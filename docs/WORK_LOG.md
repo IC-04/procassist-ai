@@ -50,9 +50,10 @@ is rich enough to support contextual reasoning.
 **Decisions** ADR-002 (provenance demoted), ADR-004 (block is the reasoning unit),
 ADR-005 (TEKG is evidence/explanation, not inference).
 
-**Generative AI use** Claude (chat) for architecture, spec authoring and the initial
-implementation of the perception layer. All numbers above were produced by running the code,
-not asserted by the model.
+**Generative AI use** GenAI-assisted development. Claude (chat) was used as a research and
+development assistance tool for architecture exploration, spec drafting and drafting the
+initial perception layer; all output was reviewed, edited and accepted by me before it entered
+the repository. All numbers above were produced by running the code, not asserted by the tool.
 
 **Next** Phase 0: stabilise repo, fix the block tail, then Gate G0.
 
@@ -135,11 +136,14 @@ fragmentation in the grid, purity within 0.003 of the best cell, and the conserv
 when two settings are close, because an absorbed excursion is exactly the `INTERRUPTION`
 signature the reasoner is later asked to judge. `min_ms` turns out to be inert on B.
 
-**Generative AI use** Claude Code (Opus 5) wrote the Phase 0 implementation, tests and
-experiment harness in this session. Every number in this entry was produced by running the
-code and read back out of the artifacts; none was asserted by the model. Two of the model's
-own proposed rules were discarded after measurement contradicted them (ADR-014, and the
-carry-forward negative result) — the measurements, not the proposals, decided.
+**Generative AI use** GenAI-assisted implementation and review. Claude Code (Opus 5) was used
+as a development assistance tool to draft the Phase 0 implementation, tests and experiment
+harness in this session; I reviewed, directed and accepted the result, and set the constraint
+that every perception rule be dataset-agnostic and justified against `DATA_SCHEMA.md`. Every
+number in this entry was produced by running the code and read back out of the artifacts; none
+was asserted by the tool. Two rules the tool proposed were discarded after measurement
+contradicted them (ADR-014, and the carry-forward negative result) — the measurements, not the
+tool's suggestions, decided.
 
 **Next** Gate G0 review. Phase 1 needs `dataset_a/`, which is still not on disk.
 
