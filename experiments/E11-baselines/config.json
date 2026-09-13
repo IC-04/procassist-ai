@@ -1,0 +1,89 @@
+{
+  "exp_id": "E11-baselines",
+  "hypothesis": "Establish the floor: what boundary and identity accuracy do trivial methods reach on Dataset A, and where do they fail? No parameter is selected from these numbers.",
+  "dataset": "dataset_a",
+  "sample": {
+    "sessions": [
+      "ses_20260630-164418-MSI",
+      "ses_20260701-053720-SIDDHIGUPTAB00B",
+      "ses_20260701-062250-Marcos",
+      "ses_20260701-093900-Marcos",
+      "ses_20260701-152030-CHAITANYA0BCF"
+    ],
+    "n": 5,
+    "seed": 7,
+    "selection": "random 5 @ seed 7"
+  },
+  "arms": [
+    "B0-single",
+    "B1-chunk",
+    "B2-gap",
+    "B3-random",
+    "B4-surface",
+    "B5-dwell"
+  ],
+  "oracle_k_arms": [
+    "B2-gap",
+    "B3-random"
+  ],
+  "random_seeds": 20,
+  "tau_calibration": {
+    "n": 127,
+    "p10_s": 24.3,
+    "median_duration_s": 37.1,
+    "p90_s": 78.6,
+    "fractions_of_median": [
+      0.03,
+      0.06,
+      0.15,
+      0.3
+    ],
+    "grid_ms": [
+      1000,
+      2250,
+      5500,
+      11250
+    ],
+    "grid_as_pct_of_median": [
+      2.7,
+      6.1,
+      14.8,
+      30.3
+    ],
+    "source": "calibrated from canonical execution durations"
+  },
+  "params": {
+    "taus_ms": [
+      1000,
+      2250,
+      5500,
+      11250
+    ],
+    "kappas": [
+      1,
+      2,
+      5,
+      10
+    ],
+    "ious": [
+      0.3,
+      0.5,
+      0.7
+    ],
+    "min_events": 3,
+    "min_ms": 1500,
+    "max_lag": 12
+  },
+  "tiers": [
+    "clean",
+    "clean+repaired",
+    "all"
+  ],
+  "conventions": [
+    "fragment (headline)",
+    "canonical (lenient)"
+  ],
+  "git_sha": "0086d07d2bdec8d34b3b8f293df5d79988ded947",
+  "started_at": "2026-09-13T13:26:40Z",
+  "finished_at": "2026-09-13T13:26:55Z"
+}

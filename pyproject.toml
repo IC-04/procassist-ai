@@ -18,6 +18,11 @@ dependencies = [
     "pandas",
     "numpy",
     "networkx",
+    # Phase 1 (evaluation harness). Both are pre-approved in ARCHITECTURE.md §6 as REUSE,
+    # so no ADR is required; PHASE_0.md pinned only the Phase 0 set and states that
+    # "later phases add their own".
+    "scikit-learn",   # ARI / NMI / homogeneity / completeness  (evaluate.identity_scores)
+    "segeval",        # WindowDiff / Pk                          (evaluate.windowdiff, .pk)
 ]
 
 [project.optional-dependencies]
