@@ -109,7 +109,36 @@ def build_blocks(rows: List[Dict], min_events: int = 3, min_ms: int = 1500) -> L
             raw.append({"surface": surface_key(pending[0]),
                         "app": pending[0].get("app_name") or "", "rows": pending})
 
-    return _summarise(_absorb(raw, min_events, min_ms))
+    return _summarise(_absorb(_attach_late_titles(raw), min_events, min_ms))
+
+
+def _attach_late_titles(raw: List[Dict]) -> List[Dict]:
+    """Pass 1b — the forward half of R2.
+
+    Pass 1 can only attach an undiscriminated row to the block already open behind it.
+    The common case it cannot see is the mirror image: a window title is not populated
+    until the window has finished activating, so switching into an application produces a
+    short bare `app:<X>` run immediately *followed* by `app:<X>:<title>`. Those are one
+    surface with the title captured late, not two.
+
+    The merge requires the same application on both sides, so an application that never
+    reports a title at all (a file-open dialog, say) keeps its own block rather than being
+    swallowed by whatever came next. On dataset_b this merges 35 of 59 bare-app runs and
+    leaves the other 24 — every one of them an application with no title anywhere — alone.
+    """
+    out: List[Dict] = []
+    i = 0
+    while i < len(raw):
+        cur = raw[i]
+        nxt = raw[i + 1] if i + 1 < len(raw) else None
+        if (nxt is not None and cur["app"] and nxt["app"] == cur["app"]
+                and cur["surface"] == f"app:{cur['app']}"):
+            nxt["rows"] = cur["rows"] + nxt["rows"]
+            i += 1
+            continue
+        out.append(cur)
+        i += 1
+    return out
 
 
 def _absorb(raw: List[Dict], min_events: int, min_ms: int) -> List[Dict]:
