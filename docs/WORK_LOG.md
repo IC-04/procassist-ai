@@ -148,3 +148,66 @@ tool's suggestions, decided.
 **Next** Gate G0 review. Phase 1 needs `dataset_a/`, which is still not on disk.
 
 **Time spent** ~3.5 h
+
+---
+
+### 2026-09-13 · Phase 0 (post) · Dataset A ingestion, then the Python environment blocker
+
+**Goal** Clear the two things standing between Gate G0 and Phase 1: get Dataset A on disk and
+verified, and resolve the Python ≥3.10 blocker. Not Phase 1.
+
+**Did**
+- **Dataset A.** Delivered as Google Drive's multi-part export — five *independent*
+  self-contained ZIPs, not `.001/.002` split parts. Verified the format from file signatures
+  before touching anything: each begins `PK\x03\x04` and ends with its own EOCD, and the five
+  hold disjoint subsets (34,923 entries, 0 duplicate paths). Concatenating them, which the
+  naming invites, would have produced a corrupt archive. CRC-verified all five before
+  extraction, then extracted each with `unzip -n`. Sources untouched and retained.
+  Full audit written to `docs/DATASET_A_READINESS.md`.
+- **Python.** No passwordless sudo, so the python.org installer and Homebrew were both
+  unavailable. Installed a relocatable CPython 3.12.14 (`python-build-standalone`) into
+  `~/.local`, SHA256-verified against the release's official `SHA256SUMS`, and put it on PATH
+  via `~/.zshrc` + `~/.zprofile`. **`pyproject.toml` was not weakened to `>=3.9` and no Phase
+  0 code was changed.**
+
+**Result**
+- Dataset A: **63 sessions, 162,768 events, 0 malformed lines**, 34,923/34,923 files, 10.22 GB;
+  GT complete for every session (63 + 63 files, 10,609 records, 0 malformed). All 13 documented
+  top-level schema fields and all five `correlation.*` fields at 100%.
+- Generic pipeline ingested A unmodified: 63 sessions → 4,968 blocks, 0 contract violations,
+  6.1 s. **No A-specific code anywhere.**
+- On 3.12.14: `make setup` green; `make test` **104 passed, 1 skipped** (the skip is the
+  ADR-010 guard that only runs when `dataset_a/` is absent — expected); `make build-b`
+  byte-reproducible and **numerically identical** to the 3.9.6 figures, so the interpreter
+  change moved nothing.
+
+**Problems**
+- **I nearly reported a wrong number.** My first audit said 20 screenshot references were
+  missing. That was an artifact of my own `len(...) < 20` example cap — the real figure is
+  3,568. Re-measured properly: **0 images are truly absent**; in 11 of 63 sessions the
+  screenshots simply live in a sibling short-named chunk (`chunk_1200`) rather than the event's
+  own chunk, so the literal `DATA_SCHEMA.md` §2 join resolves 89.68% while a session-scoped
+  lookup reaches 100%. Harmless for Phase 0/1, which never opens an image; recorded as
+  observation O1 for whichever phase first does. Not fixed now.
+- **A real git leak, found and closed.** The five delivered archives sat in the repository root
+  as 9.5 GB of untracked-but-*committable* files: `.gitignore` covered `dataset_a/` but not
+  `dataset_a-*.zip`, so a single `git add -A` would have staged them.
+- The scripted Google Drive download I started first was the wrong approach: ~5,700 files
+  fetched individually, still enumerating after 15 minutes and 0 bytes transferred. Abandoned
+  and its 166 MB partial discarded once the manual download was available. A server-side zip
+  was always going to beat per-file scraping here.
+
+**Decisions** No ADR. Nothing architectural changed. Dataset A observations O1–O4 are recorded
+in `docs/DATASET_A_READINESS.md` as observations, explicitly *not* as generic pipeline rules;
+O3 (`app_switch` is 31.1% of A's events against 8.1% of B's) flags ADR-014 for re-measurement
+in Phase 2.
+
+**Generative AI use** GenAI-assisted verification and documentation. Claude Code (Opus 5) was
+used as a development assistance tool to run the integrity/schema audit, diagnose the archive
+format and install the interpreter, under my direction. Every figure was measured by running
+the code and read back from artifacts; the one number the tool initially got wrong (the
+screenshot count above) was caught by re-measuring, not by accepting its first answer.
+
+**Next** Gate G0 review. Both Phase 1 blockers are now clear.
+
+**Time spent** ~1.5 h

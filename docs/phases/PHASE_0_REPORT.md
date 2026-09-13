@@ -50,7 +50,7 @@ python3 experiments/E01-block-sweep/run.py
 
 | # | Criterion | Result | Evidence |
 |---|---|---|---|
-| 1 | `make setup && make test` green from a clean clone | **BLOCKED** | No Python ≥3.10 exists on this machine (`/usr/bin/python3` is 3.9.6; no Homebrew, pyenv or framework build). `pyproject.toml` declares `>=3.10` as Task 0.1 specifies, so `make setup` fails deliberately with the required version and a remediation hint. `make test` is green (105 passed) on the ambient 3.9.6, which the package imports and runs on correctly. Needs one re-run after the interpreter is installed. |
+| 1 | `make setup && make test` green from a clean clone | **PASS** (resolved 2026-09-13, see §12) | CPython **3.12.14** installed; `make setup` builds `.venv` and installs the pinned dependencies; `make test` → **104 passed, 1 skipped**. The skip is `test_the_b_pipeline_does_not_need_dataset_a`, which asserts `dataset_a/` is *absent* and correctly skips now that A is on disk — not a regression. |
 | 2 | ≥5 test files including the ADR-006 contract test | **PASS** | 6 files, 105 tests. Contract test: `tests/test_context.py::test_payload_contains_no_absolute_time_or_global_index`, plus `test_the_contract_test_actually_catches_a_violation` (a contract test that cannot fail is decoration) and `tests/test_smoke_b.py::test_every_window_payload_honours_adr_006` over all 1,323 payloads actually written. |
 | 3 | Block quality targets met, or trade-off documented with numbers | **PASS** (2 of 4 targets met; 2 documented as trade-offs with numbers, which the criterion explicitly permits) | median events/block **8** ≥ 8 ✅ · empty-surface **0** ✅ · zero-duration 152, target 0 ⚠️ · blocks/session median 91, band 60–80 ⚠️. See §5 and §7. |
 | 4 | `make build-b` is byte-reproducible | **PASS** | Two runs diff clean on `blocks.jsonl`, all 15 `tekg/*.json` and all 1,323 `windows/**`. Also asserted by `tests/test_smoke_b.py::test_build_is_reproducible`. |
@@ -58,7 +58,8 @@ python3 experiments/E01-block-sweep/run.py
 | 6 | `PHASE_0_REPORT.md` written with the before/after sweep table | **PASS** | This file, §5; full tables in `experiments/E01-block-sweep/report.md`. |
 | 7 | Committed on `phase-0-setup` | **PASS** | See §9. |
 
-**Criterion 1 is BLOCKED, so Phase 0 is not complete.** Everything else passes.
+**All seven criteria PASS.** Criterion 1 was BLOCKED at the time of writing and was resolved
+on 2026-09-13; see §12.
 
 ## 5. Key numbers produced
 
@@ -158,10 +159,9 @@ Required section.
 
 ## 7. Deviations from the spec
 
-1. **`requires-python >=3.10` cannot be satisfied on this machine.** Declared as specified;
-   `make setup` fails loudly rather than silently building a 3.9 venv. Validation was run on
-   3.9.6 (the package imports and runs correctly there — Phase 0 uses no third-party import
-   at all). Acceptance criterion 1 is marked BLOCKED, not passed.
+1. ~~**`requires-python >=3.10` cannot be satisfied on this machine.**~~ **Resolved
+   2026-09-13** — CPython 3.12.14 installed, `make setup && make test` green. `pyproject.toml`
+   was never weakened to accommodate 3.9, and no Phase 0 code was changed. See §12.
 2. **Two of the four Task 0.3 targets are reported as trade-offs, with numbers**, which
    Task 0.3 explicitly permits ("If a target cannot be met without collapsing genuine short
    work, report the trade-off rather than forcing the number").
@@ -220,12 +220,11 @@ Branch `phase-0-setup`, working tree clean. Commits:
 
 ## 10. Recommendation
 
-**Phase 1 is not ready to begin**, for two independent reasons:
+At the time of writing, Phase 1 was blocked on two things. **Both are now resolved:**
 
-1. `dataset_a/` is absent, which `IMPLEMENTATION_PLAN.md` names as the hard blocker for
-   Phase 1.
-2. Acceptance criterion 1 is BLOCKED pending a Python ≥3.10 interpreter. The fix is one
-   install and one re-run of `make setup && make test`; no code change is expected.
+1. ~~`dataset_a/` is absent~~ — ingested and verified 2026-09-13; see
+   `docs/DATASET_A_READINESS.md` (63 sessions, 162,768 events, 0 malformed lines).
+2. ~~Acceptance criterion 1 is BLOCKED pending a Python ≥3.10 interpreter~~ — resolved; §12.
 
 The perception layer itself is in good shape and I would not spend more time on it before
 Phase 2 can compare it against A — further tuning on B alone would be fitting to one dataset.
@@ -233,3 +232,49 @@ Phase 2 can compare it against A — further tuning on B alone would be fitting 
 ## 11. Gate
 
 Stopped at gate **G0**. Awaiting review. **Phase 1 not started.**
+
+---
+
+## 12. Addendum — Python environment blocker resolved (2026-09-13)
+
+Acceptance criterion 1 was BLOCKED because macOS ships only Python 3.9.6 at
+`/usr/bin/python3`, while `pyproject.toml` pins `requires-python >= 3.10`.
+
+**Neither the pin nor any Phase 0 code was changed to accommodate 3.9.** The interpreter was
+installed instead.
+
+**Constraint:** no passwordless `sudo` on this machine, so the python.org `.pkg` installer and
+Homebrew were both unavailable — each needs administrator rights. The sudo-free route is a
+relocatable CPython build (`astral-sh/python-build-standalone`, the distribution `uv` itself
+uses).
+
+```
+build      cpython-3.12.14+20260901-aarch64-apple-darwin-install_only.tar.gz
+sha256     3ee3ee547cedfeb7c2b16b2b7156039f7b470bb8f857e226fd3d2eb11db83c76
+           verified against the release's official SHA256SUMS before extraction
+installed  ~/.local/share/cpython-3.12      (outside the repository)
+on PATH    ~/.local/bin/python3.12 -> …     via ~/.zshrc and ~/.zprofile
+```
+
+`ssl` (OpenSSL 3.5.8), `sqlite3`, `lzma`, `zlib` and `ctypes` all import; pip 26.2.1 present.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `make setup` | **PASS** — `.venv` on 3.12.14; installed pandas 3.0.5, numpy 2.5.3, networkx 3.6.1, pytest 9.1.1, procmine 0.1.0 (editable) |
+| `make test` | **PASS** — 104 passed, 1 skipped, 2.33 s |
+| The one skip | `test_the_b_pipeline_does_not_need_dataset_a`, guarded `skipif(dataset_a present)`. It asserts the ADR-010 property that B needs no A; with A now on disk it cannot run. Expected, not a regression. |
+| `make build-b` | **PASS** — 15 sessions, 20,477 events, 1,338 blocks, 152 one-event, 152 zero-duration, 0 empty-surface, 1,323 windows — **identical to the figures in §5**, so the interpreter change moved nothing |
+| B byte-reproducibility | **PASS** — two runs diff clean on `blocks.jsonl`, all 15 `tekg/*.json`, all 1,323 `windows/**` |
+| Dataset A intact | **PASS** — 34,923 files, 63 sessions, 34,563 images, 117 `events.jsonl`, 63 `gt.jsonl`; **0 files modified** since extraction; all five source archives preserved |
+| Dataset A ingests on 3.12 | **PASS** — 63 sessions, 162,768 events, 4,968 blocks, 0 empty-surface: identical to the 3.9.6 readiness run |
+
+### Reproducing on another machine
+
+`make setup` now works unaided wherever a Python ≥3.10 is on `PATH`. Otherwise the Makefile
+already accepts an explicit interpreter:
+
+```bash
+make setup BOOTSTRAP_PY=/path/to/python3.12
+```
