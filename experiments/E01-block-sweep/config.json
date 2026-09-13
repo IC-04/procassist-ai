@@ -1,0 +1,33 @@
+{
+  "exp_id": "E01-block-sweep",
+  "hypothesis": "Block degeneracy is caused by identifiable perception defects, not by absorption thresholds; once the defects are fixed the threshold choice is a plateau rather than a cliff.",
+  "dataset": "dataset_b",
+  "note": "dataset_b is the VALIDATION dataset here, not the source of any rule. Every rule under test is keyed on a DATA_SCHEMA.md property and runs unchanged on any conforming dataset.",
+  "arms": [
+    "A0 baseline",
+    "A1 +R5",
+    "A2 +R4",
+    "A3 +R1+R2",
+    "A4 +R3 (shipped)"
+  ],
+  "grid": {
+    "min_events": [
+      2,
+      3,
+      5,
+      8
+    ],
+    "min_ms": [
+      1000,
+      1500,
+      3000
+    ]
+  },
+  "params": {
+    "window": 5,
+    "max_lag": 12
+  },
+  "git_sha": "8dddd34a2ad80690c403cf9dfe864c33c09dbb76",
+  "started_at": "2026-09-13T11:38:39Z",
+  "finished_at": "2026-09-13T11:38:45Z"
+}
