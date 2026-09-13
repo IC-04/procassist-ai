@@ -1,0 +1,23 @@
+# Data — never committed (CLAUDE.md §5)
+dataset_a/
+dataset_b/
+
+# Generated artifacts
+build/
+
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# OS
+.DS_Store
+
+# Local tool settings (machine-specific)
+.claude/settings.local.json

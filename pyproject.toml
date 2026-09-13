@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "procmine"
+version = "0.1.0"
+description = "Reconstruct business-process executions from desktop operation logs."
+requires-python = ">=3.10"
+
+# Phase 0 dependency set (docs/phases/PHASE_0.md Task 0.1; docs/ARCHITECTURE.md §6).
+# Later phases add their own; a new dependency needs an ADR (CLAUDE.md §7).
+#
+# NOTE: none of pandas/numpy/networkx is imported anywhere in procmine/ as of Phase 0 —
+# the perception + TEKG layer is pure standard library. They are declared because the
+# phase specification pins them, and because Phases 1-5 consume them.
+dependencies = [
+    "pandas",
+    "numpy",
+    "networkx",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[project.scripts]
+procmine = "procmine.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["procmine*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
