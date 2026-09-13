@@ -17,8 +17,10 @@ Neither could know k in production. They are floors: a real method that cannot b
 handed the answer's cardinality has not earned its complexity.
 """
 from __future__ import annotations
-import collections, random
+import collections, logging, random
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+
+log = logging.getLogger("procmine.baselines")
 
 Interval = Tuple[int, int]
 
@@ -161,3 +163,83 @@ def to_segments(session_id: str, intervals: Sequence[Interval],
         return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     return [{"session_id": session_id, "start": iso(a), "end": iso(b), "label": str(l)}
             for (a, b), l in zip(intervals, labels)]
+
+
+# ---------------------------------------------------------------- CLI
+
+def main(argv=None) -> int:
+    """Emit `segments.jsonl`-shaped output for every baseline (PHASE_1.md Commands).
+
+    Scoring lives in `experiments/E11-baselines/run.py`; this entry point exists so the
+    baselines can be inspected as segment files without running the whole experiment.
+    """
+    import argparse, json, os, logging
+    from . import normalise as N, blocks as B
+
+    ap = argparse.ArgumentParser(prog="procmine.baselines")
+    ap.add_argument("--dataset", required=True)
+    ap.add_argument("--out", default=None)
+    ap.add_argument("--sample", type=int, default=0, help="use N sessions chosen by --seed")
+    ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--only", default=None, help="comma-separated baseline ids")
+    ap.add_argument("-v", "--verbose", action="store_true")
+    a = ap.parse_args(argv)
+    logging.basicConfig(level=logging.INFO if a.verbose else logging.WARNING,
+                        format="%(levelname)s %(message)s")
+
+    root = a.dataset.rstrip("/")
+    if not os.path.isdir(root) or not any(N.iter_session_dirs(root)):
+        print(f"{os.path.basename(root)} not present — nothing to segment. No artifacts written.")
+        return 0
+
+    sessions = sorted(os.path.basename(p) for p in N.iter_session_dirs(root))
+    if a.sample:
+        import random
+        sessions = sorted(random.Random(a.seed).sample(sessions, min(a.sample, len(sessions))))
+
+    names = [n.strip() for n in a.only.split(",")] if a.only else list(REGISTRY)
+    unknown = [n for n in names if n not in REGISTRY]
+    if unknown:
+        print(f"unknown baseline(s): {unknown}. Known: {list(REGISTRY)}")
+        return 2
+
+    out_root = a.out or os.path.join("build", os.path.basename(root), "baselines")
+    os.makedirs(out_root, exist_ok=True)
+
+    # k for the oracle arms comes from the ground truth when it is available; without GT
+    # (e.g. dataset_b) those arms fall back to the block count, which is stated in the
+    # summary rather than silently substituted.
+    k_true, k_source = {}, "blocks (no ground truth available)"
+    gt_exec = os.path.join("build", os.path.basename(root), "executions.jsonl")
+    if os.path.exists(gt_exec):
+        k_true = collections.Counter()
+        with open(gt_exec, encoding="utf-8") as fh:
+            for line in fh:
+                k_true[json.loads(line)["session_id"]] += 1
+        k_source = f"ground truth ({gt_exec})"
+
+    summary = {"dataset": root, "sessions": len(sessions), "oracle_k_source": k_source,
+               "arms": {}}
+    for name in names:
+        rows_written = 0
+        path = os.path.join(out_root, f"{name}.segments.jsonl")
+        with open(path, "w", encoding="utf-8") as fh:
+            for sid in sessions:
+                rows = N.load_session(os.path.join(root, sid))
+                if not rows:
+                    continue
+                blks = B.build_blocks(rows)
+                iv, lb = run_baseline(name, rows, blks,
+                                      k=k_true.get(sid, len(blks)), seed=0)
+                for seg in to_segments(sid, iv, lb):
+                    fh.write(json.dumps(seg, ensure_ascii=False) + "\n")
+                    rows_written += 1
+        summary["arms"][name] = {"segments": rows_written, "path": path}
+        log.info("%s: %d segments -> %s", name, rows_written, path)
+
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

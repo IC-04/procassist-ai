@@ -211,3 +211,59 @@ screenshot count above) was caught by re-measuring, not by accepting its first a
 **Next** Gate G0 review. Both Phase 1 blockers are now clear.
 
 **Time spent** ~1.5 h
+
+---
+
+### 2026-09-13 · Phase 1 · GT canonicaliser, evaluation harness, baselines
+
+**Goal** Turn Dataset A into a measuring instrument and end with a baseline scorecard.
+Not a segmenter phase; no method was built or tuned.
+
+**Did** `procmine/gt.py` (GT canonicaliser under ADR-011's frozen repair rules),
+`procmine/evaluate.py` (the harness, both coordinate domains, tiered), `procmine/baselines.py`
+(the six baselines plus a CLI), `experiments/E11-baselines/`, `docs/GT_DEFECT_REPORT.md`,
+58 new tests with hand-computed expected values.
+
+**Result**
+- GT: 10,609 stream records → 2,009 executions → **1,819 canonical**; tiers clean 1,946 /
+  repaired 63 / **disputed 0**; **98 interrupted (5.4%)**, spanning **5.6×** their own
+  working time.
+- Baselines (63 sessions, τ=2 s, headline tier/convention): B0 0.000 · B1 **0.008** ·
+  B2-gap **0.089** · B3-random 0.109 · B4-surface 0.247 · **B5-dwell 0.258**.
+- **B2-gap scores below random while holding the oracle count** — ADR-003 confirmed on A.
+- **Representational ceiling: only 60.4% of execution boundaries have any block boundary
+  within 2 s**, and **98.4% of the misses involve no screen change at all.**
+- Risk R1 retired: A's blocks are richer than B's (median 30 vs 8 events/block).
+
+**Problems**
+- My first canonicaliser reported **0 interrupted executions** because it grouped fragments by
+  `case_id`, as the task wording suggests. Dataset A's case_ids are unique *per fragment*;
+  `split_id` is the only link, and the manifest records it on one side only. Trusting that
+  output would have reported the interruption phenomenon as non-existent.
+- My first GT scan reported **159 unpaired `process_switched_out`**; the true count is 0. The
+  scan did not treat `process_resumed` as re-opening an execution. Both numbers are in the
+  defect report, because the wrong one is the trap.
+- My first artifact layout committed dataset-A-derived GT into `experiments/` and produced a
+  **44 MB** `metrics.json`. Both fixed before the first Phase 1 commit.
+- I introduced an inconsistency in the spread statistic while trimming that file (per-session
+  values for seed 0 mixed with pooled values for seeds 1–19). Caught because `B3-random`'s
+  spread moved between two runs whose arm means were identical.
+- Two generic Phase 0 defects surfaced by A and deliberately **not** fixed mid-phase:
+  `_TITLE_STRIP` does not strip Chrome's ` - Google Chrome`, and `NOISE_TITLE_HINTS`
+  misflags Notepad's `Untitled`. Fixing either changes block statistics and would invalidate
+  this scorecard; recommended for the start of Phase 2.
+
+**Decisions** No ADR. The alignment target is `executions[].start_ts/end_ts`, chosen because
+`expected_boundaries` was measured to be exactly the same information (100% exact match) but
+strictly less complete. τ is calibrated from A's median execution duration (34.8 s), the only
+parameter selected from A in this phase.
+
+**Generative AI use** GenAI-assisted implementation and analysis. Claude Code (Opus 5) was
+used as a development assistance tool to write the modules, tests and experiment harness under
+my direction. Every figure was produced by running the code and read back from artifacts. The
+two wrong numbers above were caught by re-measuring against the raw data rather than by
+accepting the tool's first output.
+
+**Next** Gate G1. Phase 2 not started.
+
+**Time spent** ~2.5 h

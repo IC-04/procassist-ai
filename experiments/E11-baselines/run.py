@@ -126,6 +126,7 @@ def main() -> int:
     k_true = {s: len(refs["clean+repaired"]["fragment"].get(s, {}).get("intervals", []))
               for s in sessions}
 
+    HEADLINE = "clean+repaired|fragment"
     samples = []
     results = {}
     for name in BL.REGISTRY:
@@ -143,12 +144,15 @@ def main() -> int:
                     cfg = {"taus_ms": taus, "kappas": kappas, "ious": ious,
                            "timelines": timelines, "tier": tier, "arm": name}
                     arm[f"{tier}|{conv}"] = E.evaluate_all(refs[tier][conv], hyp, cfg)
-            # Keep the full evaluate_all output for seed 0; for the 19 further random
-            # seeds keep only `overall`, since 20 copies of per-session detail would make
-            # metrics.json ~44 MB without adding information.
-            per_seed.append(arm if seed == 0
-                            else {k: {"config": v["config"], "overall": v["overall"]}
-                                  for k, v in arm.items()})
+            # Size control: per-session detail is retained for the HEADLINE combination
+            # (clean+repaired | fragment) on every seed, and `overall` only for the other
+            # five tier x convention combinations. Keeping per-session detail everywhere
+            # for all 20 random seeds produced a 44 MB file with no added information.
+            # The headline keeps it on every seed because the spread statistic below is
+            # computed from it and must not mix per-session values with pooled ones.
+            per_seed.append({
+                k: (v if k == HEADLINE else {"config": v["config"], "overall": v["overall"]})
+                for k, v in arm.items()})
             samples.append({"arm": name, "seed": seed,
                             "n_hyp": sum(len(hyp[s]["intervals"]) for s in sessions),
                             "headline_boundary_f1": arm["clean+repaired|fragment"]["overall"]
@@ -163,12 +167,9 @@ def main() -> int:
     for name, r in results.items():
         vals = []
         for run in r["runs"]:
-            ps = run["clean+repaired|fragment"].get("per_session")
-            if ps:
-                vals.extend(ps[s]["boundary_time"][tau_h]["f1"] for s in ps)
-            else:
-                vals.append(run["clean+repaired|fragment"]["overall"]
-                            ["boundary_time"][tau_h]["f1"])
+            # always per-session, for every seed — see the size-control note above
+            ps = run[HEADLINE]["per_session"]
+            vals.extend(ps[s]["boundary_time"][tau_h]["f1"] for s in ps)
         spread[name] = {"mean": round(statistics.mean(vals), 4),
                         "sd": round(statistics.pstdev(vals), 4) if len(vals) > 1 else 0.0,
                         "min": round(min(vals), 4), "max": round(max(vals), 4), "n": len(vals)}
