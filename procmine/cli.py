@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 
 from . import normalise as N, blocks as B, tekg as G, context as C, schemas as S
 from . import candidates as CA
-from . import score as SC, gate as GA, decoder as DE
+from . import score as SC, gate as GA, decoder as DE, label as LB
 
 log = logging.getLogger("procmine")
 
@@ -288,6 +288,16 @@ def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
     for c in calibrated:
         by_session[c["session_id"]].append(c)
 
+    rows_by: Dict[str, List[Dict]] = {}
+    blocks_by: Dict[str, List[Dict]] = {}
+    for sdir in N.iter_session_dirs(dataset_root):
+        sid = os.path.basename(sdir)
+        if sid not in by_session:
+            continue
+        r = N.load_session(sdir)
+        rows_by[sid] = r
+        blocks_by[sid] = B.build_blocks(r)
+
     rich: List[Dict] = []
     all_routed: List[Dict] = []
     n_seg = 0
@@ -298,10 +308,14 @@ def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
         for k, s in enumerate(segs):
             s["session_id"] = sid
             s["exec_uid"] = f"{sid}#e{k:04d}"
-            s["label"] = "segment"          # placeholder; labelling is the next stage
             s["confidence"] = round(s["score"], 4)
             rich.append(s)
         n_seg += len(segs)
+
+    # stage 8: labelling. Clustering is GLOBAL across the dataset, which is what makes the
+    # same process receive the same string in every session.
+    rich = LB.label_segments(rich, rows_by, blocks_by)
+    lab = LB.label_report(rich)
 
     problems = DE.violations(rich, d_cfg)
     _check(problems, "decoder hard constraints")
@@ -319,6 +333,7 @@ def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
             "conversion_pct": round(100 * 2 * n_seg / len(pooled), 2) if pooled else None,
             "constraint_violations": len(problems),
             "gate": GA.routing_report(all_routed),
+            "labels": lab,
             "scorer": scorer.meta,
             "decoder_cfg": {k: v for k, v in d_cfg.items()}}
 

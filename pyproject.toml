@@ -23,6 +23,7 @@ dependencies = [
     # "later phases add their own".
     "scikit-learn",   # ARI / NMI / homogeneity / completeness  (evaluate.identity_scores)
     "segeval",        # WindowDiff / Pk                          (evaluate.windowdiff, .pk)
+    "rapidfuzz",      # sequence distance over surface shapes    (label._seq_distance)
 ]
 
 [project.optional-dependencies]
