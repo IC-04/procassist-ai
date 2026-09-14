@@ -183,7 +183,7 @@ def fit_scorer(dataset_root: str, out_path: str = SCORER_PATH, tau_ms: int = 200
 
 
 def thresholds_manifest(cfg_cand: Dict, cfg_gate: Dict, cfg_dec: Dict,
-                        scorer: Optional[SC.Scorer]) -> Dict:
+                        scorer: Optional[SC.Scorer], calibration: str = "percentile") -> Dict:
     """Every threshold the pipeline uses, tagged with how it transfers to a new dataset.
 
     Makes the ADR-010 leakage check mechanical instead of a judgement call:
@@ -219,16 +219,29 @@ def thresholds_manifest(cfg_cand: Dict, cfg_gate: Dict, cfg_dec: Dict,
             "note": ("null — A's fragments reach 1144.8 s with p99 at 144.2 s, so no upper "
                      "bound is justified; STEP1_SPEC §3.6 permits one only where the "
                      "distribution supports it")},
+        "decoder.calibration": {
+            "value": calibration, "tag": "structural",
+            "note": ("percentile — each candidate's score is replaced by its within-dataset "
+                     "empirical CDF, so the operating point selects a FRACTION of the "
+                     "dataset's own distribution. The RULE transfers; the score value at "
+                     "which it bites is computed per dataset and never carried across.")},
         "decoder.lambda_per_segment": {
-            "value": cfg_dec.get("lambda_per_segment"), "tag": "a_fitted",
-            "note": "operating point chosen for count ratio ~1.0 on dataset_a"},
+            "value": cfg_dec.get("lambda_per_segment"),
+            "tag": "structural" if calibration == "percentile" else "a_fitted",
+            "note": ("under percentile calibration this is a position on a uniform [0,1] "
+                     "distribution, i.e. a target FRACTION of candidates, not a score "
+                     "threshold. Chosen on dataset_a for count ratio ~1.0; it selects the "
+                     "same fraction on any dataset.")},
         "decoder.nms_window_ms": {
             "value": cfg_dec.get("nms_window_ms"), "tag": "a_fitted",
             "note": "0 — the duration floor already suppresses candidate clusters"},
-        "gate.low": {"value": cfg_gate.get("low"), "tag": "a_fitted",
-                     "note": "confident non-boundary band edge"},
-        "gate.high": {"value": cfg_gate.get("high"), "tag": "a_fitted",
-                      "note": "confident boundary band edge"},
+        "gate.low": {"value": cfg_gate.get("low"),
+                     "tag": "structural" if calibration == "percentile" else "a_fitted",
+                     "note": ("confident non-boundary band edge; a percentile of the "
+                              "dataset's own score distribution under percentile calibration")},
+        "gate.high": {"value": cfg_gate.get("high"),
+                      "tag": "structural" if calibration == "percentile" else "a_fitted",
+                      "note": "confident boundary band edge; see gate.low"},
         "scorer.weights": {
             "value": (dict(zip(scorer.names, [round(w, 4) for w in scorer.weights]))
                       if scorer else None),
@@ -242,8 +255,13 @@ def thresholds_manifest(cfg_cand: Dict, cfg_gate: Dict, cfg_dec: Dict,
 
 def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
             no_llm: bool = True, cfg_gate: Optional[Dict] = None,
-            cfg_dec: Optional[Dict] = None) -> Dict:
-    """The full deterministic chain: candidates -> score -> gate -> decode -> intervals."""
+            cfg_dec: Optional[Dict] = None, calibration: str = "percentile") -> Dict:
+    """The full deterministic chain: candidates -> score -> CALIBRATE -> gate -> decode.
+
+    Calibration is applied across the WHOLE dataset before gating, because the operating point
+    is a fraction of that dataset's own score distribution (score.calibrate). Decoding then
+    proceeds per session.
+    """
     if not no_llm:
         raise NotImplementedError("only --no-llm is implemented; the adjudicator is a later "
                                   "stage (STEP1_SPEC §3.5)")
@@ -252,16 +270,29 @@ def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
     g_cfg = dict(GA.DEFAULT_CFG); g_cfg.update(cfg_gate or {})
     d_cfg = dict(DE.DEFAULT_CFG); d_cfg.update(cfg_dec or {})
 
-    rich: List[Dict] = []
-    all_routed: List[Dict] = []
-    n_seg = 0
+    # pass 1: score every candidate in the dataset
+    per_session: Dict[str, List[Dict]] = {}
+    pooled: List[Dict] = []
     for sdir in N.iter_session_dirs(dataset_root):
         sid = os.path.basename(sdir)
         rows = N.load_session(sdir)
         if not rows:
             continue
-        cands = CA.generate(rows, B.build_blocks(rows))
-        routed = GA.route(scorer.apply(cands), g_cfg)
+        scored = scorer.apply(CA.generate(rows, B.build_blocks(rows)))
+        per_session[sid] = scored
+        pooled.extend(scored)
+
+    # pass 2: calibrate the operating point on THIS dataset's distribution, then gate
+    calibrated = SC.calibrate(pooled, calibration)
+    by_session: Dict[str, List[Dict]] = collections.defaultdict(list)
+    for c in calibrated:
+        by_session[c["session_id"]].append(c)
+
+    rich: List[Dict] = []
+    all_routed: List[Dict] = []
+    n_seg = 0
+    for sid in sorted(by_session):
+        routed = GA.route(sorted(by_session[sid], key=lambda x: x["at_seq"]), g_cfg)
         all_routed.extend(routed)
         segs = DE.decode_session(routed, d_cfg)
         for k, s in enumerate(segs):
@@ -279,10 +310,13 @@ def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
         for r in rich:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
     with open(os.path.join(out_root, "thresholds.json"), "w", encoding="utf-8") as fh:
-        json.dump(thresholds_manifest(CA.DEFAULT_CFG, g_cfg, d_cfg, scorer), fh,
+        json.dump(thresholds_manifest(CA.DEFAULT_CFG, g_cfg, d_cfg, scorer, calibration), fh,
                   ensure_ascii=False, indent=1, default=list)
 
     return {"dataset": dataset_root, "segments": n_seg,
+            "calibration": calibration,
+            "candidates": len(pooled),
+            "conversion_pct": round(100 * 2 * n_seg / len(pooled), 2) if pooled else None,
             "constraint_violations": len(problems),
             "gate": GA.routing_report(all_routed),
             "scorer": scorer.meta,
@@ -308,6 +342,8 @@ def main(argv=None) -> int:
     ap.add_argument("--fit-scorer", action="store_true",
                     help="fit the candidate scorer on this dataset's clean GT tier")
     ap.add_argument("--scorer", default=SCORER_PATH)
+    ap.add_argument("--calibration", choices=SC.CALIBRATION_MODES, default="percentile",
+                    help="operating-point calibration; percentile transfers across datasets")
     ap.add_argument("--no-llm", action="store_true", default=True,
                     help="the only supported mode; routed candidates use rule_decision")
     ap.add_argument("-v", "--verbose", action="store_true")
@@ -333,7 +369,8 @@ def main(argv=None) -> int:
         return 0
     if a.segment:
         try:
-            print(json.dumps(segment(root, out, a.scorer, no_llm=True),
+            print(json.dumps(segment(root, out, a.scorer, no_llm=True,
+                                     calibration=a.calibration),
                              ensure_ascii=False, indent=2, default=str))
         except ArtifactInvalid as e:
             print(f"CONSTRAINT VIOLATION: {e}", file=sys.stderr)

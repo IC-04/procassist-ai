@@ -80,8 +80,10 @@ def test_negative_evidence_lowers_the_score():
 # ---------------------------------------------------------------- gate
 
 def test_gate_bands_and_ambiguity():
+    """Bands are passed explicitly: the test pins the MECHANISM, not the shipped constants,
+    which move when the calibration changes."""
     scored = [cand(1, 1000, sc=0.05), cand(2, 2000, sc=0.50), cand(3, 3000, sc=0.95)]
-    r = GA.route(scored)
+    r = GA.route(scored, {"low": 0.35, "high": 0.65})
     assert [x["route"] for x in r] == ["rule", "llm", "rule"]
     assert r[1]["ambiguity"] == pytest.approx(1.0)      # dead centre
     assert r[0]["ambiguity"] == 0.0 and r[2]["ambiguity"] == 0.0
@@ -90,7 +92,8 @@ def test_gate_bands_and_ambiguity():
 def test_every_routed_candidate_still_carries_a_rule_decision():
     """--no-llm is a complete mode, not a degraded one: the fallback must exist before the
     adjudicator does (ADR-018)."""
-    r = GA.route([cand(i, i * 1000, sc=s) for i, s in enumerate([0.4, 0.5, 0.6, 0.9])])
+    r = GA.route([cand(i, i * 1000, sc=s) for i, s in enumerate([0.4, 0.5, 0.6, 0.9])],
+                 {"low": 0.35, "high": 0.65})
     for x in r:
         assert isinstance(x["rule_decision"], bool)
     routed = [x for x in r if x["route"] == "llm"]
@@ -100,7 +103,7 @@ def test_every_routed_candidate_still_carries_a_rule_decision():
 def test_routing_report_computes_the_fraction_and_population():
     scored = [cand(i, i * 1000, sc=s) for i, s in enumerate([0.1, 0.5, 0.55, 0.9])]
     labels = [0, 1, 0, 1]
-    rep = GA.routing_report(GA.route(scored), labels)
+    rep = GA.routing_report(GA.route(scored, {"low": 0.35, "high": 0.65}), labels)
     assert rep["n_candidates"] == 4 and rep["n_routed"] == 2
     assert rep["routing_fraction"] == 0.5
     assert rep["true_boundaries_total"] == 2
@@ -111,6 +114,49 @@ def test_routing_report_computes_the_fraction_and_population():
 def test_gate_handles_an_empty_input():
     assert GA.route([]) == []
     assert GA.routing_report([])["n_candidates"] == 0
+
+
+def test_band_width_is_the_routing_fraction_under_percentile_calibration():
+    """Percentile-calibrated scores are uniform, so the band WIDTH is the routing fraction on
+    any dataset — which is what makes the <= 15% target structural rather than re-tuned."""
+    scored = [cand(i, i * 1000, sc=i / 1000.0) for i in range(1000)]
+    r = GA.route(scored, {"low": 0.80, "high": 0.94})
+    frac = GA.routing_report(r)["routing_fraction"]
+    assert 0.13 <= frac <= 0.15, frac
+    assert GA.DEFAULT_CFG["high"] - GA.DEFAULT_CFG["low"] <= 0.15
+
+
+# ---------------------------------------------------------------- score: calibration
+
+def test_percentile_calibration_makes_the_distribution_uniform():
+    lo = [{"score": 0.001 * i} for i in range(100)]
+    hi = [{"score": 0.9 + 0.001 * i} for i in range(100)]
+    for arm in (lo, hi):
+        cal = SC.calibrate(arm, "percentile")
+        vals = sorted(c["score"] for c in cal)
+        assert abs(vals[len(vals) // 2] - 0.5) < 0.02, "median percentile should be ~0.5"
+
+
+def test_percentile_calibration_is_rank_preserving_and_keeps_the_raw_score():
+    src = [{"score": s} for s in (0.9, 0.1, 0.5)]
+    cal = SC.calibrate(src, "percentile")
+    assert [c["score_raw"] for c in cal] == [0.9, 0.1, 0.5]
+    assert cal[0]["score"] > cal[2]["score"] > cal[1]["score"]
+
+
+def test_percentile_calibration_gives_ties_the_same_value():
+    cal = SC.calibrate([{"score": 0.0}, {"score": 0.0}, {"score": 1.0}], "percentile")
+    assert cal[0]["score"] == cal[1]["score"]
+
+
+def test_absolute_calibration_is_the_identity_control_arm():
+    cal = SC.calibrate([{"score": 0.3}, {"score": 0.7}], "absolute")
+    assert [c["score"] for c in cal] == [0.3, 0.7]
+
+
+def test_calibration_rejects_an_unknown_mode():
+    with pytest.raises(ValueError):
+        SC.calibrate([{"score": 0.5}], "nonsense")
 
 
 # ---------------------------------------------------------------- decoder: HARD CONSTRAINTS

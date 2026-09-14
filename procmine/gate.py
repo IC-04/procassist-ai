@@ -13,11 +13,20 @@ from __future__ import annotations
 import collections
 from typing import Any, Dict, List, Optional, Sequence
 
-# Band edges on the score. Both are fitted on Dataset A and declared as such in thresholds.json.
+# Band edges. Under percentile calibration (score.calibrate) the score IS the candidate's
+# within-dataset percentile, so these edges are positions in that distribution and the band
+# width IS the routing fraction by construction: a 0.14-wide band routes 14% of candidates on
+# any dataset. That is what makes the <= 15% target in STEP1_SPEC §3.4 a structural guarantee
+# rather than something to be re-tuned per dataset.
+#
+# The band is centred on the decoder's operating cut, not on 0.5. The decoder converts ~12.8%
+# of candidates into boundary points, so the decision sits near the 0.872 percentile; a band
+# from 0.80 to 0.94 straddles it. Centring on 0.5 — as an absolute-score gate would — would
+# route the mass in the middle of the distribution, which is nowhere near the decision.
 DEFAULT_CFG = {
-    "low": 0.35,        # below -> confident NOT a boundary
-    "high": 0.65,       # above -> confident boundary
-    "max_route_fraction": 0.15,   # STEP1_SPEC §3.4 target; widened bands if exceeded
+    "low": 0.80,        # below -> confident NOT a boundary
+    "high": 0.94,       # above -> confident boundary
+    "max_route_fraction": 0.15,   # STEP1_SPEC §3.4 target
 }
 
 

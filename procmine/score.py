@@ -185,6 +185,51 @@ def ranking_report(scored: Sequence[Dict], labels: Sequence[int]) -> Dict[str, A
     return out
 
 
+# ---------------------------------------------------------------- operating-point calibration
+
+CALIBRATION_MODES = ("absolute", "percentile")
+
+
+def calibrate(scored: Sequence[Dict], mode: str = "percentile") -> List[Dict]:
+    """Put the operating point on a scale that transfers between datasets.
+
+    Phase D shipped an ABSOLUTE, A-fitted cut-off and it did not transfer. Measured: dataset_b's
+    score distribution sits far below dataset_a's — p90 is 0.309 on B against 0.975 on A, and
+    7.1% of B's candidates clear 0.5 against 25.9% of A's — even though block density (90.2 vs
+    79.7 per session) and candidate density (0.127 vs 0.165 per event) are nearly identical.
+    The divergence is in the scores, not the data, so a fixed score threshold selects 4.4% of
+    B's candidates as boundary points against 12.6% of A's.
+
+    `percentile` replaces each score by its **within-dataset empirical CDF**, `P(X <= s)`. Ties
+    keep identical values, so the mapping is well defined despite the heavy mass near zero. The
+    distribution becomes uniform on every dataset, so one operating point selects the same
+    FRACTION everywhere.
+
+    This is the ADR-010-sanctioned pattern: the RULE ("take the top q by the dataset's own
+    score distribution") transfers, while the score value at which it bites is computed per
+    dataset and never carried across. `absolute` is retained as the control arm.
+
+    It cannot be shown CORRECT on dataset_b, which has no ground truth — only self-consistent
+    and rule-transferable. It is not tuned to make B resemble A; B is a different domain and
+    may genuinely differ.
+    """
+    if mode not in CALIBRATION_MODES:
+        raise ValueError(f"unknown calibration mode {mode!r}; expected {CALIBRATION_MODES}")
+    out = [dict(c) for c in scored]
+    if mode == "absolute" or not out:
+        for c in out:
+            c["score_raw"] = c.get("score")
+        return out
+    vals = sorted(float(c.get("score") or 0.0) for c in out)
+    n = len(vals)
+    import bisect as _b
+    for c in out:
+        raw = float(c.get("score") or 0.0)
+        c["score_raw"] = raw
+        c["score"] = round(_b.bisect_right(vals, raw) / n, 6)
+    return out
+
+
 def save(scorer: Scorer, path: str) -> None:
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     with open(path, "w", encoding="utf-8") as fh:

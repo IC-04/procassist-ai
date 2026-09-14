@@ -31,11 +31,12 @@ DEFAULT_CFG = {
     # bit at all would reject genuine executions. STEP1_SPEC §3.6 permits one "only where A's
     # distribution justifies one" — it does not.
     "max_duration_ms": None,
-    # Cost of opening a segment; the operating point. Chosen for count ratio ~= 1.0 on
-    # dataset_a (0.97 at this value), NOT for maximum F1 — lambda=1.4 scores F1 0.718 against
-    # 0.702 here, but at count ratio 0.83, which is a bet on under-segmenting. A ratio near 1.0
-    # makes no such bet. Declared `a_fitted` in thresholds.json.
-    "lambda_per_segment": 0.80,
+    # Cost of opening a segment; the operating point. Operates on PERCENTILE-CALIBRATED
+    # scores (score.calibrate), so it selects a FRACTION of each dataset's own distribution
+    # rather than clearing an absolute bar fitted on A. Chosen for count ratio ~= 1.0 on
+    # dataset_a (0.98 at this value), NOT for maximum F1 — 1.5 scores F1 0.717 at ratio 0.87,
+    # which is a bet on under-segmenting; a ratio near 1.0 makes no such bet.
+    "lambda_per_segment": 1.40,
     "nms_window_ms": 0,           # extra suppression; 0 = rely on the duration floor
     "min_score": 0.0,
 }
