@@ -544,6 +544,12 @@ is `structural`; **`label.k` is explicitly not transferred** — Louvain selects
 Two consecutive runs produce byte-identical `segments.jsonl`. `make run-b` verified with
 `dataset_a/` moved out of the tree.
 
-**S-E8.** On B, **0 of 943** consecutive segment pairs share a label, so the frozen system emits no
-consecutive same-process executions. A cannot test the case either (0 of 1,689). Recorded as a
-limitation; nothing was changed to chase it.
+**S-E8 — consecutive same-process executions.** A cannot test the case at all: 0 of 1,689
+consecutive execution pairs share a process code. On B the frozen system emits them readily —
+**67 of 168** consecutive segment pairs within a session share a label (39.9%), at a median gap
+of 7.0 s, and **7** of those pairs have *identical* surface sets, which is the hardest version of
+the case: nothing about where the operator is changes across the boundary. The system does
+therefore split adjacent same-process executions rather than merging them, and it places those
+boundaries on evidence other than surface change. **B has no ground truth, so this records what
+the system does, never that it is right.** Recorded as a limitation; nothing was changed to chase
+it.

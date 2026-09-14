@@ -175,7 +175,10 @@ of desktop telemetry, not a defect in the method, and no amount of clustering re
 - **Rare-process behaviour is untestable on A.** All 15 reference codes appear ≥ 14 times among
   the 1,332 matched executions.
 - **Consecutive same-process executions are untestable on A** — 0 of 1,689 consecutive pairs
-  share a code (S-E8).
+  share a code. On B the frozen system emits them readily: **67 of 168** consecutive segment
+  pairs share a label (39.9%, median gap 7.0 s), **7** of them with identical surface sets. So
+  the system does split adjacent same-process executions rather than merging them — but B has no
+  ground truth, so that is an observation, not a validation (S-E8).
 - **Dataset B is unvalidated throughout.** It has no ground truth; every B figure below is
   internal consistency, never accuracy.
 - **Every identity figure lives at match_rate 0.760** and none of it generalises to the unmatched
