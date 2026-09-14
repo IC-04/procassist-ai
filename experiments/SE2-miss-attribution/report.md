@@ -256,3 +256,66 @@ python3 experiments/SE1-gt-metric-correction/run.py   # population + grid
 python3 experiments/SE2-miss-attribution/run.py
 pytest tests/test_se2_classify.py -q
 ```
+
+---
+
+## Correction — 2026-09-14
+
+Appended after the experiment; the sections above are the record as written and are not
+rewritten.
+
+### C1. The ceiling in §8 was wrong: ~74.7% → **90.0%** at τ = 2 s
+
+§8 stated "the arithmetic upper bound for any event-level candidate space is about **74.7%** at
+τ = 2 s". That was computed as `100 − 25.3`, where 25.3% is category (e) as a share of the
+**1,381 missed** boundaries (349/1,381). It should have been taken as a share of **all 3,504
+boundary points** (349/3,504 = 9.96%). Mixing a share-of-missed with a share-of-all is the
+third instance in this project of a figure quoted against the wrong denominator, and the one
+that mattered most, because it understated the achievable ceiling by 15 points.
+
+Recomputed directly rather than by subtraction — a boundary is reachable **in principle** by an
+event-level generator iff at least one retained event lies within τ of it, since a candidate can
+only be placed at an event:
+
+| τ | ceiling n | **ceiling** | block-edge n | block-edge | headroom |
+|---|---|---|---|---|---|
+| 1,000 ms | 2,726 | **77.8%** | 1,690 | 48.2% | 29.6 pts |
+| 2,000 ms | 3,155 | **90.0%** | 2,123 | 60.6% | 29.5 pts |
+| 5,000 ms | 3,459 | **98.7%** | 2,696 | 76.9% | 21.8 pts |
+| 10,000 ms | 3,466 | **98.9%** | 3,236 | 92.4% | 6.6 pts |
+
+n = 3,504 boundary points, scoreable canonical, tiers `clean + repaired`.
+
+At τ = 2 s the ceiling is **90.04%** (3,155/3,504), so 349 boundaries are unreachable in
+principle — matching category (e) exactly, which confirms the classifier partitioned correctly
+and only the arithmetic was at fault. **The ceiling is τ-dependent and must be quoted per τ**:
+at τ = 1 s it is 77.8%, and at τ = 10 s the block-edge space is already within 6.6 points of it,
+so there is very little for a finer candidate layer to win at the loose end of the grid. The
+headroom a finer generator can compete for is ~29.5 points, and it is at τ = 1–2 s.
+
+§8's conclusion that the ceiling sits "below the high 80s" is therefore **withdrawn**. At
+τ = 2 s the ceiling is 90.0%, which is within the range S-E3's decision table treats as a clean
+pass.
+
+### C2. Category (a) = 0 re-tested at FIELD level — and it holds
+
+§4 established (a) = 0 by showing 162,768 raw events = 162,768 normalised events. That proves no
+**event** is deleted; it does not prove no **field value** is normalised away — and defect D-1
+was exactly that kind of loss, a stripped title suffix collapsing two surfaces into one.
+
+Re-tested on all **906** boundaries classified (b) or (d), comparing the event immediately
+before each boundary with the event immediately after:
+
+- does the **raw** `window_title` differ across the boundary while the **normalised** title is
+  identical?
+- does the **raw** `url` differ while the derived `(origin, route)` pair is identical?
+
+Live suspects in `normalise._TITLE_STRIP`: the `^\*` unsaved-document marker,
+`- Compatibility Mode`, the trailing application suffix, the whitespace collapse; and
+`route_of` discarding the origin.
+
+**Result: zero cases, on both tests, across all 906 boundaries.** No boundary is hidden by
+normalisation collapsing two distinct raw values into one.
+
+This is a materially stronger claim than the event-count trace, and it is what properly
+establishes (a) = 0. GATE-1 is **not** reopened.

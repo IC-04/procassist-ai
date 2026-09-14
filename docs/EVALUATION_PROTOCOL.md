@@ -121,3 +121,64 @@ therefore a graded deliverable, not internal scaffolding.**
 - **Downstream stability** (Phase 5): does the automation ranking survive perturbation?
 - Any number quoted without its metric **and** its tolerance is invalid.
 - Dataset B produces **no accuracy figures**. Only output, internal consistency, and stability.
+
+---
+
+## 8. Ground-truth populations — state one with every number (ADR-017)
+
+Four populations. They are never conflated, and every reported figure names the one it used.
+
+| Population | n | Definition |
+|---|---|---|
+| **raw** | 2,009 | `gt_manifest.json` execution rows. 257 of these have **no end timestamp**. |
+| **canonical** | 1,819 | after grouping fragments by `split_id`. 98 (5.4%) are interrupted (`n_fragments > 1`). |
+| **unscoreable** | 230 | canonical records whose interval information is unusable/empty — excluded from accuracy figures, reported as an exclusion. |
+| **scoreable canonical** | **1,589** | **the denominator for every accuracy figure.** |
+
+Confidence tiers (ADR-011) cut across these: clean 1,756 · repaired 63 · (disputed as flagged).
+Tuning uses `clean` only; headline uses `clean + repaired`; `all` is a sensitivity line.
+
+Caveats that must not be silently upgraded into stronger claims:
+
+- End-timestamp agreement **cannot** be claimed from `stream_value.end_ts` — NULL in the
+  relevant GT data.
+- **0 of 1,689** consecutive execution pairs share a process code → Dataset A does **not**
+  validate two consecutive executions of the same process.
+- `task_started` is 1:1 with executions (2,009 / 2,009) → **no internal step structure**;
+  ADR-008's precondition for `pm4py` is unmet.
+- One A session has GT extending far beyond the telemetry duration. Report it as that session,
+  never as a dataset-wide algorithmic failure.
+- GT annotations lead the telemetry. Two distinct quantities, both p50, corrected by S-E2 on
+  the scoreable canonical population (n = 3,504): the lead to the nearest retained **event** is
+  **≈ +176 ms**, and the distance to the nearest **block edge** is **≈ +820 ms**. The first is
+  the annotation offset; the second is a property of the block-edge candidate space and is the
+  thing under measurement, so it must never be used as a correction. Any τ below 1 s is
+  measuring the annotation offset, not the method.
+
+### τ grid — unify before quoting anything
+
+`PHASE_1_REPORT.md` used {1000, 2000, 5250, 10500} ms; `experiments/E11-baselines/config.json`
+used {1000, 2250, 5500, 11250} ms. Experiment **S-E1** picks one grid, justifies it from the
+scoreable canonical duration distribution, and **restates every prior figure on it.** Until then,
+no reachability or F1 number from Phase 1 may be quoted without its grid.
+
+## 9. Candidate reachability — a separate measurement, never an accuracy figure
+
+**Definition.** For each boundary in the scoreable canonical population, whether **any** generated
+candidate lies within tolerance τ. Reported at τ ∈ {1, 2, 5, 10} s, always against the
+block-edge-only candidate space as the comparison arm.
+
+Rules:
+
+1. It measures the **candidate space**, not the segmenter. It is an upper bound on recall for
+   methods restricted to that space, and nothing else.
+2. It is **never** reported as boundary F1, accuracy, or "the ceiling of the representation".
+3. It is always accompanied by **candidate density** (candidates per event and per block).
+   Reachability bought by nominating every event is not a result.
+4. The prior block-edge figure — 47.3 / 59.9 / 82.8 / 92.2% at τ = 1 / 2 / 5.25 / 10.5 s over
+   3,327 boundary points — was computed ad hoc on an unstated population and **must be
+   re-derived under S-E1 before being quoted again.**
+5. Related figure, same discipline: "98.4% of missed boundaries show no surface change" is
+   computed over 1,663 execution-to-execution transitions (681 of 692 missed). An independent
+   recomputation over all 3,327 boundary points gave ≈69.8%. Both may be correct on their own
+   denominators — **state the denominator every time.**
