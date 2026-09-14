@@ -183,6 +183,16 @@ of desktop telemetry, not a defect in the method, and no amount of clustering re
   internal consistency, never accuracy.
 - **Every identity figure lives at match_rate 0.760** and none of it generalises to the unmatched
   24%.
+- **The deliverable silently depended on the host environment**, until the freeze. On a machine
+  where `.venv` did not resolve, `make run-b` fell through to an interpreter without `networkx`
+  and `rapidfuzz`; the labeller caught the `ImportError` and shipped the structural method
+  instead of the graph method — **183 of 183 spans identical, 1 of 183 labels identical**, 33
+  labels instead of 13, exit code 0, no warning. It was caught by hashing `segments.jsonl` across
+  two machines, **not by any test**: the check in place was "two consecutive runs agree", and two
+  runs in one environment agree even when both are wrong. The fix was to make the dependency
+  required (`pyproject.toml`), make its absence raise (`DegradedIdentityError`), and record the
+  method and the file's sha256 in `build/<dataset>/run_manifest.json` so a mismatch is visible in
+  an artifact. See ADR-021 addendum 3.
 
 ---
 
@@ -203,8 +213,8 @@ never presented as accuracy (EVALUATION_PROTOCOL §9).
 
 ## 9. The method — and what it caught
 
-**Every gate measured a ceiling before anything was built.** That discipline caught **five**
-denominator or mechanism errors, two of them in my own recommendations:
+**Every gate measured a ceiling before anything was built.** That discipline caught **six**
+denominator, mechanism or verification errors, three of them in my own claims:
 
 1. **The 59.9% "representation ceiling"** was the reachability of the block-edge candidate space.
    Treating it as representation loss would have triggered a rewrite of working perception code.
@@ -218,6 +228,14 @@ denominator or mechanism errors, two of them in my own recommendations:
    The only one of the five that would have changed a build decision.
 5. **The IDF mechanism in ADR-021** — my own. "They share the dashboard root" was a true
    observation promoted to a causal mechanism without checking the Jaccard, which is 1.00.
+6. **The deliverable's environment dependence**, found by hashing the file on a second machine
+   after I had reported it reproducible. My byte-identity check was not wrong; it was not
+   sufficient, because both of its runs used the same interpreter.
+
+Two of the six were found in a **verification claim** rather than in the code under test — the
+Phase G oracle sizing and this one. That is worth stating on its own: a check that passes tells
+you nothing until you know what it is insensitive to, and "two runs agree" was insensitive to
+the only variable that mattered.
 
 **Three times, measuring the ceiling first prevented building something that could not have
 paid:** the LLM label-merger (bounded at 0.478, below what clustering already reached), the LLM

@@ -302,10 +302,59 @@ def thresholds_manifest(cfg_cand: Dict, cfg_gate: Dict, cfg_dec: Dict,
     }
 
 
+def run_manifest(dataset_root: str, deliverable: Optional[str], n_segments: int,
+                 n_labels: Optional[int], method_used: Optional[str]) -> Dict:
+    """Provenance for one deliverable: what produced it, and in what environment.
+
+    Written beside every run. The S-E9 incident — a host without the numeric stack shipping the
+    structural labeller instead of the graph method, silently, exit 0 — was detectable only by
+    hashing `segments.jsonl` on two machines. This makes it a field in an artifact instead.
+    """
+    import hashlib, platform, subprocess
+    sha = None
+    if deliverable and os.path.exists(deliverable):
+        sha = hashlib.sha256(open(deliverable, "rb").read()).hexdigest()
+
+    def _ver(mod: str) -> Optional[str]:
+        try:
+            import importlib.metadata as md
+            return md.version({"sklearn": "scikit-learn"}.get(mod, mod))
+        except Exception:                                     # noqa: BLE001
+            return None
+
+    try:
+        git = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
+                             cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                             timeout=10)
+        git_sha = git.stdout.strip() if git.returncode == 0 else None
+    except Exception:                                         # noqa: BLE001
+        git_sha = None
+
+    return {
+        "_purpose": "provenance of the deliverable. A run that used a different identity method "
+                    "than the validated one is visible HERE, not only by hashing the file.",
+        "dataset": os.path.basename(str(dataset_root).rstrip("/\\")),
+        "deliverable": deliverable,
+        "segments_sha256": sha,
+        "n_segments": n_segments,
+        "n_labels": n_labels,
+        "method_used": method_used,
+        "expected_method": "graph",
+        "missing_graph_dependencies": LB.missing_graph_dependencies(),
+        "git_sha": git_sha,
+        "python": {"version": platform.python_version(), "executable": sys.executable},
+        "dependencies": {m: _ver(m) for m in LB.REQUIRED_FOR_GRAPH},
+        "identity": {"weightings": list(LB.DEFAULT_CFG.get("weightings") or []),
+                     "modes": list(LB.DEFAULT_CFG.get("modes") or []),
+                     "seed": LB.DEFAULT_CFG.get("seed")},
+    }
+
+
 def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
             no_llm: bool = True, cfg_gate: Optional[Dict] = None,
             cfg_dec: Optional[Dict] = None, calibration: str = "percentile",
-            deliverable: Optional[str] = DELIVERABLE) -> Dict:
+            deliverable: Optional[str] = DELIVERABLE,
+            allow_degraded: bool = False) -> Dict:
     """The full deterministic chain: candidates -> score -> CALIBRATE -> gate -> decode.
 
     Calibration is applied across the WHOLE dataset before gating, because the operating point
@@ -369,8 +418,11 @@ def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
         n_seg += len(segs)
 
     # stage 8: labelling. Clustering is GLOBAL across the dataset, which is what makes the
-    # same process receive the same string in every session.
-    rich = LB.label_segments(rich, rows_by, blocks_by)
+    # same process receive the same string in every session. With `allow_degraded` unset this
+    # RAISES when the graph stack is missing rather than quietly labelling by another method.
+    degraded = bool(allow_degraded) and bool(LB.missing_graph_dependencies())
+    rich = LB.label_segments(rich, rows_by, blocks_by,
+                             {"allow_degraded": bool(allow_degraded)})
     lab = LB.label_report(rich)
 
     problems = DE.violations(rich, d_cfg)
@@ -397,12 +449,24 @@ def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
         delivered = deliverable
         log.info("wrote %s — %d segments, %d labels", deliverable, len(rows_out),
                  lab.get("n_labels"))
+
+    # --- provenance. A deliverable produced by a different code path than the one that was
+    # validated must be VISIBLE in an artifact, not merely inferable by someone who thinks to
+    # hash the file across two machines. That is how the S-E9 degradation was found, and it is
+    # not a detection mechanism anyone should have to rediscover.
+    manifest = run_manifest(dataset_root, delivered, n_seg, lab.get("n_labels"),
+                            method_used=LB.DEFAULT_CFG.get("method") if not degraded
+                            else "structural (DEGRADED — graph stack unavailable)")
+    with open(os.path.join(out_root, "run_manifest.json"), "w", encoding="utf-8") as fh:
+        json.dump(manifest, fh, ensure_ascii=False, indent=1)
     with open(os.path.join(out_root, "thresholds.json"), "w", encoding="utf-8") as fh:
         json.dump(thresholds_manifest(CA.DEFAULT_CFG, g_cfg, d_cfg, scorer, calibration), fh,
                   ensure_ascii=False, indent=1, default=list)
 
     return {"dataset": dataset_root, "segments": n_seg,
             "deliverable": delivered,
+            "method_used": manifest["method_used"] if deliverable else None,
+            "segments_sha256": manifest["segments_sha256"][:8] if deliverable else None,
             "calibration": calibration,
             "candidates": len(pooled),
             "conversion_pct": round(100 * 2 * n_seg / len(pooled), 2) if pooled else None,
@@ -434,6 +498,10 @@ def main(argv=None) -> int:
     ap.add_argument("--scorer", default=SCORER_PATH)
     ap.add_argument("--calibration", choices=SC.CALIBRATION_MODES, default="percentile",
                     help="operating-point calibration; percentile transfers across datasets")
+    ap.add_argument("--allow-degraded", action="store_true",
+                    help="permit the structural labeller when the graph identity stack is "
+                         "missing. Without it a missing dependency is a hard failure, because "
+                         "degrading silently ships a different deliverable (ADR-021).")
     ap.add_argument("--no-llm", action="store_true", default=True,
                     help="the only supported mode; routed candidates use rule_decision")
     ap.add_argument("-v", "--verbose", action="store_true")
@@ -460,7 +528,8 @@ def main(argv=None) -> int:
     if a.segment:
         try:
             print(json.dumps(segment(root, out, a.scorer, no_llm=True,
-                                     calibration=a.calibration),
+                                     allow_degraded=a.allow_degraded,
+                             calibration=a.calibration),
                              ensure_ascii=False, indent=2, default=str))
         except ArtifactInvalid as e:
             print(f"CONSTRAINT VIOLATION: {e}", file=sys.stderr)

@@ -9,7 +9,20 @@ PYTEST  := $(VENV)/bin/pytest
 # Interpreter used to CREATE the venv. Override with:  make setup BOOTSTRAP_PY=/path/to/python3.12
 # pyproject.toml pins requires-python >= 3.10; `setup` refuses to build a venv on anything older
 # rather than silently producing an environment that does not match the declared floor.
-BOOTSTRAP_PY ?= $(shell for p in python3.13 python3.12 python3.11 python3.10 python3 python; do \
+# PATH first, then the usual out-of-PATH install locations. The last part matters: on the
+# machine this was developed on, `python3` is the system 3.9.6 and the 3.12 lives in
+# ~/.local/bin, which is not on PATH for non-login shells. `make setup` therefore FAILED from a
+# clean clone here — and the venv it had produced earlier held an absolute symlink into that
+# same out-of-PATH interpreter, so `[ -x $(PY) ]` could fail elsewhere and silently fall through
+# to an interpreter without the numeric stack. That is the S-E9 incident's root cause; searching
+# these locations is part of the fix.
+BOOTSTRAP_PY ?= $(shell for p in python3.13 python3.12 python3.11 python3.10 python3 python \
+	    $$HOME/.local/bin/python3.13 $$HOME/.local/bin/python3.12 \
+	    $$HOME/.local/bin/python3.11 $$HOME/.local/bin/python3.10 \
+	    /opt/homebrew/bin/python3.13 /opt/homebrew/bin/python3.12 \
+	    /opt/homebrew/bin/python3.11 /opt/homebrew/bin/python3.10 \
+	    /usr/local/bin/python3.13 /usr/local/bin/python3.12 \
+	    /usr/local/bin/python3.11 /usr/local/bin/python3.10; do \
 	  command -v $$p >/dev/null 2>&1 || continue; \
 	  $$p -c 'import sys; raise SystemExit(0 if sys.version_info[:2] >= (3,10) else 1)' 2>/dev/null \
 	    && { command -v $$p; break; }; \

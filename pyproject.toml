@@ -8,22 +8,24 @@ version = "0.1.0"
 description = "Reconstruct business-process executions from desktop operation logs."
 requires-python = ">=3.10"
 
-# Phase 0 dependency set (docs/phases/PHASE_0.md Task 0.1; docs/ARCHITECTURE.md §6).
-# Later phases add their own; a new dependency needs an ADR (CLAUDE.md §7).
+# docs/ARCHITECTURE.md §6; a new dependency needs an ADR (CLAUDE.md §7).
 #
-# NOTE: none of pandas/numpy/networkx is imported anywhere in procmine/ as of Phase 0 —
-# the perception + TEKG layer is pure standard library. They are declared because the
-# phase specification pins them, and because Phases 1-5 consume them.
+# These are REQUIRED, not optional. The note that used to sit here — "none of
+# pandas/numpy/networkx is imported anywhere in procmine/" — was true in Phase 0 and became
+# false at ADR-021, when the shipped identity method became a graph method. Leaving them
+# nominally optional caused the S-E9 incident: on a host where the venv did not resolve,
+# `make run-b` fell through to an ambient interpreter without networkx or rapidfuzz, the
+# labeller caught the ImportError, and a DIFFERENT deliverable shipped with exit code 0 —
+# identical spans, 33 labels instead of 13. `label.missing_graph_dependencies()` now refuses
+# to run in that state, and these are declared as hard requirements to match.
 dependencies = [
     "pandas",
-    "numpy",
-    "networkx",
-    # Phase 1 (evaluation harness). Both are pre-approved in ARCHITECTURE.md §6 as REUSE,
-    # so no ADR is required; PHASE_0.md pinned only the Phase 0 set and states that
-    # "later phases add their own".
-    "scikit-learn",   # ARI / NMI / homogeneity / completeness  (evaluate.identity_scores)
+    "numpy",          # every similarity matrix                  (identity.*)
+    "scipy",          # sparse feature stacking                  (identity.vector_space)
+    "networkx",       # kNN graph + Louvain, THE shipped method  (identity.louvain)
+    "scikit-learn",   # ARI/NMI/homogeneity/completeness, TF-IDF (evaluate, identity)
     "segeval",        # WindowDiff / Pk                          (evaluate.windowdiff, .pk)
-    "rapidfuzz",      # sequence distance over surface shapes    (label._seq_distance)
+    "rapidfuzz",      # sequence distance over surface shapes    (identity._seq_similarity)
 ]
 
 [project.optional-dependencies]
@@ -39,3 +41,6 @@ include = ["procmine*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "slow: runs the full Step 1 chain over a dataset (deliverable reproducibility)",
+]

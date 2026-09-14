@@ -12,11 +12,17 @@ from __future__ import annotations
 import ast, os
 import pytest
 
-from procmine import identity as ID, evaluate as EV
+from procmine import identity as ID, evaluate as EV, label as LB
 
-pytest.importorskip("numpy")
-pytest.importorskip("sklearn")
-pytest.importorskip("networkx")
+# NOT importorskip. These are hard requirements of the SHIPPED identity method (ADR-021), and
+# skipping when they are missing is precisely how the S-E9 degradation stayed invisible: the
+# suite was green on a host that could not run the method it was supposed to be testing. If
+# these cannot be imported, this module must FAIL.
+_missing = LB.missing_graph_dependencies()
+assert not _missing, (
+    f"the graph identity method requires {list(LB.REQUIRED_FOR_GRAPH)} and cannot import "
+    f"{_missing}. Run `make setup` and use .venv/bin/python. These tests must fail rather "
+    f"than skip: a skipped identity suite hides a deliverable built by a different method.")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

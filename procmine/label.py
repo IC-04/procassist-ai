@@ -20,13 +20,48 @@ Method, deliberately the lightest thing that can work:
 module and reads no GT artifact; an AST test in `tests/` enforces it.
 """
 from __future__ import annotations
-import collections, hashlib, math, re
+import collections, hashlib, logging, math, re
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+
+log = logging.getLogger("procmine.label")
 
 TRANSACTIONAL = ("keystroke", "mouse_click", "browser_click", "mouse_scroll")
 NAVIGATIONAL = ("app_switch", "browser_navigation", "window_title_change", "browser_tab_event")
 CLIPBOARD = ("clipboard_change",)
 FORM = ("browser_form_input", "shortcut")
+
+# The shipped identity method (ADR-021) is a graph method. These are on its CRITICAL PATH, not
+# optional accelerators, and treating them as optional is what caused the S-E9 incident: on a
+# host where the venv did not resolve, `make run-b` fell through to an ambient interpreter
+# without networkx or rapidfuzz, `_graph_assign` caught the ImportError, and the structural
+# labeller shipped instead of the graph method — 33 labels against 13, ARI 0.431 against 0.681,
+# with identical spans, exit code 0 and no warning anywhere.
+REQUIRED_FOR_GRAPH = ("numpy", "scipy", "networkx", "sklearn", "rapidfuzz")
+_PIP_NAMES = {"sklearn": "scikit-learn"}
+
+
+class DegradedIdentityError(RuntimeError):
+    """The graph identity method was requested and its dependencies are not importable.
+
+    Raised rather than silently falling back, per the `schemas.py` convention: an artifact that
+    does not meet its contract is a hard failure, never a warning. Shipping a different
+    labelling than the one that was validated is exactly such an artifact, and it is invisible
+    in the output — the spans are byte-identical and only the labels differ.
+    """
+
+
+def missing_graph_dependencies() -> List[str]:
+    """Which of `REQUIRED_FOR_GRAPH` cannot be imported, in declaration order."""
+    import importlib.util
+    out: List[str] = []
+    for m in REQUIRED_FOR_GRAPH:
+        try:
+            if importlib.util.find_spec(m) is None:
+                out.append(m)
+        except (ImportError, ValueError):
+            out.append(m)
+    return out
+
 
 DEFAULT_CFG = {
     # Grouping method. "graph" is the shipped default from S-E6 (ADR-021): the three-view
@@ -60,6 +95,11 @@ DEFAULT_CFG = {
     # ARI 0.5852 -> 0.6814, NMI 0.696 -> 0.738, homogeneity 0.686 -> 0.751 AND completeness
     # 0.707 -> 0.725, event-weighted ARI 0.267 -> 0.297. Label count 15 -> 17.
     "modes": ("tiebreak",),
+    # Opt-in escape hatch. With the graph method selected and its stack missing, labelling
+    # RAISES unless this is set; setting it downgrades to the structural labeller and logs a
+    # warning naming what was lost. It exists so the fallback stays reachable deliberately,
+    # never by accident.
+    "allow_degraded": False,
     # Distance below which two signatures are the same process, "structural" method only.
     # Structural: a similarity on shapes, not a value fitted to A's content.
     "merge_distance": 0.42,
@@ -249,27 +289,36 @@ def _graph_assign(segs: Sequence[Dict], rows_by_session: Dict[str, Sequence[Dict
     """The S-E6 grouping (ADR-021): three-view representation -> similarity -> kNN graph ->
     Louvain, with the configuration selected unsupervised on THIS dataset.
 
-    Returns `None` — and the caller falls back to the structural labeller — if the optional
-    numeric stack is unavailable. Nothing here reads a ground-truth field, and `k` is never a
-    parameter: Louvain selects the community count itself, which is what makes the same code
-    run on Dataset B without A's `k` transferring (ADR-010).
+    **Raises `DegradedIdentityError` if the numeric stack is missing**, rather than returning
+    `None` and letting the caller quietly ship a different labelling. Returns `None` only when
+    `allow_degraded` is set, and logs a warning saying what was given up. Nothing here reads a
+    ground-truth field, and `k` is never a parameter: Louvain selects the community count
+    itself, which is what makes the same code run on Dataset B without A's `k` transferring
+    (ADR-010).
     """
-    try:
-        from . import identity as ID
-    except ImportError:
+    missing = missing_graph_dependencies()
+    if missing:
+        pip = " ".join(_PIP_NAMES.get(m, m) for m in missing)
+        msg = (f"the graph identity method (ADR-021) requires {list(REQUIRED_FOR_GRAPH)} and "
+               f"cannot import {missing}. Install them (`pip install {pip}`, or `make setup` "
+               f"for the pinned environment) and re-run. Falling back would silently ship the "
+               f"structural labeller — identical spans, different labels, ARI 0.431 instead of "
+               f"0.681 — so it is refused. Pass allow_degraded=True (CLI: --allow-degraded) if "
+               f"the structural labeller is genuinely what you want.")
+        if not cfg.get("allow_degraded"):
+            raise DegradedIdentityError(msg)
+        log.warning("DEGRADED IDENTITY: %s", msg)
         return None
-    try:
-        reps = [ID.represent(s, rows_by_session.get(s.get("session_id"), []),
-                             blocks_by_session.get(s.get("session_id"), [])) for s in segs]
-        sel = ID.select_config(reps, [s.get("session_id") for s in segs],
-                               seed=int(cfg.get("seed", 7)),
-                               weightings=cfg.get("weightings"),
-                               modes=cfg.get("modes", ID.COMBINE_MODES))
-        S = ID.combine(sel.pop("_views"), ID.WEIGHT_GRID[sel["weights"]],
-                       mode=sel.get("mode", "linear"))
-        return ID.louvain(ID.knn_graph(S, k=sel["k_nn"]), seed=int(cfg.get("seed", 7)))
-    except ImportError:
-        return None
+    from . import identity as ID
+    reps = [ID.represent(s, rows_by_session.get(s.get("session_id"), []),
+                         blocks_by_session.get(s.get("session_id"), [])) for s in segs]
+    sel = ID.select_config(reps, [s.get("session_id") for s in segs],
+                           seed=int(cfg.get("seed", 7)),
+                           weightings=cfg.get("weightings"),
+                           modes=cfg.get("modes", ID.COMBINE_MODES))
+    S = ID.combine(sel.pop("_views"), ID.WEIGHT_GRID[sel["weights"]],
+                   mode=sel.get("mode", "linear"))
+    return ID.louvain(ID.knn_graph(S, k=sel["k_nn"]), seed=int(cfg.get("seed", 7)))
 
 
 def label_segments(segments: Sequence[Dict], rows_by_session: Dict[str, Sequence[Dict]],
