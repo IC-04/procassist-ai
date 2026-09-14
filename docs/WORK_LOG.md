@@ -597,3 +597,65 @@ and their tests under my direction; every figure was produced by running the cod
 **Next** Labelling (stage 8). Suite 248 passed / 1 skipped; 249 passed with `dataset_a` absent.
 
 **Time spent** ~2 h
+
+---
+
+### 2026-09-14 · Step 1 · Calibration, labelling, and S-E4 full Dataset A validation
+
+**Goal** Fix the cross-dataset operating point, add process labelling, validate the whole
+deterministic chain on all of A, and size Phase G. No LLM.
+
+**Did** percentile calibration in `score.py`, `label.py`, ADR-020, `experiments/SE4-end-to-end-a/`,
+`segments.jsonl` regenerated from the chain, 38 new tests.
+
+**Result — dataset_a, LOSO, `--no-llm`, all 63 sessions**
+
+| τ | P | R | F1 | ceiling | R/ceiling |
+|---|---|---|---|---|---|
+| 1 s | 0.534 | 0.551 | 0.543 | 77.8% | 70.9% |
+| **2 s** | **0.680** | **0.702** | **0.690** | **90.0%** | **77.9%** |
+| 5 s | 0.729 | 0.752 | 0.740 | 98.7% | 76.2% |
+| 10 s | 0.781 | 0.806 | 0.794 | 98.9% | 81.5% |
+
+count ratio **0.98** · segmental F1@.5 0.768 · WD 0.470 · Pk 0.257 · ARI 0.431 **at match_rate
+0.760** · interruption_recall 0.122 **at ratio 0.98** · labels 51, 90% cross-session ·
+per-session F1 0.683 ± 0.115 · **2.67× B5-dwell (0.258)** · 265 s.
+
+**Problems / things measured rather than assumed**
+- **Calibration.** The A/B divergence was in the scores, not the data: B's p90 0.309 vs A's
+  0.975. Percentile calibration costs A 0.012 F1 and moves B from 3.8 to 12.2 segments/session
+  with durations 24/87/204 s → 21/35/71 s. **3 thresholds moved `a_fitted` → `structural`.**
+  Cannot be proven correct on B — only self-consistent and rule-transferable.
+- **Gate bands had to be recentred.** Under percentile calibration band *width is* the routing
+  fraction, so the old 0.35/0.65 routed exactly 30%. Now 0.80/0.94 straddling the operating cut
+  → **exactly 14.0% on both datasets**, a structural guarantee.
+- **Labelling took two attempts.** Selecting `k` by stability is degenerate — fine clusters are
+  trivially stable, giving k=849 at 27% cross-session reuse. Switching to co-clustering Jaccard
+  did not fix it. **stability × cross-session reuse** has a clean interior optimum: k=63 on A,
+  33 on B, each from its own data.
+- **The Phase G oracle sizing was wrong and I corrected it.** The first version counted
+  *candidates* in the routed band and added them to a *boundary*-level confusion matrix. With
+  **1.72 candidates per true boundary** that overstated the gain several-fold — it reported
+  +0.08 F1 at 3.4% routing. Recomputed in boundaries: **+0.004 at 3.4%, +0.025 at the full 15%
+  budget.** This is the fourth denominator error in the project and the only one that would have
+  changed a build decision. **Recommendation: Phase G is a compressed demonstration, not a full
+  experiment.**
+- **`segments.jsonl` trips a validator false positive.** One intra-block boundary lands on a
+  chunk edge; `validate_segments.dataset_context` builds `justified` from *block* boundaries, a
+  Phase B assumption predating ADR-015. The candidate was triggered by `large_relative_gap`; no
+  trigger references `chunk_id`. Outside this phase's budget — reported with the one-line fix.
+- **Interruption stitching is the largest real gap**: 0.122. The decoder has no resumption model.
+  Measured and stated rather than hidden.
+
+**Decisions** ADR-020 — A's GT does not tile the session (coverage 0.81, 12% gaps), so the
+decoder selects disjoint segments; a partitioning decoder would cap recall near 52%. Downstream:
+**~19% of observed session time belongs to no execution**, which Step 2 effort estimates must not
+assume away.
+
+**Generative AI use** GenAI-assisted implementation. Claude Code (Opus 5) wrote the calibration,
+labeller and experiment under my direction; every figure was produced by running the code, and
+the two wrong numbers above were caught by re-deriving them, not by accepting the first output.
+
+**Next** Phase F/G per the spec. Suite 267 passed, 1 skipped.
+
+**Time spent** ~2.5 h

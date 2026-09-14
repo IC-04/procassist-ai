@@ -289,3 +289,38 @@ under ablation of a single feature is A-specific and must be reported as such.
 
 **Evidence** Ablation above. Scorer: 28 domain-neutral features, LOSO AUC 0.979 over 63
 sessions. Routing 3.4%. Every threshold tagged in `thresholds.json`.
+
+### ADR-020 · 2026-09-14 · accepted · Dataset A's ground truth does not tile the session
+**Context** The decoder's shape was about to be chosen. A natural default is a partitioning
+segmenter — every moment of the session belongs to exactly one segment — and it would have been
+wrong for a reason that is not visible without measuring.
+
+**Measured on Dataset A**, scoreable canonical population, 63 sessions:
+
+| | |
+|---|---|
+| median GT time coverage of the session span | **0.81** |
+| median inter-fragment gap share of the span | **0.12** |
+| fragments per session | min 20 · median 28 · max 41 |
+
+Executions are **disjoint intervals with idle space between them**, not a partition.
+
+**Decision** The decoder selects **disjoint segments**, each contributing its own start and end
+boundary. It does not partition the session.
+
+**Consequences** A partitioning decoder emitting `N` segments produces `N+1` distinct boundary
+points, because each segment's end is the next one's start. The reference has `2N` — every
+fragment contributes two. Matching the reference's boundary count would therefore require
+roughly twice as many segments as executions, i.e. a count ratio near 2.0; holding the count
+ratio at 1.0 instead caps boundary recall near **52%** however good the ranking. The constraint
+is structural and no amount of scoring quality escapes it.
+
+**Downstream consequence for later work, recorded now:** roughly **19% of observed session time
+belongs to no business-process execution** at all. Step 2 effort estimates must not assume
+session time and process time are the same quantity, and any "time spent on process X" figure
+must state which of the two it divides by.
+
+**Evidence** Coverage and gap measurements above. Confirmed by construction in
+`procmine/decoder.py`, whose emitted segments are disjoint and whose test
+`test_decoder_emits_disjoint_segments_not_a_partition` asserts a gap between segments is
+representable.

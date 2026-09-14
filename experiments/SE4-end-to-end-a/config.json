@@ -1,0 +1,18 @@
+{
+  "exp_id": "SE4-end-to-end-a",
+  "dataset": "dataset_a",
+  "sessions": 63,
+  "mode": "--no-llm",
+  "calibration": "percentile",
+  "tau_grid_ms": [
+    1000,
+    2000,
+    5000,
+    10000
+  ],
+  "population_source": "experiments/SE1-gt-metric-correction",
+  "evaluation": "procmine/evaluate.py, reused unchanged",
+  "git_sha": "b7ca437fc237c32e59fa137fe6015591ca233341",
+  "started_at": "2026-09-14T13:34:03Z",
+  "finished_at": "2026-09-14T13:39:13Z"
+}

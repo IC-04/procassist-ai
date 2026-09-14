@@ -1,0 +1,70 @@
+{"kind": "interior_boundary", "session_id": "ses_20260630-121953-LAPTOP-R36BQBTE", "boundary_ms": 1782822073232, "inside_block": "ses_20260630-121953-LAPTOP-R36BQBTE#b0005", "block_surface": "app:Microsoft Excel:m1_reference", "block_span_ms": [1782822017210, 1782822077149], "block_n_events": 35, "distance_to_nearest_gt_ms": 438, "segment_label": "process__p00", "surrounding_events": [{"delta_ms": -140, "event_type": "screenshot_smart", "app": "Microsoft Excel", "route": ""}, {"delta_ms": -112, "event_type": "app_switch", "app": "Microsoft Excel", "route": ""}, {"delta_ms": -54, "event_type": "app_switch", "app": "Microsoft Excel", "route": ""}, {"delta_ms": 0, "event_type": "app_switch", "app": "Microsoft Excel", "route": ""}, {"delta_ms": 68, "event_type": "app_switch", "app": "Microsoft Excel", "route": ""}, {"delta_ms": 113, "event_type": "app_switch", "app": "Microsoft Excel", "route": ""}]}
+{"kind": "per_session", "session_id": "ses_20260630-121953-LAPTOP-R36BQBTE", "f1_2000": 0.4583}
+{"kind": "per_session", "session_id": "ses_20260630-124826-CHAITANYA0BCF", "f1_2000": 0.7611}
+{"kind": "per_session", "session_id": "ses_20260630-125757-LAPTOP-R36BQBTE", "f1_2000": 0.641}
+{"kind": "per_session", "session_id": "ses_20260630-131729-CHAITANYA0BCF", "f1_2000": 0.6329}
+{"kind": "per_session", "session_id": "ses_20260630-132737-LAPTOP-R36BQBTE", "f1_2000": 0.6222}
+{"kind": "per_session", "session_id": "ses_20260630-135201-LAPTOP-R36BQBTE", "f1_2000": 0.6818}
+{"kind": "per_session", "session_id": "ses_20260630-135451-CHAITANYA0BCF", "f1_2000": 0.6972}
+{"kind": "per_session", "session_id": "ses_20260630-145433-JAYESH", "f1_2000": 0.7273}
+{"kind": "per_session", "session_id": "ses_20260630-163424-SIDDHIGUPTAB00B", "f1_2000": 0.7358}
+{"kind": "per_session", "session_id": "ses_20260630-164418-MSI", "f1_2000": 0.7009}
+{"kind": "per_session", "session_id": "ses_20260701-005920-yuvraj", "f1_2000": 0.6552}
+{"kind": "per_session", "session_id": "ses_20260701-014804-yuvraj", "f1_2000": 0.6182}
+{"kind": "per_session", "session_id": "ses_20260701-022828-yuvraj", "f1_2000": 0.6809}
+{"kind": "per_session", "session_id": "ses_20260701-030836-yuvraj", "f1_2000": 0.6593}
+{"kind": "per_session", "session_id": "ses_20260701-032825-CHAITANYA0BCF", "f1_2000": 0.7083}
+{"kind": "per_session", "session_id": "ses_20260701-035622-SIDDHIGUPTAB00B", "f1_2000": 0.7206}
+{"kind": "per_session", "session_id": "ses_20260701-043922-SIDDHIGUPTAB00B", "f1_2000": 0.7125}
+{"kind": "per_session", "session_id": "ses_20260701-051820-CHAITANYA0BCF", "f1_2000": 0.7229}
+{"kind": "per_session", "session_id": "ses_20260701-051850-LAPTOP-R36BQBTE", "f1_2000": 0.7759}
+{"kind": "per_session", "session_id": "ses_20260701-053005-MSI", "f1_2000": 0.6214}
+{"kind": "per_session", "session_id": "ses_20260701-053720-SIDDHIGUPTAB00B", "f1_2000": 0.7213}
+{"kind": "per_session", "session_id": "ses_20260701-054901-LAPTOP-R36BQBTE", "f1_2000": 0.0217}
+{"kind": "per_session", "session_id": "ses_20260701-054930-CHAITANYA0BCF", "f1_2000": 0.7143}
+{"kind": "per_session", "session_id": "ses_20260701-055037-Marcos", "f1_2000": 0.6857}
+{"kind": "per_session", "session_id": "ses_20260701-055918-MSI", "f1_2000": 0.75}
+{"kind": "per_session", "session_id": "ses_20260701-062250-Marcos", "f1_2000": 0.7207}
+{"kind": "per_session", "session_id": "ses_20260701-062732-MSI", "f1_2000": 0.5962}
+{"kind": "per_session", "session_id": "ses_20260701-063106-LAPTOP-R36BQBTE", "f1_2000": 0.7021}
+{"kind": "per_session", "session_id": "ses_20260701-065151-CHAITANYA0BCF", "f1_2000": 0.7107}
+{"kind": "per_session", "session_id": "ses_20260701-070320-JAYESH", "f1_2000": 0.76}
+{"kind": "per_session", "session_id": "ses_20260701-071849-Marcos", "f1_2000": 0.7308}
+{"kind": "per_session", "session_id": "ses_20260701-072319-MSI", "f1_2000": 0.6476}
+{"kind": "per_session", "session_id": "ses_20260701-072435-CHAITANYA0BCF", "f1_2000": 0.6186}
+{"kind": "per_session", "session_id": "ses_20260701-074424-SIDDHIGUPTAB00B", "f1_2000": 0.6909}
+{"kind": "per_session", "session_id": "ses_20260701-075548-CHAITANYA0BCF", "f1_2000": 0.6923}
+{"kind": "per_session", "session_id": "ses_20260701-075604-LAPTOP-0IM1OHQH", "f1_2000": 0.7818}
+{"kind": "per_session", "session_id": "ses_20260701-081120-SIDDHIGUPTAB00B", "f1_2000": 0.6429}
+{"kind": "per_session", "session_id": "ses_20260701-081732-CHAITANYA0BCF", "f1_2000": 0.6437}
+{"kind": "per_session", "session_id": "ses_20260701-083656-LAPTOP-0IM1OHQH", "f1_2000": 0.7241}
+{"kind": "per_session", "session_id": "ses_20260701-090300-Marcos", "f1_2000": 0.5455}
+{"kind": "per_session", "session_id": "ses_20260701-092027-SIDDHIGUPTAB00B", "f1_2000": 0.7742}
+{"kind": "per_session", "session_id": "ses_20260701-093900-Marcos", "f1_2000": 0.6813}
+{"kind": "per_session", "session_id": "ses_20260701-095337-LAPTOP-0IM1OHQH", "f1_2000": 0.6538}
+{"kind": "per_session", "session_id": "ses_20260701-100550-Marcos", "f1_2000": 0.7826}
+{"kind": "per_session", "session_id": "ses_20260701-103521-LAPTOP-0IM1OHQH", "f1_2000": 0.7347}
+{"kind": "per_session", "session_id": "ses_20260701-103853-Marcos", "f1_2000": 0.7455}
+{"kind": "per_session", "session_id": "ses_20260701-110548-LAPTOP-0IM1OHQH", "f1_2000": 0.7917}
+{"kind": "per_session", "session_id": "ses_20260701-110917-Marcos", "f1_2000": 0.7429}
+{"kind": "per_session", "session_id": "ses_20260701-115141-SIDDHIGUPTAB00B", "f1_2000": 0.7273}
+{"kind": "per_session", "session_id": "ses_20260701-120612-Marcos", "f1_2000": 0.7327}
+{"kind": "per_session", "session_id": "ses_20260701-120828-LAPTOP-0IM1OHQH", "f1_2000": 0.7647}
+{"kind": "per_session", "session_id": "ses_20260701-123729-Marcos", "f1_2000": 0.7241}
+{"kind": "per_session", "session_id": "ses_20260701-124033-SIDDHIGUPTAB00B", "f1_2000": 0.7241}
+{"kind": "per_session", "session_id": "ses_20260701-124550-LAPTOP-0IM1OHQH", "f1_2000": 0.807}
+{"kind": "per_session", "session_id": "ses_20260701-124636-MSI", "f1_2000": 0.7009}
+{"kind": "per_session", "session_id": "ses_20260701-131015-SIDDHIGUPTAB00B", "f1_2000": 0.7627}
+{"kind": "per_session", "session_id": "ses_20260701-131247-MSI", "f1_2000": 0.7419}
+{"kind": "per_session", "session_id": "ses_20260701-134215-SIDDHIGUPTAB00B", "f1_2000": 0.6441}
+{"kind": "per_session", "session_id": "ses_20260701-141430-SIDDHIGUPTAB00B", "f1_2000": 0.7258}
+{"kind": "per_session", "session_id": "ses_20260701-145907-MSI", "f1_2000": 0.7027}
+{"kind": "per_session", "session_id": "ses_20260701-152030-CHAITANYA0BCF", "f1_2000": 0.3}
+{"kind": "per_session", "session_id": "ses_20260701-155031-CHAITANYA0BCF", "f1_2000": 0.6882}
+{"kind": "per_session", "session_id": "ses_20260701-172430-yuvraj", "f1_2000": 0.7273}
+{"kind": "baseline", "arm": "B0-single", "boundary_f1": {"1000": 0.0, "2000": 0.0, "5000": 0.0012, "10000": 0.0127}, "precision_2000": 0.0, "recall_2000": 0.0, "count_ratio": 0.036, "segmental_f1_iou50": 0.0, "windowdiff": 0.4622, "ari": null, "match_rate": null, "interruption_recall": 0.7959}
+{"kind": "baseline", "arm": "B1-chunk", "boundary_f1": {"1000": 0.0051, "2000": 0.0079, "5000": 0.0118, "10000": 0.0365}, "precision_2000": 0.0593, "recall_2000": 0.0042, "count_ratio": 0.0679, "segmental_f1_iou50": 0.0032, "windowdiff": 0.4688, "ari": 1.0, "match_rate": 0.0017, "interruption_recall": 0.6633}
+{"kind": "baseline", "arm": "B2-gap", "boundary_f1": {"1000": 0.0554, "2000": 0.0886, "5000": 0.1666, "10000": 0.2614}, "precision_2000": 0.0865, "recall_2000": 0.0908, "count_ratio": 1.0, "segmental_f1_iou50": 0.1336, "windowdiff": 0.6048, "ari": 0.6819, "match_rate": 0.1336, "interruption_recall": 0.1939}
+{"kind": "baseline", "arm": "B3-random", "boundary_f1": {"1000": 0.0943, "2000": 0.1094, "5000": 0.2426, "10000": 0.4248}, "precision_2000": 0.1092, "recall_2000": 0.1097, "count_ratio": 1.0, "segmental_f1_iou50": 0.3199, "windowdiff": 0.6264, "ari": 0.3624, "match_rate": 0.3199, "interruption_recall": 0.1546}
+{"kind": "baseline", "arm": "B4-surface", "boundary_f1": {"1000": 0.139, "2000": 0.2474, "5000": 0.3047, "10000": 0.362}, "precision_2000": 0.1534, "recall_2000": 0.6393, "count_ratio": 5.032, "segmental_f1_iou50": 0.1864, "windowdiff": 0.8586, "ari": 0.7698, "match_rate": 0.5622, "interruption_recall": 0.398}
+{"kind": "baseline", "arm": "B5-dwell", "boundary_f1": {"1000": 0.1469, "2000": 0.258, "5000": 0.3801, "10000": 0.4672}, "precision_2000": 0.1734, "recall_2000": 0.5041, "count_ratio": 2.8293, "segmental_f1_iou50": 0.3118, "windowdiff": 0.8381, "ari": 0.7973, "match_rate": 0.597, "interruption_recall": 0.3878}

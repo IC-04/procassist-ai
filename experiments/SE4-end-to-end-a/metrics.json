@@ -1,0 +1,439 @@
+{
+  "population": "scoreable canonical (1,589 executions -> 1,752 fragments -> 3,504 points)",
+  "operating_point": {
+    "calibration": "percentile",
+    "lambda_per_segment": 1.4,
+    "min_duration_ms": 19000,
+    "gate_bands": [
+      0.8,
+      0.94
+    ]
+  },
+  "overall": {
+    "n_sessions": 63,
+    "n_ref_segments": 1752,
+    "n_hyp_segments": 1717,
+    "count_ratio": 0.98,
+    "boundary_time": {
+      "1000": {
+        "precision": 0.5344,
+        "recall": 0.5515,
+        "f1": 0.5428,
+        "tp": 1835,
+        "fp": 1599,
+        "fn": 1492
+      },
+      "2000": {
+        "precision": 0.6797,
+        "recall": 0.7015,
+        "f1": 0.6904,
+        "tp": 2334,
+        "fp": 1100,
+        "fn": 993
+      },
+      "5000": {
+        "precision": 0.7289,
+        "recall": 0.7523,
+        "f1": 0.7404,
+        "tp": 2503,
+        "fp": 931,
+        "fn": 824
+      },
+      "10000": {
+        "precision": 0.7813,
+        "recall": 0.8064,
+        "f1": 0.7937,
+        "tp": 2683,
+        "fp": 751,
+        "fn": 644
+      }
+    },
+    "boundary_index": {
+      "1": {
+        "precision": 0.1593,
+        "recall": 0.1644,
+        "f1": 0.1618,
+        "tp": 547,
+        "fp": 2887,
+        "fn": 2780
+      },
+      "2": {
+        "precision": 0.2196,
+        "recall": 0.2266,
+        "f1": 0.223,
+        "tp": 754,
+        "fp": 2680,
+        "fn": 2573
+      },
+      "5": {
+        "precision": 0.2685,
+        "recall": 0.2771,
+        "f1": 0.2727,
+        "tp": 922,
+        "fp": 2512,
+        "fn": 2405
+      },
+      "10": {
+        "precision": 0.4706,
+        "recall": 0.4857,
+        "f1": 0.478,
+        "tp": 1616,
+        "fp": 1818,
+        "fn": 1711
+      }
+    },
+    "segmental": {
+      "0.3": {
+        "precision": 0.8754,
+        "recall": 0.8579,
+        "f1": 0.8665,
+        "matched": 1503,
+        "n_ref": 1752,
+        "n_hyp": 1717
+      },
+      "0.5": {
+        "precision": 0.7758,
+        "recall": 0.7603,
+        "f1": 0.7679,
+        "matched": 1332,
+        "n_ref": 1752,
+        "n_hyp": 1717
+      },
+      "0.7": {
+        "precision": 0.6878,
+        "recall": 0.6741,
+        "f1": 0.6809,
+        "matched": 1181,
+        "n_ref": 1752,
+        "n_hyp": 1717
+      }
+    },
+    "windowdiff_mean": 0.4698,
+    "pk_mean": 0.2567,
+    "identity_pooled": {
+      "ari": 0.4307,
+      "nmi": 0.5625,
+      "homogeneity": 0.6215,
+      "completeness": 0.5137,
+      "n": 1332,
+      "match_rate": 0.7603,
+      "n_matched": 1332
+    },
+    "interruption": {
+      "n_interrupted": 98,
+      "stitched": 12,
+      "recall": 0.1224,
+      "n_fragments_total": 261,
+      "fragments_covered": 259
+    }
+  },
+  "ceiling_pct": {
+    "1000": 77.8,
+    "2000": 90.0,
+    "5000": 98.7,
+    "10000": 98.9
+  },
+  "baselines": {
+    "B0-single": {
+      "boundary_f1": {
+        "1000": 0.0,
+        "2000": 0.0,
+        "5000": 0.0012,
+        "10000": 0.0127
+      },
+      "precision_2000": 0.0,
+      "recall_2000": 0.0,
+      "count_ratio": 0.036,
+      "segmental_f1_iou50": 0.0,
+      "windowdiff": 0.4622,
+      "ari": null,
+      "match_rate": null,
+      "interruption_recall": 0.7959
+    },
+    "B1-chunk": {
+      "boundary_f1": {
+        "1000": 0.0051,
+        "2000": 0.0079,
+        "5000": 0.0118,
+        "10000": 0.0365
+      },
+      "precision_2000": 0.0593,
+      "recall_2000": 0.0042,
+      "count_ratio": 0.0679,
+      "segmental_f1_iou50": 0.0032,
+      "windowdiff": 0.4688,
+      "ari": 1.0,
+      "match_rate": 0.0017,
+      "interruption_recall": 0.6633
+    },
+    "B2-gap": {
+      "boundary_f1": {
+        "1000": 0.0554,
+        "2000": 0.0886,
+        "5000": 0.1666,
+        "10000": 0.2614
+      },
+      "precision_2000": 0.0865,
+      "recall_2000": 0.0908,
+      "count_ratio": 1.0,
+      "segmental_f1_iou50": 0.1336,
+      "windowdiff": 0.6048,
+      "ari": 0.6819,
+      "match_rate": 0.1336,
+      "interruption_recall": 0.1939
+    },
+    "B3-random": {
+      "boundary_f1": {
+        "1000": 0.0943,
+        "2000": 0.1094,
+        "5000": 0.2426,
+        "10000": 0.4248
+      },
+      "precision_2000": 0.1092,
+      "recall_2000": 0.1097,
+      "count_ratio": 1.0,
+      "segmental_f1_iou50": 0.3199,
+      "windowdiff": 0.6264,
+      "ari": 0.3624,
+      "match_rate": 0.3199,
+      "interruption_recall": 0.1546
+    },
+    "B4-surface": {
+      "boundary_f1": {
+        "1000": 0.139,
+        "2000": 0.2474,
+        "5000": 0.3047,
+        "10000": 0.362
+      },
+      "precision_2000": 0.1534,
+      "recall_2000": 0.6393,
+      "count_ratio": 5.032,
+      "segmental_f1_iou50": 0.1864,
+      "windowdiff": 0.8586,
+      "ari": 0.7698,
+      "match_rate": 0.5622,
+      "interruption_recall": 0.398
+    },
+    "B5-dwell": {
+      "boundary_f1": {
+        "1000": 0.1469,
+        "2000": 0.258,
+        "5000": 0.3801,
+        "10000": 0.4672
+      },
+      "precision_2000": 0.1734,
+      "recall_2000": 0.5041,
+      "count_ratio": 2.8293,
+      "segmental_f1_iou50": 0.3118,
+      "windowdiff": 0.8381,
+      "ari": 0.7973,
+      "match_rate": 0.597,
+      "interruption_recall": 0.3878
+    }
+  },
+  "candidate_space_quality": {
+    "boundary_points": 3504,
+    "reachability_pct": {
+      "1000": 77.2,
+      "2000": 88.0,
+      "5000": 92.2,
+      "10000": 98.7
+    },
+    "density_per_event": 0.165,
+    "density_per_block": 5.42,
+    "_note": "candidate-space quality, NOT segmentation quality (EVALUATION_PROTOCOL \u00a79)"
+  },
+  "ranking": {
+    "auc": 0.979,
+    "n_pos": 6034,
+    "n_neg": 20826,
+    "precision_at_500": 0.934,
+    "precision_at_1000": 0.945,
+    "precision_at_2000": 0.9485,
+    "precision_at_3504": 0.9398
+  },
+  "auc_denominators": {
+    "auc_population": "all candidates",
+    "n_candidates": 26860,
+    "auc_positive_definition": "candidate within 2000 ms of any GT boundary",
+    "n_positive_candidates": 6034,
+    "n_distinct_gt_boundaries": 3504,
+    "candidates_per_true_boundary": 1.72
+  },
+  "labels": {
+    "n_segments": 1717,
+    "n_labels": 51,
+    "n_sessions": 63,
+    "labels_in_more_than_one_session": 46,
+    "cross_session_label_rate": 0.902,
+    "segments_under_a_cross_session_label": 1711,
+    "most_common": [
+      [
+        "resident-tax__p03",
+        133
+      ],
+      [
+        "resident-tax__p06",
+        127
+      ],
+      [
+        "leave-applications__p07",
+        125
+      ],
+      [
+        "social-insurance__p05",
+        105
+      ],
+      [
+        "payroll-items__p04",
+        88
+      ],
+      [
+        "resident-tax__p02",
+        75
+      ],
+      [
+        "onboarding__p13",
+        75
+      ],
+      [
+        "leave-applications__p14",
+        71
+      ],
+      [
+        "social-insurance__p10",
+        70
+      ],
+      [
+        "hr_policy__p12",
+        66
+      ]
+    ],
+    "mean_sessions_per_label": 15.1
+  },
+  "per_session_f1_2000": {
+    "mean": 0.6828,
+    "sd": 0.1146,
+    "min": 0.0217,
+    "max": 0.807
+  },
+  "perturbation": {
+    "lambda_per_segment x0.8": {
+      "f1_2000": 0.6589,
+      "count_ratio": 1.1279
+    },
+    "lambda_per_segment x1.2": {
+      "f1_2000": 0.6664,
+      "count_ratio": 0.6547
+    },
+    "min_duration_ms x0.8": {
+      "f1_2000": 0.6879,
+      "count_ratio": 1.0029
+    },
+    "min_duration_ms x1.2": {
+      "f1_2000": 0.6857,
+      "count_ratio": 0.9435
+    }
+  },
+  "phase_g_oracle": {
+    "0.034": {
+      "routing_fraction": 0.034,
+      "n_routed": 913,
+      "recoverable_boundary_fn": 9,
+      "removable_boundary_fp": 19,
+      "oracle_precision": 0.6843,
+      "oracle_recall": 0.7042,
+      "oracle_f1_upper_bound": 0.6941,
+      "delta_f1_vs_current": 0.0037,
+      "_unit": "GT boundaries and emitted boundary points, NOT candidates"
+    },
+    "0.050": {
+      "routing_fraction": 0.05,
+      "n_routed": 1343,
+      "recoverable_boundary_fn": 15,
+      "removable_boundary_fp": 33,
+      "oracle_precision": 0.6876,
+      "oracle_recall": 0.706,
+      "oracle_f1_upper_bound": 0.6967,
+      "delta_f1_vs_current": 0.0063,
+      "_unit": "GT boundaries and emitted boundary points, NOT candidates"
+    },
+    "0.100": {
+      "routing_fraction": 0.1,
+      "n_routed": 2686,
+      "recoverable_boundary_fn": 31,
+      "removable_boundary_fp": 93,
+      "oracle_precision": 0.7014,
+      "oracle_recall": 0.7109,
+      "oracle_f1_upper_bound": 0.7061,
+      "delta_f1_vs_current": 0.0157,
+      "_unit": "GT boundaries and emitted boundary points, NOT candidates"
+    },
+    "0.150": {
+      "routing_fraction": 0.15,
+      "n_routed": 4029,
+      "recoverable_boundary_fn": 38,
+      "removable_boundary_fp": 170,
+      "oracle_precision": 0.7184,
+      "oracle_recall": 0.713,
+      "oracle_f1_upper_bound": 0.7156,
+      "delta_f1_vs_current": 0.0252,
+      "_unit": "GT boundaries and emitted boundary points, NOT candidates"
+    }
+  },
+  "interior_to_block_example": {
+    "session_id": "ses_20260630-121953-LAPTOP-R36BQBTE",
+    "boundary_ms": 1782822073232,
+    "inside_block": "ses_20260630-121953-LAPTOP-R36BQBTE#b0005",
+    "block_surface": "app:Microsoft Excel:m1_reference",
+    "block_span_ms": [
+      1782822017210,
+      1782822077149
+    ],
+    "block_n_events": 35,
+    "distance_to_nearest_gt_ms": 438,
+    "segment_label": "process__p00",
+    "surrounding_events": [
+      {
+        "delta_ms": -140,
+        "event_type": "screenshot_smart",
+        "app": "Microsoft Excel",
+        "route": ""
+      },
+      {
+        "delta_ms": -112,
+        "event_type": "app_switch",
+        "app": "Microsoft Excel",
+        "route": ""
+      },
+      {
+        "delta_ms": -54,
+        "event_type": "app_switch",
+        "app": "Microsoft Excel",
+        "route": ""
+      },
+      {
+        "delta_ms": 0,
+        "event_type": "app_switch",
+        "app": "Microsoft Excel",
+        "route": ""
+      },
+      {
+        "delta_ms": 68,
+        "event_type": "app_switch",
+        "app": "Microsoft Excel",
+        "route": ""
+      },
+      {
+        "delta_ms": 113,
+        "event_type": "app_switch",
+        "app": "Microsoft Excel",
+        "route": ""
+      }
+    ]
+  },
+  "runtime_s": {
+    "total": 265.3,
+    "loso_scoring": 172.1
+  }
+}
