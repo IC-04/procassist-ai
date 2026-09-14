@@ -539,3 +539,61 @@ experiment and tests under my direction; every figure was produced by running th
 1 skipped.
 
 **Time spent** ~1.5 h
+
+---
+
+### 2026-09-14 · Step 1 · Scoring, ambiguity gate, constrained decoder
+
+**Goal** Turn the Phase C candidate space into segments. Entirely a precision problem: ~28 true
+boundaries among ~426 candidates per session. No LLM, no labelling beyond a placeholder.
+
+**Did** `score.py` (logistic regression, 28 domain-neutral features, clean tier, LOSO),
+`gate.py`, `decoder.py` (O(n²) DP under hard constraints), CLI `--segment` / `--fit-scorer`,
+`build/<ds>/thresholds.json`, ADR-019, 25 new tests.
+
+**Result — dataset_a, LOSO, scoreable canonical, λ=0.8**
+
+| τ | P | R | F1 |
+|---|---|---|---|
+| 1 s | 0.551 | 0.564 | 0.557 |
+| **2 s** | **0.694** | **0.710** | **0.702** |
+| 5 s | 0.746 | 0.762 | 0.754 |
+| 10 s | 0.791 | 0.808 | 0.799 |
+
+count ratio **0.9703** · segmental F1@IoU0.5 0.7746 · WindowDiff 0.4736 · **0 constraint
+violations** · per-session F1 0.695 ± 0.115 · LOSO AUC 0.979 · **2.72× B5-dwell (0.258)**.
+Recall 0.710 against the 90.0% ceiling is **78.9% of achievable**, not 71% of 100%.
+
+**Problems / things measured rather than assumed**
+- **GT does not tile the session** — median coverage 0.81, 12% of span in inter-fragment gaps.
+  A partitioning decoder emits N+1 boundary points where the reference has 2N, capping recall
+  near **52%** however good the ranking. The decoder therefore selects **disjoint** segments.
+  Caught before building, by measuring coverage.
+- **NMS measured and deliberately NOT used.** The duration floor already suppresses clusters;
+  adding NMS makes things worse — nms=2 s drops F1 0.702 → 0.589 (ratio 0.73). Reported the
+  measurement instead of adding the machinery.
+- **The duration floor is p01 of FRAGMENT durations (19.0 s).** Phase 1's "34.8 s / 23.9 s" were
+  *execution-active* durations — a different quantity, correctly not reused.
+- **The gate's routed population is discouraging, and that is the point of measuring it.**
+  Routing is 3.4% (918/26,860), well inside the 15% target, but it contains only **161 true
+  boundaries — 2.7% of all 6,034** — at base rate 0.175, rule-only precision 0.196. An
+  adjudicator could address at most 2.7% of boundaries. That decides Phase G on evidence.
+- **`is_web_surface` ablation: F1 0.702 → 0.698, Δ −0.004.** The headline does not rest on the
+  feature most likely to be A-specific. Good news for the B transfer, and the evidence ADR-019
+  cites.
+- **Operating point chosen for count ratio ≈ 1.0, not maximum F1.** λ=1.4 scores F1 0.718 at
+  ratio 0.83 — a bet on under-segmenting. λ=0.8 gives 0.97 and makes no such bet.
+- **B transfer flagged, not validated.** The A-fitted chain emits 4.9 segments/session on B
+  against 28.2 on A — 1 per 143 s vs 1 per 46 s, roughly 3× sparser per unit time, covering
+  35–85% of each session. B has no ground truth, so this cannot be checked. Recorded as the
+  live ADR-010/ADR-019 risk.
+
+**Decisions** ADR-019 — fitted scorer weights are a sanctioned A→B transfer under four
+conditions, all met; `thresholds.json` tags all 11 thresholds so the leakage check is mechanical.
+
+**Generative AI use** GenAI-assisted implementation. Claude Code (Opus 5) wrote the three stages
+and their tests under my direction; every figure was produced by running the code.
+
+**Next** Labelling (stage 8). Suite 248 passed / 1 skipped; 249 passed with `dataset_a` absent.
+
+**Time spent** ~2 h

@@ -167,3 +167,125 @@ equality. The rule would have bought nothing for those and damaged the rest.
 does, and the surface is the unit. Suppressing them would have merged distinct documents into
 one block and erased 176 genuine boundaries. Regression test:
 `tests/test_blocks.py::test_a_document_switch_within_one_application_is_preserved`.
+
+### ADR-015 · 2026-09-13 · accepted · The activity block is a container, not a boundary unit — refines ADR-004
+**Context** ADR-004 made the block "the unit of reasoning". In practice that made block edges
+the *candidate space* for business-process boundaries, and Phase 1 measured the cost: of 3,327
+GT boundary points on Dataset A, **74.5% fall strictly inside a block** and only **59.9%** are
+within τ=2 s of a block edge. That figure was then read as a ceiling on the representation.
+**Decision** The reading is corrected, not the perception layer.
+
+| | |
+|---|---|
+| OLD | activity block ≈ business-process boundary unit |
+| NEW | activity block = activity / context / compression / identity **container**; an execution boundary may occur **inside** a block |
+
+ADR-004 stands as a statement about **compression and reasoning affordability** (162,768 events
+→ 4,968 blocks on A) and is superseded only in its implied use as the candidate space. A new
+deterministic stage generates **intra-block, event-level** candidates; blocks must therefore
+retain access to their underlying events.
+**Consequences** 59.9% is restated as *the reachability of the block-edge candidate space*, never
+as a representation ceiling. `STEP1_SPEC.md` §2 replaces the pipeline in `ARCHITECTURE.md` §3.
+Two questions are kept permanently distinct: **(A)** information destroyed by preprocessing vs
+**(B)** information preserved but not surfaced as a candidate. Experiment S-E2 decides which
+applies, per missed boundary, before any rebuild is considered.
+**Evidence** `docs/phases/PHASE_1_REPORT.md` §8. Reachability 47.3 / 59.9 / 82.8 / 92.2% at
+τ = 1 / 2 / 5.25 / 10.5 s; median distance to the nearest block edge 1,040 ms; 36.5% of
+executions contain zero whole blocks; 80.3% of block edges are interior to a GT execution.
+Prior signal evidence (to be re-measured under S-E3): at missed boundaries vs interior controls
+±2 s, `browser_navigation` 8.5% vs 2.3%, `clipboard_change` 0.6% vs 30.5%, `shortcut` 1.6% vs
+53.4% — the discriminating events survive into the retained stream, which is evidence for (B).
+
+### ADR-016 · 2026-09-13 · accepted · Scope is Step 1 only; the phase plan is replaced
+**Context** The repository accumulated specifications for a full pipeline — retrieval/execution
+memory, agentic tools, vision, workflow and SOP generation, family/variant analysis, a Streamlit
+prototype — before Step 1 had been shown to work. Phases 2–7 encode that plan.
+**Decision** The current bounded objective is Step 1 alone: *infer business-process execution
+segments from low-level desktop telemetry, using existing activity blocks as context containers
+and adding event-level candidate boundary inference.* `docs/STEP1_SPEC.md` is authoritative for
+it. `phases/PHASE_2.md`, `PHASE_3.md`, `PHASE_4.md` are superseded by `STEP1_SPEC.md` §6–7;
+`PHASE_5.md`, `PHASE_6.md`, `PHASE_7.md`, `RETRIEVAL_SPEC.md` and `PROTOTYPE_SPEC.md` are
+deferred until Step 1 exits at S-DONE. `ARCHITECTURE.md` §3 stages 7–10 are deferred.
+**Consequences** No Step 2 or Step 3 architecture is written until S-DONE. Deferred documents
+are retained, banner-marked, and not deleted — they are prior work and may be revived.
+**Evidence** `README.md`: "Technical accuracy is not the objective in itself. Your judgment is
+what is being assessed — including how you choose to spend your 7 days"; FAQ Q3 answers "will I
+score higher by building something technically sophisticated?" with **No**. As of this ADR,
+`segments.jsonl` — Deliverables §1 — does not exist.
+
+### ADR-017 · 2026-09-13 · accepted · Accuracy is reported on the scoreable canonical GT population
+**Context** Phase 1 reported figures without stating which GT population they were computed on,
+and the ceiling analysis in `PHASE_1_REPORT.md` §8 was computed ad hoc and never committed as an
+experiment. The τ grid also disagrees between documents: the report uses
+{1000, 2000, 5250, 10500} ms, `experiments/E11-baselines/config.json` uses
+{1000, 2250, 5500, 11250} ms.
+**Decision** Four populations are named in every report and never conflated: **raw** (2,009
+manifest executions, of which 257 have no end timestamp), **canonical** (1,819 after fragment
+grouping, 98 interrupted), **unscoreable** (230 canonical records with no usable interval), and
+**scoreable canonical** (**1,589**) — the last being the denominator for every accuracy figure.
+The τ grid is unified in S-E1 and justified from A's duration distribution; every prior figure is
+restated on it. Reachability of a candidate space is reported separately from segmentation
+quality and is never presented as an accuracy number.
+**Consequences** `EVALUATION_PROTOCOL.md` gains §8 (populations) and §9 (candidate reachability).
+The 59.9% figure is re-derived under S-E1 before it is quoted again.
+**Evidence** Counted from `build/dataset_a/executions_canonical.jsonl`: 1,819 canonical;
+230 with no intervals; 1,589 scoreable; 98 interrupted; confidence tiers clean 1,756 /
+repaired 63.
+
+### ADR-018 · 2026-09-13 · accepted · The LLM adjudicates the ambiguous tail; it is not the segmenter
+**Context** Two opposing failure modes were live: confining the LLM to cosmetic work (naming,
+report prose), and making it the primary segmenter over every transition.
+**Decision** Neither. Deterministic candidate generation, scoring and constrained global
+inference handle the majority of cases. A deterministic ambiguity gate routes **≤15%** of
+candidates to a bounded semantic adjudicator whose output is limited to: boundary vs no-boundary
+for one candidate neighbourhood, process identity / label normalisation, and a short
+evidence-citing justification. `--no-llm` remains a supported, tested mode at all times.
+**Consequences** Preferred because it is explainable, reproducible, cheap, validatable on A, and
+structurally incapable of hallucinating a boundary — while still placing AI where semantic
+judgement is genuinely required. Its value is **measured by ablation (S-E5)**; if the ablation
+shows negligible value the adjudicator is removed and the negative result is reported. Agentic
+tools, retrieval/memory, few-shot retrieval, vision and fine-tuning are out of scope for the
+first implementation. ADR-006 (the model never controls temporal arithmetic) and ADR-009 (vision
+is selective, never global) are unchanged and still binding.
+**Evidence** Per-window payload ≈1.7k tokens at `window=5` — ungated adjudication over A's 4,968
+blocks is unaffordable and unjustified, since 74% of boundary decisions have deterministic
+evidence. `context.extracted_text` covers ~4% of events, so it cannot be a central feature.
+
+### ADR-019 · 2026-09-14 · accepted · Fitted scorer weights are a sanctioned A→B transfer
+**Context** `procmine/score.py` fits a logistic regression on Dataset A's `clean` ground-truth
+tier and applies it to Dataset B. ADR-010 forbids dataset-specific transfer from A to B, so
+whether fitted weights are permitted must be ruled on explicitly rather than assumed.
+
+**Decision** Fitted scorer weights **are** a sanctioned A→B transfer, subject to four conditions,
+all of which are met:
+
+1. **The features are domain-neutral and structural.** Every input is an event-type count, a
+   composition ratio, a timing quantity normalised by the session's own distribution, or a
+   structural flag. **No A surface string, process name, process code, vocabulary item, keyword
+   list, cluster count `k`, or few-shot example is used** — those remain forbidden by ADR-010 and
+   nothing here relaxes that.
+2. **The weights are committed with their provenance stated.** `procmine/scorer_v1.json` carries
+   `fitted_on: dataset_a`, `tier: clean`, `tau_ms`, and
+   `provenance: "a_fitted — declared A->B transfer"`. Every threshold in the pipeline is tagged
+   `tolerance_derived` / `structural` / `a_fitted` in `build/<dataset>/thresholds.json`, which
+   makes the leakage check mechanical rather than a judgement call.
+3. **`make run-b` succeeds with `dataset_a/` absent from disk.** The B path loads committed
+   weights and never reads A. Enforced by test and by the ADR-010 guard test.
+4. **The transfer risk is measured, not assumed.** `is_web_surface` is the strongest positive
+   feature (lift 1.56) and Dataset A is portal-heavy, so it was the feature most likely not to
+   transfer. Ablated: removing it moves boundary F1 at τ=2 s from **0.702 to 0.698** — a
+   **−0.004** change, with count ratio unmoved at 0.97. The headline therefore does **not** rest
+   on an A-specific feature.
+
+**Why this is permitted at all.** Developing on A and applying to B is what the assignment asks
+for: A carries ground truth precisely so a method can be built on it, and B has none to fit on.
+Refusing to transfer fitted parameters would mean refusing to use A for its stated purpose. What
+ADR-010 forbids is transferring A's *content* — its vocabulary and process identities — and that
+prohibition is untouched.
+
+**Consequences** Any future model must declare its features against condition 1 and re-run the
+ablation of condition 4 before its number may be quoted on B. A scorer whose headline collapses
+under ablation of a single feature is A-specific and must be reported as such.
+
+**Evidence** Ablation above. Scorer: 28 domain-neutral features, LOSO AUC 0.979 over 63
+sessions. Routing 3.4%. Every threshold tagged in `thresholds.json`.

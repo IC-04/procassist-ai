@@ -1,10 +1,11 @@
 """Build the perception + TEKG layer for a dataset. No LLM involved."""
 from __future__ import annotations
 import json, os, sys, time, argparse, logging, collections
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from . import normalise as N, blocks as B, tekg as G, context as C, schemas as S
 from . import candidates as CA
+from . import score as SC, gate as GA, decoder as DE
 
 log = logging.getLogger("procmine")
 
@@ -126,6 +127,168 @@ def build(dataset_root: str, out_root: str, window: int = 5, min_events: int = 3
     return summary
 
 
+# ---------------------------------------------------------------- Step 1 chain
+
+SCORER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scorer_v1.json")
+
+
+def fit_scorer(dataset_root: str, out_path: str = SCORER_PATH, tau_ms: int = 2000) -> Dict:
+    """Fit the candidate scorer on a dataset's CLEAN ground-truth tier (ADR-011, ADR-019).
+
+    Ground truth is imported here, in the orchestrator, and never by `candidates.py`,
+    `score.py`, `gate.py` or `decoder.py` — an AST test enforces that. GT supplies the label
+    and nothing else; no GT field is ever a feature.
+    """
+    import bisect
+    from . import gt as GT                      # local: only the fitting path touches GT
+    gt_dir = os.path.join("build", os.path.basename(dataset_root.rstrip("/")))
+    canon = os.path.join(gt_dir, "executions_canonical.jsonl")
+    if not os.path.exists(canon):
+        raise FileNotFoundError(f"{canon} missing — run `python3 -m procmine.gt --dataset "
+                                f"{dataset_root}` first")
+    clean: Dict[str, List[int]] = collections.defaultdict(list)
+    with open(canon, encoding="utf-8") as fh:
+        for line in fh:
+            c = json.loads(line)
+            if c.get("confidence") != "clean":
+                continue
+            for a, b in c.get("intervals", []):
+                x, y = GT.parse_ts(a), GT.parse_ts(b)
+                if x is not None and y is not None and y > x:
+                    clean[c["session_id"]].extend([x, y])
+
+    cands: List[Dict] = []
+    labels: List[int] = []
+    for sdir in N.iter_session_dirs(dataset_root):
+        sid = os.path.basename(sdir)
+        rows = N.load_session(sdir)
+        if not rows:
+            continue
+        cs = CA.generate(rows, B.build_blocks(rows))
+        g = sorted(clean.get(sid, []))
+        for c in cs:
+            t = c.get("at_ms")
+            d = 10 ** 12
+            if t is not None and g:
+                i = bisect.bisect_left(g, t)
+                d = min([abs(g[j] - t) for j in (i - 1, i) if 0 <= j < len(g)] or [10 ** 12])
+            cands.append(c)
+            labels.append(1 if d <= tau_ms else 0)
+    scorer = SC.fit(cands, labels)
+    scorer.meta.update({"fitted_on": os.path.basename(dataset_root.rstrip("/")),
+                        "tier": "clean", "tau_ms": tau_ms,
+                        "provenance": "a_fitted — declared A->B transfer, ADR-019"})
+    SC.save(scorer, out_path)
+    return {"scorer": out_path, **scorer.meta}
+
+
+def thresholds_manifest(cfg_cand: Dict, cfg_gate: Dict, cfg_dec: Dict,
+                        scorer: Optional[SC.Scorer]) -> Dict:
+    """Every threshold the pipeline uses, tagged with how it transfers to a new dataset.
+
+    Makes the ADR-010 leakage check mechanical instead of a judgement call:
+      tolerance_derived — computed from tau or a contract constant; transfers as-is
+      structural        — derived from the dataset's OWN distribution at runtime; transfers
+                          as a RULE, and its value legitimately differs per dataset
+      a_fitted          — a value fitted on Dataset A; a declared A->B transfer (ADR-019)
+    """
+    return {
+        "_schema": "thresholds/v1",
+        "_tags": {"tolerance_derived": "from tau or a contract constant",
+                  "structural": "from the dataset's own distribution at runtime",
+                  "a_fitted": "fitted on Dataset A; declared A->B transfer (ADR-019)"},
+        "candidates.dedup_ms": {
+            "value": cfg_cand.get("dedup_ms"), "tag": "tolerance_derived",
+            "note": ("a quarter of the tightest tau in the unified grid (1000 ms). S-E3 also "
+                     "observed a 55 ms p50 inter-arrival on dataset_a; that observation "
+                     "MOTIVATED dedup but does not set the value — the value is derived from "
+                     "tau alone, so it transfers to any dataset scored at the same grid.")},
+        "candidates.gap_percentile": {
+            "value": cfg_cand.get("gap_percentile"), "tag": "structural",
+            "note": "per-session percentile of ms_since_last; never an absolute ms (ADR-003)"},
+        "candidates.window_ms": {
+            "value": cfg_cand.get("window_ms"), "tag": "tolerance_derived",
+            "note": "equals tau=2000 ms, the featurisation window"},
+        "decoder.min_duration_ms": {
+            "value": cfg_dec.get("min_duration_ms"), "tag": "a_fitted",
+            "note": ("p01 of dataset_a's scoreable canonical FRAGMENT durations (19.0 s). "
+                     "Phase 1's 34.8 s / 23.9 s were execution-active durations and are not "
+                     "reused.")},
+        "decoder.max_duration_ms": {
+            "value": cfg_dec.get("max_duration_ms"), "tag": "a_fitted",
+            "note": ("null — A's fragments reach 1144.8 s with p99 at 144.2 s, so no upper "
+                     "bound is justified; STEP1_SPEC §3.6 permits one only where the "
+                     "distribution supports it")},
+        "decoder.lambda_per_segment": {
+            "value": cfg_dec.get("lambda_per_segment"), "tag": "a_fitted",
+            "note": "operating point chosen for count ratio ~1.0 on dataset_a"},
+        "decoder.nms_window_ms": {
+            "value": cfg_dec.get("nms_window_ms"), "tag": "a_fitted",
+            "note": "0 — the duration floor already suppresses candidate clusters"},
+        "gate.low": {"value": cfg_gate.get("low"), "tag": "a_fitted",
+                     "note": "confident non-boundary band edge"},
+        "gate.high": {"value": cfg_gate.get("high"), "tag": "a_fitted",
+                      "note": "confident boundary band edge"},
+        "scorer.weights": {
+            "value": (dict(zip(scorer.names, [round(w, 4) for w in scorer.weights]))
+                      if scorer else None),
+            "tag": "a_fitted",
+            "note": ("logistic regression fitted on dataset_a's clean tier; features are "
+                     "domain-neutral and structural — no A surface string, process name, "
+                     "vocabulary or keyword list (ADR-019)")},
+        "scorer.bias": {"value": round(scorer.bias, 4) if scorer else None, "tag": "a_fitted"},
+    }
+
+
+def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
+            no_llm: bool = True, cfg_gate: Optional[Dict] = None,
+            cfg_dec: Optional[Dict] = None) -> Dict:
+    """The full deterministic chain: candidates -> score -> gate -> decode -> intervals."""
+    if not no_llm:
+        raise NotImplementedError("only --no-llm is implemented; the adjudicator is a later "
+                                  "stage (STEP1_SPEC §3.5)")
+    os.makedirs(out_root, exist_ok=True)
+    scorer = SC.load(scorer_path)
+    g_cfg = dict(GA.DEFAULT_CFG); g_cfg.update(cfg_gate or {})
+    d_cfg = dict(DE.DEFAULT_CFG); d_cfg.update(cfg_dec or {})
+
+    rich: List[Dict] = []
+    all_routed: List[Dict] = []
+    n_seg = 0
+    for sdir in N.iter_session_dirs(dataset_root):
+        sid = os.path.basename(sdir)
+        rows = N.load_session(sdir)
+        if not rows:
+            continue
+        cands = CA.generate(rows, B.build_blocks(rows))
+        routed = GA.route(scorer.apply(cands), g_cfg)
+        all_routed.extend(routed)
+        segs = DE.decode_session(routed, d_cfg)
+        for k, s in enumerate(segs):
+            s["session_id"] = sid
+            s["exec_uid"] = f"{sid}#e{k:04d}"
+            s["label"] = "segment"          # placeholder; labelling is the next stage
+            s["confidence"] = round(s["score"], 4)
+            rich.append(s)
+        n_seg += len(segs)
+
+    problems = DE.violations(rich, d_cfg)
+    _check(problems, "decoder hard constraints")
+
+    with open(os.path.join(out_root, "segments_rich.jsonl"), "w", encoding="utf-8") as fh:
+        for r in rich:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+    with open(os.path.join(out_root, "thresholds.json"), "w", encoding="utf-8") as fh:
+        json.dump(thresholds_manifest(CA.DEFAULT_CFG, g_cfg, d_cfg, scorer), fh,
+                  ensure_ascii=False, indent=1, default=list)
+
+    return {"dataset": dataset_root, "segments": n_seg,
+            "constraint_violations": len(problems),
+            "gate": GA.routing_report(all_routed),
+            "scorer": scorer.meta,
+            "decoder_cfg": {k: v for k, v in d_cfg.items()}}
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="procmine")
     ap.add_argument("--dataset", required=True)
@@ -140,6 +303,13 @@ def main(argv=None) -> int:
                     help="skip reasoner payloads (parameter sweeps do not need them)")
     ap.add_argument("--no-candidates", action="store_true",
                     help="skip candidates.jsonl (DATA_CONTRACT §10.2)")
+    ap.add_argument("--segment", action="store_true",
+                    help="run the Step 1 chain: candidates -> score -> gate -> decode")
+    ap.add_argument("--fit-scorer", action="store_true",
+                    help="fit the candidate scorer on this dataset's clean GT tier")
+    ap.add_argument("--scorer", default=SCORER_PATH)
+    ap.add_argument("--no-llm", action="store_true", default=True,
+                    help="the only supported mode; routed candidates use rule_decision")
     ap.add_argument("-v", "--verbose", action="store_true")
     a = ap.parse_args(argv)
 
@@ -157,6 +327,19 @@ def main(argv=None) -> int:
         return 0
 
     out = a.out or os.path.join("build", os.path.basename(root))
+
+    if a.fit_scorer:
+        print(json.dumps(fit_scorer(root, a.scorer), ensure_ascii=False, indent=2))
+        return 0
+    if a.segment:
+        try:
+            print(json.dumps(segment(root, out, a.scorer, no_llm=True),
+                             ensure_ascii=False, indent=2, default=str))
+        except ArtifactInvalid as e:
+            print(f"CONSTRAINT VIOLATION: {e}", file=sys.stderr)
+            return 2
+        return 0
+
     try:
         s = build(root, out, window=a.window, min_events=a.min_events, min_ms=a.min_ms,
                   max_lag=a.max_lag, write_windows=not a.no_windows,
