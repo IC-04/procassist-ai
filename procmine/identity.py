@@ -345,7 +345,13 @@ def similarity_views(reps: Sequence[Dict], idf: bool = False) -> Dict[str, Any]:
                        "bigram": s_bigram, "text": sim_text, "object": s_obj}}
 
 
-COMBINE_MODES = ("linear", "adaptive", "noisy_or")
+COMBINE_MODES = ("linear", "adaptive", "noisy_or", "tiebreak")
+
+# Above this surface Jaccard the WHERE term is saturated and carries no information
+# about whether two executions are the same process. S-E6b measured the residual to be
+# pairs at Jaccard exactly 1.00. Structural: a property of the statistic, not a value
+# fitted to A.
+SATURATED_WHERE = 0.95
 
 
 def combine(views: Dict[str, Any], weights: Optional[Dict[str, float]] = None,
@@ -392,6 +398,21 @@ def combine(views: Dict[str, Any], weights: Optional[Dict[str, float]] = None,
         S = 1.0 - prod
         cap = 1.0 - np.prod([1.0 - wn[k] for k in keys])      # value when every view is 1.0
         S = S / max(cap, 1e-9)
+    elif mode == "tiebreak":
+        # S-E6b's finding, acted on: a surface Jaccard of 1.0 is maximally SIMILAR and minimally
+        # INFORMATIVE. Where WHERE is saturated it is discarded and the pair is decided on WHAT
+        # and sequence alone, renormalised — the only views that can still separate two
+        # executions with identical footprints. Everywhere else the linear sum is unchanged.
+        base = sum(wn[k] * views[k] for k in keys)
+        parts = views.get("_parts") or {}
+        sat = parts.get("surface")
+        if sat is None:
+            S = base
+        else:
+            alt_keys = ("what", "seq")
+            alt_tot = sum(wn[k] for k in alt_keys) or 1.0
+            alt = sum((wn[k] / alt_tot) * views[k] for k in alt_keys)
+            S = np.where(sat >= SATURATED_WHERE, alt, base)
     else:
         raise ValueError(f"unknown combine mode {mode!r}; expected one of {COMBINE_MODES}")
 

@@ -222,3 +222,43 @@ def test_unknown_combine_mode_is_an_error_not_a_silent_default():
     _, reps = _reps()
     with pytest.raises(ValueError):
         ID.combine(ID.similarity_views(reps), mode="bogus")
+
+
+# ---------------------------------------------------------------- S-E7: freeze
+
+def test_tiebreak_discards_a_saturated_where_term():
+    """S-E6b measured the residual to be pairs whose surface sets are IDENTICAL. A Jaccard of
+    1.0 is maximally similar and minimally informative, so above the saturation threshold the
+    WHERE term must be discarded and the pair decided on WHAT and sequence alone."""
+    import numpy as np
+    _, reps = _reps()
+    v = ID.similarity_views(reps)
+    sat = v["_parts"]["surface"]
+    lin = ID.combine(v, mode="linear")
+    tb = ID.combine(v, mode="tiebreak")
+    off = ~np.eye(len(reps), dtype=bool)
+    saturated = (sat >= ID.SATURATED_WHERE) & off
+    unsaturated = (sat < ID.SATURATED_WHERE) & off
+    if unsaturated.any():
+        assert np.allclose(lin[unsaturated], tb[unsaturated], atol=1e-5)
+    if saturated.any():
+        # On saturated pairs the value must be the WHAT/seq-only combination, whatever that is.
+        w = ID.DEFAULT_WEIGHTS
+        tot = w["what"] + w["seq"]
+        alt = (w["what"] / tot) * v["what"] + (w["seq"] / tot) * v["seq"]
+        assert np.allclose(np.clip(alt, 0, 1)[saturated], tb[saturated], atol=1e-5)
+
+
+def test_grouping_is_byte_identical_across_repeated_runs():
+    """The freeze contract: same input, same seed, same assignment — every time."""
+    _, reps = _reps()
+    sess = [r["session_id"] for r in reps]
+    a = ID.select_config(reps, sess, seed=7, weightings=("where_heavy",), modes=("tiebreak",))
+    b = ID.select_config(reps, sess, seed=7, weightings=("where_heavy",), modes=("tiebreak",))
+    a.pop("_views"); b.pop("_views")
+    assert a == b
+    import json
+    Sa = ID.combine(ID.similarity_views(reps), ID.WEIGHT_GRID["where_heavy"], mode="tiebreak")
+    Sb = ID.combine(ID.similarity_views(reps), ID.WEIGHT_GRID["where_heavy"], mode="tiebreak")
+    assert json.dumps(ID.louvain(ID.knn_graph(Sa, k=5), seed=7)) == \
+           json.dumps(ID.louvain(ID.knn_graph(Sb, k=5), seed=7))

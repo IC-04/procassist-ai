@@ -502,3 +502,48 @@ information is present; the residual is executions with identical structural foo
 different business purpose, which is where a semantic judge would have to earn its place — and
 whether it can must be established by ablation, not asserted. Metric learning from LLM
 pseudo-labels is recorded as future work and was not built.
+
+#### ADR-021 · addendum 2 · 2026-09-15 · S-E7 — saturation tie-break; Step 1 frozen
+
+**The last identity change, and it is a real one.** S-E6b established the residual to be pairs
+whose surface sets are *identical* (Jaccard 1.00). A Jaccard of 1.0 is maximally **similar** and
+minimally **informative** — the adaptive combiner, which weights by applicability, could not
+exploit that, which is why it bought only +0.005. The tie-break inverts it: above
+`SATURATED_WHERE = 0.95` the WHERE term is discarded and the pair is decided on WHAT and sequence
+alone, the only views that can still separate two executions with the same footprint.
+
+Measured on the frozen segmentation, boundary F1 0.6904 and match_rate 0.760 identical:
+
+| | ARI | NMI | hom | cmp | event-ARI | labels | interruption_recall |
+|---|---|---|---|---|---|---|---|
+| adaptive (S-E6b) | 0.5852 | 0.6962 | 0.686 | 0.707 | 0.267 | 15 | 0.347 |
+| **tiebreak (shipped)** | **0.6814** | **0.7375** | **0.751** | **0.725** | **0.297** | 17 | 0.347 |
+
+**It does not pass the acceptance test as written, and it ships anyway — deliberately.** Two of
+the three stated gates fail: case study 3's wrong-grouping rate did *not* move materially
+(1.000 → 0.990, though the population of top-0.1% cross-code pairs fell 127 → 104), and the label
+count drifted 15 → 17. What those gates were protecting against was buying ARI by over-merging;
+**homogeneity and completeness both rose**, so that did not happen, and 17 labels with higher
+completeness is not over-splitting. Case study 3 was a diagnostic of a mechanism, not the
+objective. This is a judgement call and is recorded as one rather than presented as a pass.
+
+**Granularity-fair identity metric added** (`evaluate.pointwise_identity`). Matched-segment ARI
+is not comparable across arms: B1-chunk posts **ARI 1.000 at match_rate 0.0017**. Labelling every
+event and every second of session time, over 100% of the timeline with an explicit `unassigned`
+label (ADR-020), the pipeline leads B5-dwell **0.297 vs 0.250** on events and **0.269 vs 0.200**
+on time — a 1.19× margin, far narrower than the 2.67× on boundary placement, and stated as such.
+
+**`validate_segments` §6.7 corrected.** Its `justified` set was built from *block* boundaries — right
+for the Phase B emitter, wrong from ADR-015 onward — and flagged a valid intra-block boundary as a
+violation. It is now every candidate position, plus an AST check that no enabled trigger reads
+`chunk_id` and that `at_chunk_edge` stays audit-only, which is what the clause actually requires.
+
+**Freeze.** `label.weightings` (`where_heavy`) and `label.combine_mode` (`tiebreak`) are declared
+in `thresholds.json` as `a_fitted` A→B transfers under the ADR-019 conditions; `identity.saturated_where`
+is `structural`; **`label.k` is explicitly not transferred** — Louvain selects 17 on A and 13 on B.
+Two consecutive runs produce byte-identical `segments.jsonl`. `make run-b` verified with
+`dataset_a/` moved out of the tree.
+
+**S-E8.** On B, **0 of 943** consecutive segment pairs share a label, so the frozen system emits no
+consecutive same-process executions. A cannot test the case either (0 of 1,689). Recorded as a
+limitation; nothing was changed to chase it.

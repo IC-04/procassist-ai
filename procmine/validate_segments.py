@@ -127,11 +127,24 @@ def check_no_chunk_boundaries(segments: Sequence[Dict],
 
     `chunk_edges[sid]` is the set of epoch-second values at which the recorder changed chunk.
     `justified[sid]` is the set of epoch-second values at which a boundary is independently
-    explained (for this emitter: every block boundary, each of which is a surface change).
+    explained — i.e. at which the segmenter had a **non-chunk reason** to place one.
 
-    A boundary is a violation only if it is chunk-aligned AND unjustified. Coincidence alone
-    is not a violation — chunks are dissolved in `normalise.load_session` (ADR-001), so a
-    surface change may fall on a chunk edge by chance.
+    A boundary is a violation only if it is chunk-aligned AND unjustified. Coincidence alone is
+    not a violation — chunks are dissolved in `normalise.load_session` (ADR-001), so an
+    independently-motivated boundary may fall on a chunk edge by chance.
+
+    **What counts as justified was wrong until S-E7.** It was built from *block* boundaries,
+    which was correct for the Phase B emitter — that emitter could only cut at a block edge —
+    and became wrong at ADR-015, when a legitimate execution boundary was allowed to occur
+    *inside* a block. The check then flagged valid intra-block boundaries purely for landing on
+    a chunk edge: one real false positive on the committed `segments.jsonl`.
+
+    The justified set is now **every candidate position the generator emitted**, which is what
+    §6.7 actually requires. A candidate exists because some trigger fired, no enabled trigger
+    references `chunk_id`, and `feat_at_chunk_edge` is audit-only and never a trigger
+    (`candidates.py` module contract). So a boundary standing on a candidate was placed for a
+    reason that is not the chunk, by construction. Block edges remain in the set because every
+    block edge is also emitted as a candidate.
     """
     if chunk_edges is None:
         return []
@@ -174,7 +187,7 @@ def dataset_context(dataset_root: str) -> Dict[str, Any]:
     Reading the dataset is what makes checks 1 and 5 meaningful; without it they degrade to
     a format check, which `check_session_ids` states explicitly rather than passing silently.
     """
-    from . import normalise as N, blocks as B
+    from . import normalise as N, blocks as B, candidates as CA
     session_ids: Set[str] = set()
     chunk_edges: Dict[str, Set[int]] = {}
     justified: Dict[str, Set[int]] = {}
@@ -191,9 +204,48 @@ def dataset_context(dataset_root: str) -> Dict[str, Any]:
                 edges.add(y["ts_ms"] // 1000)
         chunk_edges[sid] = edges
         blks = B.build_blocks(rows)
-        justified[sid] = ({b["start_ms"] // 1000 for b in blks}
-                          | {b["end_ms"] // 1000 for b in blks})
+        # Every position the candidate generator would nominate. Block edges are a strict
+        # subset of these (candidates.py guarantees the superset property), so this widens the
+        # old set rather than replacing it — and it is the set §6.7 is actually about.
+        just = ({b["start_ms"] // 1000 for b in blks} | {b["end_ms"] // 1000 for b in blks})
+        for c in CA.generate(rows, blks):
+            at = c.get("at_ms")
+            if at is not None:
+                just.add(at // 1000)
+        justified[sid] = just
     return {"session_ids": session_ids, "chunk_edges": chunk_edges, "justified": justified}
+
+
+def chunk_triggers_in_generator() -> List[str]:
+    """§6.7, checked at the source rather than only at the output.
+
+    The output check can only ever say a boundary *coincides* with a chunk edge. What the
+    clause forbids is a boundary placed *because of* one, and that is a property of the
+    generator: it holds iff no enabled trigger reads `chunk_id`. Asserted here by AST, so a
+    future trigger that did read it would fail the validator rather than pass unnoticed.
+    """
+    import ast as _ast
+    from . import candidates as _CA
+    tree = _ast.parse(open(_CA.__file__, encoding="utf-8").read())
+    bad: List[str] = []
+
+    # 1. `chunk_id` may be read only inside the featuriser. Anywhere else it could influence
+    #    whether a candidate is emitted, which is the thing §6.7 forbids.
+    AUDIT_ONLY = {"_features"}
+    for fn in _ast.walk(tree):
+        if not isinstance(fn, (_ast.FunctionDef, _ast.AsyncFunctionDef)):
+            continue
+        for nd in _ast.walk(fn):
+            if (isinstance(nd, _ast.Constant) and nd.value in ("chunk_id", "seq_in_chunk")
+                    and fn.name not in AUDIT_ONLY):
+                bad.append(f"{fn.name}() reads {nd.value!r} outside the audit-only featuriser")
+
+    # 2. No enabled trigger may be chunk-derived. `at_chunk_edge` is produced as a FEATURE and
+    #    must never appear in the trigger set.
+    for t in sorted(_CA.ENABLED_TRIGGERS):
+        if "chunk" in t:
+            bad.append(f"enabled trigger {t!r} is chunk-derived")
+    return bad
 
 
 def load(path: str) -> List[Dict]:

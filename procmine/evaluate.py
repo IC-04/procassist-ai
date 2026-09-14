@@ -442,3 +442,108 @@ def _pairs_at(ref: Sequence[Interval], hyp: Sequence[Interval],
         uh.add(j)
         out.append((i, j))
     return out
+
+
+# ---------------------------------------------------------------- granularity-fair identity
+#
+# `matched_identity` scores ARI over reference segments that a hypothesis matched at IoU. That
+# is the right question for "when it found an execution, did it name it consistently", and the
+# wrong question for comparing methods, because BOTH the population and the granularity move
+# between arms:
+#
+#   * B5-dwell is scored over the 59.7% of references it matched at all, and posts ARI 0.797;
+#     the pipeline is scored over 76.0% and posts 0.585. Those are not the same denominator.
+#   * B5 runs at count ratio 2.83. Short fragments sit inside a single surface, so they are
+#     trivially label-pure — over-segmentation is rewarded by a matched-segment metric.
+#
+# The fair comparison assigns EVERY event (or every unit of session time) the label of its
+# containing segment and scores that population. It covers 100% of the timeline, so no arm can
+# improve its score by declining to cover part of it, and splitting a region into more segments
+# cannot help because the underlying events are unchanged.
+#
+# Coverage is explicit: events in no segment are labelled UNASSIGNED on both sides rather than
+# dropped. ADR-020 measured that roughly 19% of observed session time belongs to no execution,
+# so silently discarding it would flatter every arm and would misrepresent the reference.
+
+UNASSIGNED = "__unassigned__"
+
+
+def _stamp(points: Sequence[int], intervals: Sequence[Interval],
+           labels: Sequence[Any]) -> List[Any]:
+    """Label each point by its containing interval; UNASSIGNED where none contains it.
+
+    Intervals are assumed non-overlapping within a session (DATA_CONTRACT §6.4). Where they do
+    overlap, the earliest-starting one wins, deterministically.
+    """
+    order = sorted(range(len(intervals)), key=lambda i: (intervals[i][0], intervals[i][1]))
+    starts = [intervals[i][0] for i in order]
+    ends: List[int] = []
+    run = -(10 ** 18)
+    for i in order:                    # running max end, so one lookup settles containment
+        run = max(run, intervals[i][1])
+        ends.append(run)
+    out: List[Any] = []
+    for p in points:
+        j = bisect.bisect_right(starts, p) - 1
+        lab = UNASSIGNED
+        while j >= 0 and ends[j] >= p:
+            a, b = intervals[order[j]]
+            if a <= p <= b:
+                lab = labels[order[j]]
+                break
+            j -= 1
+        out.append(lab)
+    return out
+
+
+def pointwise_identity(ref_bundle: Dict[str, Any], hyp_bundle: Dict[str, Any],
+                       timelines: Dict[str, Sequence[int]], unit: str = "event",
+                       bin_ms: int = 1000) -> Dict[str, Any]:
+    """Granularity-fair identity: ARI / NMI / homogeneity / completeness over the WHOLE timeline.
+
+    `unit="event"` scores one point per retained event; `unit="time"` scores one point per
+    `bin_ms` of session span, so a slow execution is not out-weighed by a fast one with more
+    events. Both are reported; neither is a substitute for the other.
+
+    Returns the scores plus the coverage figures needed to read them: what fraction of points
+    the reference and the hypothesis each assign to any segment, and what fraction both assign.
+    ARI computed over a population that is 80% UNASSIGNED on one side is measuring coverage,
+    not identity, so the coverage numbers are not optional.
+    """
+    ref_pts: List[Any] = []
+    hyp_pts: List[Any] = []
+    for sid in sorted(set(ref_bundle) | set(hyp_bundle)):
+        tl = list(timelines.get(sid) or [])
+        if not tl:
+            continue
+        if unit == "event":
+            points: List[int] = tl
+        elif unit == "time":
+            lo, hi = tl[0], tl[-1]
+            n_bins = max(1, (hi - lo) // max(1, bin_ms))
+            points = [lo + k * bin_ms for k in range(int(n_bins) + 1)]
+        else:
+            raise ValueError(f"unknown unit {unit!r}; expected 'event' or 'time'")
+        r = ref_bundle.get(sid, {})
+        h = hyp_bundle.get(sid, {})
+        ref_pts += _stamp(points, list(r.get("intervals", [])), list(r.get("labels", [])))
+        hyp_pts += _stamp(points, list(h.get("intervals", [])), list(h.get("labels", [])))
+
+    if not ref_pts:
+        return {"unit": unit, "n": 0, "ari": None, "nmi": None,
+                "homogeneity": None, "completeness": None}
+    n = len(ref_pts)
+    r_cov = sum(1 for x in ref_pts if x != UNASSIGNED) / n
+    h_cov = sum(1 for x in hyp_pts if x != UNASSIGNED) / n
+    both = sum(1 for a, b in zip(ref_pts, hyp_pts)
+               if a != UNASSIGNED and b != UNASSIGNED) / n
+    out = identity_scores(ref_pts, hyp_pts)
+    out.update({"unit": unit, "bin_ms": bin_ms if unit == "time" else None,
+                "n_points": n,
+                "reference_coverage": round(r_cov, 4),
+                "hypothesis_coverage": round(h_cov, 4),
+                "both_assigned": round(both, 4),
+                "n_ref_labels": len(set(ref_pts)), "n_hyp_labels": len(set(hyp_pts)),
+                "_note": "100% of the timeline; unassigned points carry an explicit label "
+                         "(ADR-020: ~19% of session time belongs to no execution)"})
+    return out

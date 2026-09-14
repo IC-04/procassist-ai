@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 
 from . import normalise as N, blocks as B, tekg as G, context as C, schemas as S
 from . import candidates as CA
-from . import score as SC, gate as GA, decoder as DE, label as LB
+from . import score as SC, gate as GA, decoder as DE, label as LB, identity as ID
 
 log = logging.getLogger("procmine")
 
@@ -235,6 +235,41 @@ def thresholds_manifest(cfg_cand: Dict, cfg_gate: Dict, cfg_dec: Dict,
         "decoder.nms_window_ms": {
             "value": cfg_dec.get("nms_window_ms"), "tag": "a_fitted",
             "note": "0 — the duration floor already suppresses candidate clusters"},
+        # --- identity / labelling (S-E7 freeze). The view weighting is the one A->B transfer
+        #     here and is declared as such under the ADR-019 conditions: it is a structural,
+        #     domain-neutral choice over view families, and no A surface, route, origin, process
+        #     name, vocabulary item or cluster count crosses over. `k` is NOT transferred.
+        "label.weightings": {
+            "value": list(LB.DEFAULT_CFG.get("weightings") or []),
+            "tag": "a_fitted",
+            "note": "where_heavy. Selected on dataset_a, where the supervised probe measured "
+                    "WHERE at 0.851 accuracy against HOW at 0.256 (S-E6). Left to select "
+                    "itself, the unsupervised rule picks how_heavy on B's 183 executions and "
+                    "produces clusters whose members mostly do not share the cluster's own "
+                    "modal surface (0.32-0.52 vs 0.765). Declared A->B transfer, ADR-021 "
+                    "addendum. No A content crosses; only the choice of view family.",
+        },
+        "label.combine_mode": {
+            "value": list(LB.DEFAULT_CFG.get("modes") or []),
+            "tag": "a_fitted",
+            "note": "tiebreak. Above a saturated surface Jaccard the WHERE term carries no "
+                    "information and is discarded in favour of WHAT and sequence. The RULE is "
+                    "structural; it was validated on A (ARI 0.585 -> 0.681 at identical "
+                    "boundary F1 and match_rate). ADR-021 addendum.",
+        },
+        "identity.saturated_where": {
+            "value": ID.SATURATED_WHERE,
+            "tag": "structural",
+            "note": "0.95 — a property of the Jaccard statistic (near-identical sets carry no "
+                    "discriminating information), not a value fitted to A's content.",
+        },
+        "label.k": {
+            "value": None,
+            "tag": "structural",
+            "note": "NOT transferred, by construction. Louvain selects its own community count "
+                    "by modularity on whatever dataset is in front of it; A's 17 never reaches "
+                    "B, which selects 13 (ADR-010).",
+        },
         "gate.low": {"value": cfg_gate.get("low"),
                      "tag": "structural" if calibration == "percentile" else "a_fitted",
                      "note": ("confident non-boundary band edge; a percentile of the "

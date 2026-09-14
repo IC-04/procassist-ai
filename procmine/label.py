@@ -53,6 +53,13 @@ DEFAULT_CFG = {
     # structural and domain-neutral, no A surface, route, process name or cluster count crosses.
     # Set to None to sweep every weighting (the S-E6 behaviour).
     "weightings": ("where_heavy",),
+    # Combination mode, frozen at S-E7. `tiebreak` discards the WHERE term for pairs whose
+    # surface Jaccard is saturated (>= 0.95) and decides them on WHAT and sequence alone — the
+    # only views that can separate two executions with identical footprints, which S-E6b
+    # measured to be the whole residual. On dataset_a, at identical boundary F1 and match_rate:
+    # ARI 0.5852 -> 0.6814, NMI 0.696 -> 0.738, homogeneity 0.686 -> 0.751 AND completeness
+    # 0.707 -> 0.725, event-weighted ARI 0.267 -> 0.297. Label count 15 -> 17.
+    "modes": ("tiebreak",),
     # Distance below which two signatures are the same process, "structural" method only.
     # Structural: a similarity on shapes, not a value fitted to A's content.
     "merge_distance": 0.42,
@@ -256,7 +263,8 @@ def _graph_assign(segs: Sequence[Dict], rows_by_session: Dict[str, Sequence[Dict
                              blocks_by_session.get(s.get("session_id"), [])) for s in segs]
         sel = ID.select_config(reps, [s.get("session_id") for s in segs],
                                seed=int(cfg.get("seed", 7)),
-                               weightings=cfg.get("weightings"))
+                               weightings=cfg.get("weightings"),
+                               modes=cfg.get("modes", ID.COMBINE_MODES))
         S = ID.combine(sel.pop("_views"), ID.WEIGHT_GRID[sel["weights"]],
                        mode=sel.get("mode", "linear"))
         return ID.louvain(ID.knn_graph(S, k=sel["k_nn"]), seed=int(cfg.get("seed", 7)))

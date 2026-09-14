@@ -1,0 +1,137 @@
+{
+  "_status": "OBSERVATION ON DATASET B. No ground truth exists here: this records what the frozen system DOES, never that it is correct.",
+  "_why": "Dataset A contains 0 of 1,689 consecutive same-process pairs, so the case was untestable on the dataset every accuracy number comes from.",
+  "n_segments": 183,
+  "n_sessions": 15,
+  "n_consecutive_pairs": 168,
+  "n_consecutive_same_label": 67,
+  "rate": 0.3988,
+  "n_with_identical_surface_sets": 7,
+  "median_gap_ms_all_pairs": 9000,
+  "median_gap_ms_same_label": 7000,
+  "examples": [
+    {
+      "session_id": "ses_20260701-164424-CHAITANYA0BCF",
+      "label": "leave-applications-social-insurance__p00",
+      "gap_ms": 0,
+      "surface_jaccard": 0.5,
+      "identical_surface_sets": false,
+      "a": {
+        "start": "2026-07-01T16:50:38Z",
+        "end": "2026-07-01T16:51:05Z",
+        "surfaces": [
+          "app:Microsoft Word:keiyaku_kaijo_tetsuzuki [Compatibility Mode]",
+          "app:Microsoft Word:shinkui_keiyaku_tetsuzuki [Compatibility Mode]",
+          "app:Notepad:IT申請メモ"
+        ]
+      },
+      "b": {
+        "start": "2026-07-01T16:51:05Z",
+        "end": "2026-07-01T16:53:01Z",
+        "surfaces": [
+          "app:Microsoft Word:getsujitsu_teigaku_torihikisaki_ichiran [Compatibility Mode]",
+          "app:Microsoft Word:keiyaku_kaijo_tetsuzuki [Compatibility Mode]",
+          "app:Microsoft Word:shinkui_keiyaku_tetsuzuki [Compatibility Mode]"
+        ]
+      }
+    },
+    {
+      "session_id": "ses_20260701-164424-CHAITANYA0BCF",
+      "label": "leave-applications-social-insurance__p00",
+      "gap_ms": 8000,
+      "surface_jaccard": 0.571,
+      "identical_surface_sets": false,
+      "a": {
+        "start": "2026-07-01T16:51:05Z",
+        "end": "2026-07-01T16:53:01Z",
+        "surfaces": [
+          "app:Microsoft Word:getsujitsu_teigaku_torihikisaki_ichiran [Compatibility Mode]",
+          "app:Microsoft Word:keiyaku_kaijo_tetsuzuki [Compatibility Mode]",
+          "app:Microsoft Word:shinkui_keiyaku_tetsuzuki [Compatibility Mode]"
+        ]
+      },
+      "b": {
+        "start": "2026-07-01T16:53:09Z",
+        "end": "2026-07-01T16:55:09Z",
+        "surfaces": [
+          "app:Microsoft Word:getsujitsu_teigaku_torihikisaki_ichiran [Compatibility Mode]",
+          "app:Microsoft Word:keiyaku_kaijo_tetsuzuki [Compatibility Mode]",
+          "app:Microsoft Word:shinkui_keiyaku_tetsuzuki [Compatibility Mode]"
+        ]
+      }
+    },
+    {
+      "session_id": "ses_20260701-171614-CHAITANYA0BCF",
+      "label": "payroll-items__p05",
+      "gap_ms": 7000,
+      "surface_jaccard": 0.0,
+      "identical_surface_sets": false,
+      "a": {
+        "start": "2026-07-01T17:17:30Z",
+        "end": "2026-07-01T17:18:16Z",
+        "surfaces": [
+          "web:http://127.0.0.1:5132/payroll-items"
+        ]
+      },
+      "b": {
+        "start": "2026-07-01T17:18:23Z",
+        "end": "2026-07-01T17:19:07Z",
+        "surfaces": [
+          "app:Windows Explorer:File Explorer",
+          "app:Windows Explorer:Home",
+          "web:http://127.0.0.1:5134/payroll-items"
+        ]
+      }
+    },
+    {
+      "session_id": "ses_20260701-171614-CHAITANYA0BCF",
+      "label": "onboarding-social-insurance__p12",
+      "gap_ms": 21000,
+      "surface_jaccard": 0.286,
+      "identical_surface_sets": false,
+      "a": {
+        "start": "2026-07-01T17:19:54Z",
+        "end": "2026-07-01T17:20:36Z",
+        "surfaces": [
+          "app:Microsoft Excel:Opening",
+          "app:Microsoft Excel:budget_analysis",
+          "app:Microsoft Word:Resume Reading"
+        ]
+      },
+      "b": {
+        "start": "2026-07-01T17:20:57Z",
+        "end": "2026-07-01T17:21:18Z",
+        "surfaces": [
+          "app:Microsoft Excel:Opening",
+          "app:Microsoft Excel:budget_analysis",
+          "web:http://127.0.0.1:5133/social-insurance"
+        ]
+      }
+    },
+    {
+      "session_id": "ses_20260701-171614-CHAITANYA0BCF",
+      "label": "onboarding-social-insurance__p12",
+      "gap_ms": 23000,
+      "surface_jaccard": 1.0,
+      "identical_surface_sets": true,
+      "a": {
+        "start": "2026-07-01T17:20:57Z",
+        "end": "2026-07-01T17:21:18Z",
+        "surfaces": [
+          "app:Microsoft Excel:Opening",
+          "app:Microsoft Excel:budget_analysis",
+          "web:http://127.0.0.1:5133/social-insurance"
+        ]
+      },
+      "b": {
+        "start": "2026-07-01T17:21:41Z",
+        "end": "2026-07-01T17:22:05Z",
+        "surfaces": [
+          "app:Microsoft Excel:Opening",
+          "app:Microsoft Excel:budget_analysis",
+          "web:http://127.0.0.1:5133/social-insurance"
+        ]
+      }
+    }
+  ]
+}
