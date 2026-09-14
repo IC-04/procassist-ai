@@ -29,8 +29,24 @@ CLIPBOARD = ("clipboard_change",)
 FORM = ("browser_form_input", "shortcut")
 
 DEFAULT_CFG = {
-    # Distance below which two signatures are the same process. Structural: it is a similarity
-    # on shapes, not a value fitted to A's content.
+    # Grouping method. "graph" is the shipped default from S-E6 (ADR-021): the three-view
+    # representation of `identity.py`, a weighted similarity, a kNN graph and Louvain, with
+    # the weighting and graph `k` selected unsupervised by stability x cross-session reuse.
+    # "structural" is the Phase E single-pass medoid labeller, kept as the control arm the
+    # decision was measured against and as the fallback when the optional numeric stack is
+    # absent. Measured on dataset_a over the frozen S-E4 segmentation, at identical boundary
+    # F1 (0.6904 at tau=2 s) and identical match_rate (0.760):
+    #
+    #     arm          ARI     NMI     hom     cmp     labels   interruption_recall
+    #     structural   0.4307  0.5625  0.6215  0.5137  51       0.1224
+    #     graph        0.5831  0.6880  0.6788  0.6975  15       0.3367
+    #
+    # The interruption figure must be read with the label count: 15 labels raise it partly by
+    # being coarser. Homogeneity and completeness are reported because ARI alone cannot tell
+    # over-merging from over-splitting, and here both rise.
+    "method": "graph",
+    # Distance below which two signatures are the same process, "structural" method only.
+    # Structural: a similarity on shapes, not a value fitted to A's content.
     "merge_distance": 0.42,
     "min_cluster": 2,            # a singleton is still labelled, just not merged
     "k_stability_trials": 5,     # perturbation trials when selecting k
@@ -212,6 +228,32 @@ def choose_k(sigs: Sequence[Dict], sessions: Optional[Sequence[str]] = None,
                     "cross_session_rate": None, "objective": None}
 
 
+def _graph_assign(segs: Sequence[Dict], rows_by_session: Dict[str, Sequence[Dict]],
+                  blocks_by_session: Dict[str, Sequence[Dict]],
+                  cfg: Dict) -> Optional[List[int]]:
+    """The S-E6 grouping (ADR-021): three-view representation -> similarity -> kNN graph ->
+    Louvain, with the configuration selected unsupervised on THIS dataset.
+
+    Returns `None` — and the caller falls back to the structural labeller — if the optional
+    numeric stack is unavailable. Nothing here reads a ground-truth field, and `k` is never a
+    parameter: Louvain selects the community count itself, which is what makes the same code
+    run on Dataset B without A's `k` transferring (ADR-010).
+    """
+    try:
+        from . import identity as ID
+    except ImportError:
+        return None
+    try:
+        reps = [ID.represent(s, rows_by_session.get(s.get("session_id"), []),
+                             blocks_by_session.get(s.get("session_id"), [])) for s in segs]
+        sel = ID.select_config(reps, [s.get("session_id") for s in segs],
+                               seed=int(cfg.get("seed", 7)))
+        S = ID.combine(sel.pop("_views"), ID.WEIGHT_GRID[sel["weights"]])
+        return ID.louvain(ID.knn_graph(S, k=sel["k_nn"]), seed=int(cfg.get("seed", 7)))
+    except ImportError:
+        return None
+
+
 def label_segments(segments: Sequence[Dict], rows_by_session: Dict[str, Sequence[Dict]],
                    blocks_by_session: Dict[str, Sequence[Dict]],
                    cfg: Optional[Dict] = None) -> List[Dict]:
@@ -227,9 +269,13 @@ def label_segments(segments: Sequence[Dict], rows_by_session: Dict[str, Sequence
         return []
     sigs = [signature(s, rows_by_session.get(s.get("session_id"), []),
                       blocks_by_session.get(s.get("session_id"), [])) for s in segs]
-    sel = (choose_k(sigs, [s.get("session_id") for s in segs], c) if len(sigs) > 3
-           else {"merge_distance": c["merge_distance"]})
-    assign = _cluster(sigs, sel["merge_distance"])
+    assign = None
+    if c.get("method") == "graph" and len(segs) > 3:
+        assign = _graph_assign(segs, rows_by_session, blocks_by_session, c)
+    if assign is None:
+        sel = (choose_k(sigs, [s.get("session_id") for s in segs], c) if len(sigs) > 3
+               else {"merge_distance": c["merge_distance"]})
+        assign = _cluster(sigs, sel["merge_distance"])
 
     # name each cluster from its FIRST member, so names are stable under re-runs
     first: Dict[int, int] = {}

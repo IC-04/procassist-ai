@@ -1,0 +1,2097 @@
+{
+  "frozen": {
+    "n_segments": 1717,
+    "boundary_time": {
+      "1000": {
+        "precision": 0.5344,
+        "recall": 0.5515,
+        "f1": 0.5428,
+        "tp": 1835,
+        "fp": 1599,
+        "fn": 1492
+      },
+      "2000": {
+        "precision": 0.6797,
+        "recall": 0.7015,
+        "f1": 0.6904,
+        "tp": 2334,
+        "fp": 1100,
+        "fn": 993
+      },
+      "5000": {
+        "precision": 0.7289,
+        "recall": 0.7523,
+        "f1": 0.7404,
+        "tp": 2503,
+        "fp": 931,
+        "fn": 824
+      },
+      "10000": {
+        "precision": 0.7813,
+        "recall": 0.8064,
+        "f1": 0.7937,
+        "tp": 2683,
+        "fp": 751,
+        "fn": 644
+      }
+    },
+    "count_ratio": 0.98
+  },
+  "audit": {
+    "n_executions": 1717,
+    "where": {
+      "dim_surfaces": 116,
+      "dim_routes": 31,
+      "dim_bigrams": 825,
+      "mean_surfaces_per_exec": 2.51,
+      "sparsity": 0.9783,
+      "coverage": 1.0
+    },
+    "how": {
+      "dim": 20,
+      "mean_nonzero": 15.4,
+      "sparsity": 0.2301,
+      "coverage": 1.0
+    },
+    "what": {
+      "mean_chars": 187.6,
+      "coverage": 1.0,
+      "note": "char 2-3-gram TF-IDF; extracted_text not exposed by the frozen normalise record and therefore absent"
+    }
+  },
+  "examples": [
+    {
+      "session_id": "ses_20260630-121953-LAPTOP-R36BQBTE",
+      "start_ms": 1782822002290,
+      "n_events": 29,
+      "n_blocks": 6,
+      "WHERE": {
+        "surface_shape": [
+          "app:WindowsTerminal:Theme M1 - Mixed Multi-Domain (HR / Finance / Ops)",
+          "app:Notepad:Notepad",
+          "app:Notepad:SETUP.md",
+          "web:http://127.0.0.1:5122/",
+          "app:Microsoft Excel:Opening",
+          "app:Microsoft Excel:m1_reference"
+        ],
+        "routes": [
+          "/"
+        ],
+        "origins": [
+          "http://127.0.0.1:5122"
+        ],
+        "apps": [
+          "Google Chrome",
+          "Microsoft Excel",
+          "Notepad",
+          "WindowsTerminal"
+        ]
+      },
+      "HOW": {
+        "p_typing": 0.138,
+        "p_pointing": 0.0,
+        "p_navigating": 0.517,
+        "p_clipboard": 0.0,
+        "p_form": 0.0,
+        "p_shortcut": 0.0,
+        "p_dialog": 0.0,
+        "p_scroll": 0.0,
+        "p_drag": 0.0,
+        "p_title_change": 0.103,
+        "rate_events_per_min": 24.527,
+        "rate_app_switch_per_min": 10.149,
+        "rate_nav_per_min": 0.0,
+        "blocks_per_min": 5.075,
+        "surface_switch_rate": 0.833,
+        "revisit_ratio": 0.0,
+        "log_gap_p50": 4.934,
+        "log_gap_p90": 7.529,
+        "burstiness": 3.988,
+        "log_duration": 4.276
+      },
+      "WHAT": "Theme M1 - Mixed Multi-Domain (HR / Finance / Ops) b5c02ccf4c454d125778876ed1a15bd2 Notepad SETUP.md Untitled Opening m1_reference"
+    },
+    {
+      "session_id": "ses_20260701-072319-MSI",
+      "start_ms": 1782891029424,
+      "n_events": 29,
+      "n_blocks": 2,
+      "WHERE": {
+        "surface_shape": [
+          "web:http://127.0.0.1:5124/social-insurance",
+          "app:Notepad:Untitled"
+        ],
+        "routes": [
+          "/social-insurance"
+        ],
+        "origins": [
+          "http://127.0.0.1:5124"
+        ],
+        "apps": [
+          "Google Chrome",
+          "Notepad"
+        ]
+      },
+      "HOW": {
+        "p_typing": 0.276,
+        "p_pointing": 0.103,
+        "p_navigating": 0.138,
+        "p_clipboard": 0.103,
+        "p_form": 0.0,
+        "p_shortcut": 0.138,
+        "p_dialog": 0.0,
+        "p_scroll": 0.034,
+        "p_drag": 0.0,
+        "p_title_change": 0.0,
+        "rate_events_per_min": 59.812,
+        "rate_app_switch_per_min": 6.187,
+        "rate_nav_per_min": 2.062,
+        "blocks_per_min": 4.125,
+        "surface_switch_rate": 0.5,
+        "revisit_ratio": 0.0,
+        "log_gap_p50": 4.143,
+        "log_gap_p90": 8.018,
+        "burstiness": 2.988,
+        "log_duration": 3.404
+      },
+      "WHAT": "受発注在庫管理システム c86a8ea22b8196ffa2cf603eef48f612 Untitled 29fe404182da6523208887640ced599f"
+    },
+    {
+      "session_id": "ses_20260701-172430-yuvraj",
+      "start_ms": 1782927785018,
+      "n_events": 61,
+      "n_blocks": 6,
+      "WHERE": {
+        "surface_shape": [
+          "web:http://127.0.0.1:5124/payroll-items",
+          "web:http://127.0.0.1:5123/social-insurance",
+          "app:Microsoft PowerPoint:Budget_Report - Protected View",
+          "web:http://127.0.0.1:5123/social-insurance",
+          "web:http://127.0.0.1:5122/dashboard",
+          "web:http://127.0.0.1:5123/dashboard"
+        ],
+        "routes": [
+          "/dashboard",
+          "/payroll-items",
+          "/social-insurance"
+        ],
+        "origins": [
+          "http://127.0.0.1:5122",
+          "http://127.0.0.1:5123",
+          "http://127.0.0.1:5124"
+        ],
+        "apps": [
+          "Google Chrome",
+          "Microsoft PowerPoint"
+        ]
+      },
+      "HOW": {
+        "p_typing": 0.049,
+        "p_pointing": 0.115,
+        "p_navigating": 0.557,
+        "p_clipboard": 0.049,
+        "p_form": 0.016,
+        "p_shortcut": 0.016,
+        "p_dialog": 0.0,
+        "p_scroll": 0.016,
+        "p_drag": 0.0,
+        "p_title_change": 0.0,
+        "rate_events_per_min": 56.289,
+        "rate_app_switch_per_min": 29.528,
+        "rate_nav_per_min": 1.846,
+        "blocks_per_min": 5.537,
+        "surface_switch_rate": 0.833,
+        "revisit_ratio": 0.167,
+        "log_gap_p50": 4.007,
+        "log_gap_p90": 7.624,
+        "burstiness": 3.806,
+        "log_duration": 4.19
+      },
+      "WHAT": "受発注在庫管理システム 調整内容・差異原因を入力してください… btn-pi-register pi-note 815097e21af2c25486a19d041a803080 財務会計システム Budget_Report - Protected View 差異要因・是正措置・部門共有内容を入力してください… btn-si-complete si-note 545f357411dd642d981db040bfef533c"
+    }
+  ],
+  "similarity_grid": {
+    "uniform": {
+      "weights": {
+        "where": 0.25,
+        "how": 0.25,
+        "what": 0.25,
+        "seq": 0.25
+      },
+      "mean": 0.1111,
+      "p50": 0.0755,
+      "p95": 0.3146,
+      "p99": 0.4808
+    },
+    "where_heavy": {
+      "weights": {
+        "where": 0.5,
+        "how": 0.1,
+        "what": 0.2,
+        "seq": 0.2
+      },
+      "mean": 0.1086,
+      "p50": 0.0766,
+      "p95": 0.324,
+      "p99": 0.4926
+    },
+    "what_heavy": {
+      "weights": {
+        "where": 0.15,
+        "how": 0.15,
+        "what": 0.55,
+        "seq": 0.15
+      },
+      "mean": 0.1142,
+      "p50": 0.0874,
+      "p95": 0.2892,
+      "p99": 0.4372
+    },
+    "how_heavy": {
+      "weights": {
+        "where": 0.15,
+        "how": 0.55,
+        "what": 0.15,
+        "seq": 0.15
+      },
+      "mean": 0.1288,
+      "p50": 0.0677,
+      "p95": 0.4306,
+      "p99": 0.5794
+    },
+    "balanced": {
+      "weights": {
+        "where": 0.3,
+        "how": 0.2,
+        "what": 0.3,
+        "seq": 0.2
+      },
+      "mean": 0.1125,
+      "p50": 0.0812,
+      "p95": 0.3101,
+      "p99": 0.4694
+    }
+  },
+  "ceiling_merge_only": {
+    "_bounds": "RELABELLING ONLY — membership fixed. Re-clustering arms are not bounded by this row and may exceed it.",
+    "n_matched": 1332,
+    "n_reference_codes": 15,
+    "n_predicted_labels": 41,
+    "ari": 0.4776,
+    "nmi": 0.5577,
+    "homogeneity": 0.5529,
+    "completeness": 0.5627,
+    "reference_codes_split_across_labels": 15,
+    "predicted_labels_impure": 37,
+    "impure_membership_share": 0.3018
+  },
+  "ceiling_supervised_probe": {
+    "_status": "DIAGNOSTIC ONLY — supervised, LOSO by session. An upper bound on any unsupervised method over this representation. Never runs on Dataset B.",
+    "per_view": {
+      "WHERE": {
+        "accuracy": 0.8514,
+        "macro_f1": 0.8468,
+        "ari": 0.7196,
+        "nmi": 0.7532,
+        "n_classes": 15,
+        "n": 1332
+      },
+      "HOW": {
+        "accuracy": 0.256,
+        "macro_f1": 0.2158,
+        "ari": 0.1411,
+        "nmi": 0.2698,
+        "n_classes": 15,
+        "n": 1332
+      },
+      "WHAT": {
+        "accuracy": 0.741,
+        "macro_f1": 0.7344,
+        "ari": 0.5348,
+        "nmi": 0.6109,
+        "n_classes": 15,
+        "n": 1332
+      },
+      "ALL": {
+        "accuracy": 0.8911,
+        "macro_f1": 0.8875,
+        "ari": 0.7862,
+        "nmi": 0.8049,
+        "n_classes": 15,
+        "n": 1332
+      }
+    }
+  },
+  "segmentation_inherited": {
+    "_status": "DIAGNOSTIC ONLY — clustering run on GT SEGMENTS, never shipped.",
+    "n_gt_segments": 1752,
+    "n_clusters": 27,
+    "ari": 0.4269,
+    "nmi": 0.6253,
+    "homogeneity": 0.6558,
+    "completeness": 0.5975,
+    "match_rate": 1.0,
+    "_match_rate_note": "1.0 by construction — the segments ARE the reference intervals"
+  },
+  "unsupervised_selection": {
+    "_rule": "modularity x cross-session reuse, both unsupervised. Chosen BEFORE any GT comparison. Reference process codes never enter the similarity or this rule.",
+    "grid": [
+      {
+        "weights": "how_heavy",
+        "k_nn": 5,
+        "n_clusters": 24,
+        "modularity": 0.8669,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0879,
+        "singletons": 0,
+        "density": 0.00404,
+        "components": 2,
+        "objective": 0.8669
+      },
+      {
+        "weights": "uniform",
+        "k_nn": 5,
+        "n_clusters": 29,
+        "modularity": 0.8667,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1083,
+        "singletons": 0,
+        "density": 0.00414,
+        "components": 1,
+        "objective": 0.8667
+      },
+      {
+        "weights": "balanced",
+        "k_nn": 5,
+        "n_clusters": 28,
+        "modularity": 0.8622,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0681,
+        "singletons": 0,
+        "density": 0.00413,
+        "components": 1,
+        "objective": 0.8622
+      },
+      {
+        "weights": "where_heavy",
+        "k_nn": 5,
+        "n_clusters": 35,
+        "modularity": 0.8859,
+        "cross_session_reuse": 0.9714,
+        "largest_share": 0.0629,
+        "singletons": 0,
+        "density": 0.00414,
+        "components": 2,
+        "objective": 0.8605
+      },
+      {
+        "weights": "where_heavy",
+        "k_nn": 10,
+        "n_clusters": 22,
+        "modularity": 0.8444,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0734,
+        "singletons": 0,
+        "density": 0.00818,
+        "components": 1,
+        "objective": 0.8444
+      },
+      {
+        "weights": "uniform",
+        "k_nn": 10,
+        "n_clusters": 22,
+        "modularity": 0.8264,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0909,
+        "singletons": 0,
+        "density": 0.00809,
+        "components": 1,
+        "objective": 0.8264
+      },
+      {
+        "weights": "balanced",
+        "k_nn": 10,
+        "n_clusters": 22,
+        "modularity": 0.8209,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0961,
+        "singletons": 0,
+        "density": 0.00812,
+        "components": 1,
+        "objective": 0.8209
+      },
+      {
+        "weights": "how_heavy",
+        "k_nn": 10,
+        "n_clusters": 18,
+        "modularity": 0.8175,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1485,
+        "singletons": 0,
+        "density": 0.00782,
+        "components": 1,
+        "objective": 0.8175
+      },
+      {
+        "weights": "where_heavy",
+        "k_nn": 20,
+        "n_clusters": 15,
+        "modularity": 0.8022,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1497,
+        "singletons": 0,
+        "density": 0.01606,
+        "components": 1,
+        "objective": 0.8022
+      },
+      {
+        "weights": "what_heavy",
+        "k_nn": 5,
+        "n_clusters": 31,
+        "modularity": 0.8366,
+        "cross_session_reuse": 0.9355,
+        "largest_share": 0.081,
+        "singletons": 0,
+        "density": 0.0041,
+        "components": 1,
+        "objective": 0.7826
+      },
+      {
+        "weights": "uniform",
+        "k_nn": 20,
+        "n_clusters": 18,
+        "modularity": 0.7798,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0914,
+        "singletons": 0,
+        "density": 0.01559,
+        "components": 1,
+        "objective": 0.7798
+      },
+      {
+        "weights": "balanced",
+        "k_nn": 20,
+        "n_clusters": 17,
+        "modularity": 0.7769,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1334,
+        "singletons": 0,
+        "density": 0.01571,
+        "components": 1,
+        "objective": 0.7769
+      },
+      {
+        "weights": "what_heavy",
+        "k_nn": 10,
+        "n_clusters": 20,
+        "modularity": 0.7748,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.12,
+        "singletons": 0,
+        "density": 0.00798,
+        "components": 1,
+        "objective": 0.7748
+      },
+      {
+        "weights": "how_heavy",
+        "k_nn": 20,
+        "n_clusters": 15,
+        "modularity": 0.7648,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1008,
+        "singletons": 0,
+        "density": 0.01519,
+        "components": 1,
+        "objective": 0.7648
+      },
+      {
+        "weights": "what_heavy",
+        "k_nn": 20,
+        "n_clusters": 13,
+        "modularity": 0.7217,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1345,
+        "singletons": 0,
+        "density": 0.01528,
+        "components": 1,
+        "objective": 0.7217
+      }
+    ]
+  },
+  "chosen_config": {
+    "weights": "how_heavy",
+    "k_nn": 5,
+    "n_clusters": 24,
+    "modularity": 0.8669,
+    "cross_session_reuse": 1.0,
+    "largest_share": 0.0879,
+    "singletons": 0,
+    "density": 0.00404,
+    "components": 2,
+    "objective": 0.8669
+  },
+  "k_selection_silhouette": {
+    "grid": {
+      "15": 0.1413,
+      "30": 0.1506,
+      "60": 0.1349,
+      "120": 0.1188
+    },
+    "chosen_k": 30,
+    "_note": "silhouette on the precomputed (1-S) distance; unsupervised, runs identically on B"
+  },
+  "graphs": {
+    "kNN k=5": {
+      "nodes": 1717,
+      "edges": 5953,
+      "density": 0.00404,
+      "degree_min": 5,
+      "degree_p50": 6,
+      "degree_mean": 6.93,
+      "degree_max": 21,
+      "isolates": 0,
+      "components": 2
+    },
+    "mutual-kNN k=5": {
+      "nodes": 1717,
+      "edges": 2632,
+      "density": 0.00179,
+      "degree_min": 0,
+      "degree_p50": 3,
+      "degree_mean": 3.07,
+      "degree_max": 5,
+      "isolates": 89,
+      "components": 164
+    },
+    "threshold S>0.637 (p99.5)": {
+      "nodes": 1717,
+      "edges": 7366,
+      "density": 0.005,
+      "degree_min": 0,
+      "degree_p50": 6,
+      "degree_mean": 8.58,
+      "degree_max": 48,
+      "isolates": 210,
+      "components": 253
+    }
+  },
+  "arms": [
+    {
+      "arm": "S-E4 structural (control)",
+      "n_labels": 51,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.4307,
+      "nmi": 0.5625,
+      "homogeneity": 0.6215,
+      "completeness": 0.5137,
+      "match_rate": 0.7603,
+      "n_matched": 1332,
+      "interruption_recall": 0.1224,
+      "cross_session_reuse": 0.902,
+      "mean_sessions_per_label": 15.1,
+      "singleton_labels": 4,
+      "largest_label_share": 0.0775,
+      "runtime_s": 87.3,
+      "deterministic": true,
+      "k_selection": "threshold sweep, stability x cross-session reuse"
+    },
+    {
+      "arm": "k-means (k=30, vector space)",
+      "n_labels": 30,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.2215,
+      "nmi": 0.4436,
+      "homogeneity": 0.487,
+      "completeness": 0.4074,
+      "match_rate": 0.7603,
+      "n_matched": 1332,
+      "interruption_recall": 0.102,
+      "cross_session_reuse": 1.0,
+      "mean_sessions_per_label": 28.63,
+      "singleton_labels": 0,
+      "largest_label_share": 0.0856,
+      "runtime_s": 15.5,
+      "deterministic": true,
+      "k_selection": "silhouette over a fixed grid — NOT self-selecting",
+      "_note": "S is a weighted sum of similarities and is not a proper metric, so k-means runs on the vector space, not on S"
+    },
+    {
+      "arm": "agglomerative average (k=30)",
+      "n_labels": 30,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.1087,
+      "nmi": 0.2535,
+      "homogeneity": 0.2496,
+      "completeness": 0.2575,
+      "match_rate": 0.7603,
+      "n_matched": 1332,
+      "interruption_recall": 0.1735,
+      "cross_session_reuse": 0.9,
+      "mean_sessions_per_label": 21.93,
+      "singleton_labels": 1,
+      "largest_label_share": 0.1299,
+      "runtime_s": 0.4,
+      "deterministic": true,
+      "k_selection": "silhouette over a fixed grid — NOT self-selecting"
+    },
+    {
+      "arm": "agglomerative complete (k=30)",
+      "n_labels": 30,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.1221,
+      "nmi": 0.2852,
+      "homogeneity": 0.2999,
+      "completeness": 0.2719,
+      "match_rate": 0.7603,
+      "n_matched": 1332,
+      "interruption_recall": 0.0918,
+      "cross_session_reuse": 1.0,
+      "mean_sessions_per_label": 28.03,
+      "singleton_labels": 0,
+      "largest_label_share": 0.1095,
+      "runtime_s": 0.0,
+      "deterministic": true,
+      "k_selection": "silhouette over a fixed grid — NOT self-selecting"
+    },
+    {
+      "arm": "DBSCAN (eps=0.3, min_samples=3)",
+      "n_labels": 643,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.1632,
+      "nmi": 0.5363,
+      "homogeneity": 0.7287,
+      "completeness": 0.4243,
+      "match_rate": 0.7603,
+      "n_matched": 1332,
+      "interruption_recall": 0.0714,
+      "cross_session_reuse": 0.0871,
+      "mean_sessions_per_label": 1.84,
+      "singleton_labels": 585,
+      "largest_label_share": 0.1468,
+      "runtime_s": 0.0,
+      "deterministic": true,
+      "k_selection": "self-selecting, but density-based",
+      "noise_points": 585
+    },
+    {
+      "arm": "DBSCAN (eps=0.45, min_samples=3)",
+      "n_labels": 35,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": -0.0005,
+      "nmi": 0.0274,
+      "homogeneity": 0.0145,
+      "completeness": 0.2658,
+      "match_rate": 0.7603,
+      "n_matched": 1332,
+      "interruption_recall": 0.8571,
+      "cross_session_reuse": 0.1429,
+      "mean_sessions_per_label": 3.54,
+      "singleton_labels": 29,
+      "largest_label_share": 0.9604,
+      "runtime_s": 0.0,
+      "deterministic": true,
+      "k_selection": "self-selecting, but density-based",
+      "noise_points": 29
+    },
+    {
+      "arm": "graph kNN(k=5) + Louvain",
+      "n_labels": 24,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.2036,
+      "nmi": 0.4067,
+      "homogeneity": 0.4253,
+      "completeness": 0.3897,
+      "match_rate": 0.7603,
+      "n_matched": 1332,
+      "interruption_recall": 0.102,
+      "cross_session_reuse": 1.0,
+      "mean_sessions_per_label": 32.04,
+      "singleton_labels": 0,
+      "largest_label_share": 0.0879,
+      "runtime_s": 0.2,
+      "deterministic": true,
+      "k_selection": "SELF-SELECTING (modularity)",
+      "modularity": 0.8669
+    },
+    {
+      "arm": "graph mutual-kNN(k=5) + Louvain",
+      "n_labels": 190,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.1676,
+      "nmi": 0.5188,
+      "homogeneity": 0.6704,
+      "completeness": 0.4231,
+      "match_rate": 0.7603,
+      "n_matched": 1332,
+      "interruption_recall": 0.0612,
+      "cross_session_reuse": 0.4737,
+      "mean_sessions_per_label": 6.11,
+      "singleton_labels": 89,
+      "largest_label_share": 0.0384,
+      "runtime_s": 0.2,
+      "deterministic": true,
+      "k_selection": "SELF-SELECTING (modularity)"
+    },
+    {
+      "arm": "graph threshold(p99.5) + components",
+      "n_labels": 253,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.0005,
+      "nmi": 0.2199,
+      "homogeneity": 0.1635,
+      "completeness": 0.3358,
+      "match_rate": 0.7603,
+      "n_matched": 1332,
+      "interruption_recall": 0.4898,
+      "cross_session_reuse": 0.1423,
+      "mean_sessions_per_label": 1.65,
+      "singleton_labels": 210,
+      "largest_label_share": 0.7793,
+      "runtime_s": 0.0,
+      "deterministic": true,
+      "k_selection": "SELF-SELECTING (components)",
+      "threshold": 0.6368
+    },
+    {
+      "arm": "graph threshold(p99.5) + Louvain",
+      "n_labels": 275,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.2249,
+      "nmi": 0.4868,
+      "homogeneity": 0.5773,
+      "completeness": 0.4208,
+      "match_rate": 0.7603,
+      "n_matched": 1332,
+      "interruption_recall": 0.0408,
+      "cross_session_reuse": 0.2109,
+      "mean_sessions_per_label": 3.63,
+      "singleton_labels": 210,
+      "largest_label_share": 0.0879,
+      "runtime_s": 0.1,
+      "deterministic": true,
+      "k_selection": "SELF-SELECTING (modularity)"
+    },
+    {
+      "arm": "spectral (k=30, precomputed affinity)",
+      "n_labels": 30,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.1717,
+      "nmi": 0.3537,
+      "homogeneity": 0.3857,
+      "completeness": 0.3266,
+      "match_rate": 0.7603,
+      "n_matched": 1332,
+      "interruption_recall": 0.0918,
+      "cross_session_reuse": 1.0,
+      "mean_sessions_per_label": 28.77,
+      "singleton_labels": 0,
+      "largest_label_share": 0.0798,
+      "runtime_s": 0.3,
+      "deterministic": true,
+      "k_selection": "silhouette over a fixed grid — NOT self-selecting"
+    }
+  ],
+  "contract_boundary_f1": {
+    "frozen": {
+      "1000": 0.5428,
+      "2000": 0.6904,
+      "5000": 0.7404,
+      "10000": 0.7937
+    },
+    "identical_on_every_arm": true,
+    "violations": []
+  },
+  "graph_inspection": [
+    {
+      "community": 0,
+      "size": 151,
+      "sessions": 52,
+      "top_surfaces": [
+        [
+          "app:Notepad:Untitled",
+          101
+        ],
+        [
+          "web:http://127.0.0.1:5123/resident-tax",
+          43
+        ],
+        [
+          "web:http://127.0.0.1:5122/resident-tax",
+          36
+        ],
+        [
+          "web:http://127.0.0.1:5122/onboarding",
+          29
+        ],
+        [
+          "web:http://127.0.0.1:5124/onboarding",
+          26
+        ]
+      ],
+      "top_routes": [
+        [
+          "/resident-tax",
+          86
+        ],
+        [
+          "/onboarding",
+          59
+        ],
+        [
+          "/leave-applications",
+          42
+        ],
+        [
+          "/payroll-items",
+          27
+        ],
+        [
+          "/social-insurance",
+          10
+        ]
+      ],
+      "mean_how": {
+        "p_typing": 0.228,
+        "p_pointing": 0.08,
+        "p_navigating": 0.367,
+        "p_form": 0.011,
+        "rate_events_per_min": 200.749,
+        "log_duration": 3.35
+      },
+      "top_what_tokens": [
+        [
+          "Untitled",
+          101
+        ],
+        [
+          "財務会計システム",
+          88
+        ],
+        [
+          "rt-note",
+          85
+        ],
+        [
+          "HR人事給与システム",
+          80
+        ],
+        [
+          "btn-rt-confirm",
+          68
+        ],
+        [
+          "受発注在庫管理システム",
+          60
+        ],
+        [
+          "ob-note",
+          58
+        ],
+        [
+          "照合内容・承認コメントを入力してください…",
+          43
+        ]
+      ],
+      "reference_codes_inside": [
+        [
+          "F",
+          29
+        ],
+        [
+          "A",
+          25
+        ],
+        [
+          "E",
+          22
+        ],
+        [
+          "H",
+          19
+        ],
+        [
+          "K",
+          19
+        ],
+        [
+          "O",
+          15
+        ]
+      ],
+      "n_distinct_surfaces": 35,
+      "n_distinct_routes": 8,
+      "example_segments": [
+        {
+          "session_id": "ses_20260630-124826-CHAITANYA0BCF",
+          "start_ms": 1782824227797,
+          "surfaces": [
+            "web:http://127.0.0.1:5123/resident-tax",
+            "app:Notepad:Untitled",
+            "web:http://127.0.0.1:5123/resident-tax"
+          ]
+        },
+        {
+          "session_id": "ses_20260630-124826-CHAITANYA0BCF",
+          "start_ms": 1782824437459,
+          "surfaces": [
+            "web:http://127.0.0.1:5123/resident-tax",
+            "app:Notepad:Untitled",
+            "web:http://127.0.0.1:5123/resident-tax"
+          ]
+        },
+        {
+          "session_id": "ses_20260630-124826-CHAITANYA0BCF",
+          "start_ms": 1782824638755,
+          "surfaces": [
+            "web:http://127.0.0.1:5122/resident-tax",
+            "app:Notepad:Untitled",
+            "web:http://127.0.0.1:5122/resident-tax"
+          ]
+        }
+      ]
+    },
+    {
+      "community": 1,
+      "size": 149,
+      "sessions": 53,
+      "top_surfaces": [
+        [
+          "web:http://127.0.0.1:5123/resident-tax",
+          38
+        ],
+        [
+          "web:http://127.0.0.1:5122/resident-tax",
+          37
+        ],
+        [
+          "web:http://127.0.0.1:5123/payroll-items",
+          30
+        ],
+        [
+          "web:http://127.0.0.1:5124/payroll-items",
+          29
+        ],
+        [
+          "web:http://127.0.0.1:5122/payroll-items",
+          23
+        ]
+      ],
+      "top_routes": [
+        [
+          "/resident-tax",
+          80
+        ],
+        [
+          "/payroll-items",
+          68
+        ],
+        [
+          "/onboarding",
+          41
+        ],
+        [
+          "/social-insurance",
+          30
+        ],
+        [
+          "/leave-applications",
+          28
+        ]
+      ],
+      "mean_how": {
+        "p_typing": 0.244,
+        "p_pointing": 0.089,
+        "p_navigating": 0.331,
+        "p_form": 0.013,
+        "rate_events_per_min": 183.635,
+        "log_duration": 3.293
+      },
+      "top_what_tokens": [
+        [
+          "財務会計システム",
+          102
+        ],
+        [
+          "HR人事給与システム",
+          91
+        ],
+        [
+          "受発注在庫管理システム",
+          82
+        ],
+        [
+          "rt-note",
+          79
+        ],
+        [
+          "btn-pi-register",
+          66
+        ],
+        [
+          "pi-note",
+          66
+        ],
+        [
+          "btn-rt-confirm",
+          62
+        ],
+        [
+          "処理内容・確認コメントを入力してください…",
+          47
+        ]
+      ],
+      "reference_codes_inside": [
+        [
+          "A",
+          28
+        ],
+        [
+          "F",
+          23
+        ],
+        [
+          "G",
+          21
+        ],
+        [
+          "L",
+          18
+        ],
+        [
+          "B",
+          12
+        ],
+        [
+          "O",
+          12
+        ]
+      ],
+      "n_distinct_surfaces": 22,
+      "n_distinct_routes": 5,
+      "example_segments": [
+        {
+          "session_id": "ses_20260630-124826-CHAITANYA0BCF",
+          "start_ms": 1782823995223,
+          "surfaces": [
+            "app:Notepad:Untitled",
+            "web:http://127.0.0.1:5124/payroll-items"
+          ]
+        },
+        {
+          "session_id": "ses_20260630-124826-CHAITANYA0BCF",
+          "start_ms": 1782824087478,
+          "surfaces": [
+            "web:http://127.0.0.1:5123/payroll-items",
+            "web:http://127.0.0.1:5124/payroll-items"
+          ]
+        },
+        {
+          "session_id": "ses_20260630-124826-CHAITANYA0BCF",
+          "start_ms": 1782824257181,
+          "surfaces": [
+            "web:http://127.0.0.1:5123/resident-tax",
+            "web:http://127.0.0.1:5122/resident-tax"
+          ]
+        }
+      ]
+    },
+    {
+      "community": 2,
+      "size": 135,
+      "sessions": 53,
+      "top_surfaces": [
+        [
+          "web:http://127.0.0.1:5123/payroll-items",
+          37
+        ],
+        [
+          "web:http://127.0.0.1:5122/payroll-items",
+          29
+        ],
+        [
+          "web:http://127.0.0.1:5122/onboarding",
+          26
+        ],
+        [
+          "web:http://127.0.0.1:5124/onboarding",
+          25
+        ],
+        [
+          "web:http://127.0.0.1:5124/payroll-items",
+          23
+        ]
+      ],
+      "top_routes": [
+        [
+          "/payroll-items",
+          78
+        ],
+        [
+          "/onboarding",
+          60
+        ],
+        [
+          "/leave-applications",
+          50
+        ],
+        [
+          "/resident-tax",
+          47
+        ],
+        [
+          "/social-insurance",
+          34
+        ]
+      ],
+      "mean_how": {
+        "p_typing": 0.288,
+        "p_pointing": 0.115,
+        "p_navigating": 0.232,
+        "p_form": 0.016,
+        "rate_events_per_min": 148.79,
+        "log_duration": 3.363
+      },
+      "top_what_tokens": [
+        [
+          "btn-pi-register",
+          76
+        ],
+        [
+          "pi-note",
+          76
+        ],
+        [
+          "受発注在庫管理システム",
+          63
+        ],
+        [
+          "財務会計システム",
+          63
+        ],
+        [
+          "HR人事給与システム",
+          61
+        ],
+        [
+          "処理内容・確認コメントを入力してください…",
+          61
+        ],
+        [
+          "ob-note",
+          46
+        ],
+        [
+          "rt-note",
+          43
+        ]
+      ],
+      "reference_codes_inside": [
+        [
+          "G",
+          19
+        ],
+        [
+          "L",
+          16
+        ],
+        [
+          "O",
+          15
+        ],
+        [
+          "A",
+          15
+        ],
+        [
+          "E",
+          13
+        ],
+        [
+          "B",
+          12
+        ]
+      ],
+      "n_distinct_surfaces": 34,
+      "n_distinct_routes": 9,
+      "example_segments": [
+        {
+          "session_id": "ses_20260630-124826-CHAITANYA0BCF",
+          "start_ms": 1782825046906,
+          "surfaces": [
+            "web:http://127.0.0.1:5122/onboarding",
+            "web:http://127.0.0.1:5122/dashboard"
+          ]
+        },
+        {
+          "session_id": "ses_20260630-131729-CHAITANYA0BCF",
+          "start_ms": 1782825651321,
+          "surfaces": [
+            "web:http://127.0.0.1:5124/onboarding",
+            "web:http://127.0.0.1:5122/onboarding",
+            "web:http://127.0.0.1:5122/social-insurance"
+          ]
+        },
+        {
+          "session_id": "ses_20260630-131729-CHAITANYA0BCF",
+          "start_ms": 1782825715495,
+          "surfaces": [
+            "web:http://127.0.0.1:5122/social-insurance",
+            "web:http://127.0.0.1:5124/onboarding",
+            "web:http://127.0.0.1:5124/payroll-items"
+          ]
+        }
+      ]
+    },
+    {
+      "community": 3,
+      "size": 130,
+      "sessions": 47,
+      "top_surfaces": [
+        [
+          "web:http://127.0.0.1:5122/leave-applications",
+          71
+        ],
+        [
+          "web:http://127.0.0.1:5124/leave-applications",
+          70
+        ],
+        [
+          "app:Notepad:Untitled",
+          62
+        ],
+        [
+          "app:Microsoft Word:HR_Policy",
+          29
+        ],
+        [
+          "app:Microsoft Word:Supplier_List",
+          26
+        ]
+      ],
+      "top_routes": [
+        [
+          "/leave-applications",
+          125
+        ],
+        [
+          "/payroll-items",
+          21
+        ],
+        [
+          "/resident-tax",
+          17
+        ],
+        [
+          "/onboarding",
+          13
+        ],
+        [
+          "/social-insurance",
+          13
+        ]
+      ],
+      "mean_how": {
+        "p_typing": 0.192,
+        "p_pointing": 0.091,
+        "p_navigating": 0.393,
+        "p_form": 0.011,
+        "rate_events_per_min": 124.627,
+        "log_duration": 3.876
+      },
+      "top_what_tokens": [
+        [
+          "btn-la-approve",
+          122
+        ],
+        [
+          "la-note",
+          120
+        ],
+        [
+          "受発注在庫管理システム",
+          91
+        ],
+        [
+          "HR人事給与システム",
+          90
+        ],
+        [
+          "仕入先への依頼内容または保留理由を入力してください…",
+          70
+        ],
+        [
+          "承認コメントまたは差戻し理由を入力してください…",
+          67
+        ],
+        [
+          "Untitled",
+          62
+        ],
+        [
+          "財務会計システム",
+          49
+        ]
+      ],
+      "reference_codes_inside": [
+        [
+          "M",
+          56
+        ],
+        [
+          "C",
+          54
+        ],
+        [
+          "J",
+          2
+        ],
+        [
+          "L",
+          1
+        ],
+        [
+          "B",
+          1
+        ],
+        [
+          "D",
+          1
+        ]
+      ],
+      "n_distinct_surfaces": 43,
+      "n_distinct_routes": 8,
+      "example_segments": [
+        {
+          "session_id": "ses_20260630-124826-CHAITANYA0BCF",
+          "start_ms": 1782823762347,
+          "surfaces": [
+            "app:WindowsTerminal:Windows PowerShell",
+            "web:http://127.0.0.1:5124/leave-applications",
+            "app:Microsoft Word:Opening"
+          ]
+        },
+        {
+          "session_id": "ses_20260630-124826-CHAITANYA0BCF",
+          "start_ms": 1782824701988,
+          "surfaces": [
+            "web:http://127.0.0.1:5124/leave-applications",
+            "app:Microsoft Word:Supplier_List [Compatibility Mode]",
+            "app:Notepad:Untitled"
+          ]
+        },
+        {
+          "session_id": "ses_20260630-124826-CHAITANYA0BCF",
+          "start_ms": 1782824759726,
+          "surfaces": [
+            "web:http://127.0.0.1:5122/resident-tax",
+            "web:http://127.0.0.1:5124/leave-applications",
+            "app:Notepad:Untitled"
+          ]
+        }
+      ]
+    },
+    {
+      "community": 4,
+      "size": 107,
+      "sessions": 47,
+      "top_surfaces": [
+        [
+          "app:Notepad:Untitled",
+          76
+        ],
+        [
+          "web:http://127.0.0.1:5123/onboarding",
+          32
+        ],
+        [
+          "web:http://127.0.0.1:5123/leave-applications",
+          26
+        ],
+        [
+          "web:http://127.0.0.1:5123/resident-tax",
+          20
+        ],
+        [
+          "web:http://127.0.0.1:5124/onboarding",
+          19
+        ]
+      ],
+      "top_routes": [
+        [
+          "/onboarding",
+          65
+        ],
+        [
+          "/leave-applications",
+          32
+        ],
+        [
+          "/resident-tax",
+          32
+        ],
+        [
+          "/payroll-items",
+          16
+        ],
+        [
+          "/dashboard",
+          11
+        ]
+      ],
+      "mean_how": {
+        "p_typing": 0.285,
+        "p_pointing": 0.104,
+        "p_navigating": 0.246,
+        "p_form": 0.014,
+        "rate_events_per_min": 153.108,
+        "log_duration": 3.976
+      },
+      "top_what_tokens": [
+        [
+          "Untitled",
+          76
+        ],
+        [
+          "財務会計システム",
+          67
+        ],
+        [
+          "ob-note",
+          63
+        ],
+        [
+          "btn-ob-complete",
+          52
+        ],
+        [
+          "HR人事給与システム",
+          34
+        ],
+        [
+          "btn-ob-flag",
+          33
+        ],
+        [
+          "受発注在庫管理システム",
+          31
+        ],
+        [
+          "la-note",
+          31
+        ]
+      ],
+      "reference_codes_inside": [
+        [
+          "J",
+          19
+        ],
+        [
+          "H",
+          10
+        ],
+        [
+          "E",
+          8
+        ],
+        [
+          "O",
+          5
+        ],
+        [
+          "A",
+          4
+        ],
+        [
+          "F",
+          3
+        ]
+      ],
+      "n_distinct_surfaces": 38,
+      "n_distinct_routes": 9,
+      "example_segments": [
+        {
+          "session_id": "ses_20260630-131729-CHAITANYA0BCF",
+          "start_ms": 1782825596205,
+          "surfaces": [
+            "web:http://127.0.0.1:5124/onboarding",
+            "app:Notepad:Untitled",
+            "web:http://127.0.0.1:5124/onboarding"
+          ]
+        },
+        {
+          "session_id": "ses_20260630-135451-CHAITANYA0BCF",
+          "start_ms": 1782827746619,
+          "surfaces": [
+            "app:WindowsTerminal:Windows PowerShell",
+            "web:http://127.0.0.1:5123/leave-applications",
+            "web:http://127.0.0.1:5123/onboarding"
+          ]
+        },
+        {
+          "session_id": "ses_20260630-135451-CHAITANYA0BCF",
+          "start_ms": 1782827939684,
+          "surfaces": [
+            "web:http://127.0.0.1:5123/resident-tax",
+            "app:Notepad:Untitled",
+            "web:http://127.0.0.1:5123/resident-tax"
+          ]
+        }
+      ]
+    }
+  ],
+  "gt_informed_sweep": {
+    "_status": "DEVELOPMENT/EVALUATION ANALYSIS, NOT an unsupervised selection. Shown so the cost of the unsupervised choice is visible.",
+    "rows": [
+      {
+        "weights": "where_heavy",
+        "k_nn": 10,
+        "n_clusters": 22,
+        "modularity": 0.8444,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0734,
+        "singletons": 0,
+        "density": 0.00818,
+        "components": 1,
+        "objective": 0.8444,
+        "ari": 0.5831,
+        "nmi": 0.6741,
+        "homogeneity": 0.7005,
+        "completeness": 0.6496
+      },
+      {
+        "weights": "where_heavy",
+        "k_nn": 20,
+        "n_clusters": 15,
+        "modularity": 0.8022,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1497,
+        "singletons": 0,
+        "density": 0.01606,
+        "components": 1,
+        "objective": 0.8022,
+        "ari": 0.5831,
+        "nmi": 0.688,
+        "homogeneity": 0.6788,
+        "completeness": 0.6975
+      },
+      {
+        "weights": "balanced",
+        "k_nn": 10,
+        "n_clusters": 22,
+        "modularity": 0.8209,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0961,
+        "singletons": 0,
+        "density": 0.00812,
+        "components": 1,
+        "objective": 0.8209,
+        "ari": 0.5731,
+        "nmi": 0.6947,
+        "homogeneity": 0.7233,
+        "completeness": 0.6682
+      },
+      {
+        "weights": "balanced",
+        "k_nn": 20,
+        "n_clusters": 17,
+        "modularity": 0.7769,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1334,
+        "singletons": 0,
+        "density": 0.01571,
+        "components": 1,
+        "objective": 0.7769,
+        "ari": 0.5456,
+        "nmi": 0.6869,
+        "homogeneity": 0.6859,
+        "completeness": 0.6879
+      },
+      {
+        "weights": "uniform",
+        "k_nn": 20,
+        "n_clusters": 18,
+        "modularity": 0.7798,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0914,
+        "singletons": 0,
+        "density": 0.01559,
+        "components": 1,
+        "objective": 0.7798,
+        "ari": 0.5021,
+        "nmi": 0.6792,
+        "homogeneity": 0.6897,
+        "completeness": 0.669
+      },
+      {
+        "weights": "uniform",
+        "k_nn": 5,
+        "n_clusters": 29,
+        "modularity": 0.8667,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1083,
+        "singletons": 0,
+        "density": 0.00414,
+        "components": 1,
+        "objective": 0.8667,
+        "ari": 0.4898,
+        "nmi": 0.671,
+        "homogeneity": 0.7297,
+        "completeness": 0.6211
+      },
+      {
+        "weights": "where_heavy",
+        "k_nn": 5,
+        "n_clusters": 35,
+        "modularity": 0.8859,
+        "cross_session_reuse": 0.9714,
+        "largest_share": 0.0629,
+        "singletons": 0,
+        "density": 0.00414,
+        "components": 2,
+        "objective": 0.8605,
+        "ari": 0.4885,
+        "nmi": 0.6702,
+        "homogeneity": 0.7518,
+        "completeness": 0.6045
+      },
+      {
+        "weights": "balanced",
+        "k_nn": 5,
+        "n_clusters": 28,
+        "modularity": 0.8622,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0681,
+        "singletons": 0,
+        "density": 0.00413,
+        "components": 1,
+        "objective": 0.8622,
+        "ari": 0.4828,
+        "nmi": 0.6545,
+        "homogeneity": 0.7107,
+        "completeness": 0.6065
+      },
+      {
+        "weights": "uniform",
+        "k_nn": 10,
+        "n_clusters": 22,
+        "modularity": 0.8264,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0909,
+        "singletons": 0,
+        "density": 0.00809,
+        "components": 1,
+        "objective": 0.8264,
+        "ari": 0.4808,
+        "nmi": 0.6567,
+        "homogeneity": 0.6827,
+        "completeness": 0.6325
+      },
+      {
+        "weights": "what_heavy",
+        "k_nn": 20,
+        "n_clusters": 13,
+        "modularity": 0.7217,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1345,
+        "singletons": 0,
+        "density": 0.01528,
+        "components": 1,
+        "objective": 0.7217,
+        "ari": 0.3893,
+        "nmi": 0.5287,
+        "homogeneity": 0.4996,
+        "completeness": 0.5615
+      },
+      {
+        "weights": "what_heavy",
+        "k_nn": 10,
+        "n_clusters": 20,
+        "modularity": 0.7748,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.12,
+        "singletons": 0,
+        "density": 0.00798,
+        "components": 1,
+        "objective": 0.7748,
+        "ari": 0.29,
+        "nmi": 0.4885,
+        "homogeneity": 0.4959,
+        "completeness": 0.4814
+      },
+      {
+        "weights": "what_heavy",
+        "k_nn": 5,
+        "n_clusters": 31,
+        "modularity": 0.8366,
+        "cross_session_reuse": 0.9355,
+        "largest_share": 0.081,
+        "singletons": 0,
+        "density": 0.0041,
+        "components": 1,
+        "objective": 0.7826,
+        "ari": 0.2628,
+        "nmi": 0.4835,
+        "homogeneity": 0.5284,
+        "completeness": 0.4457
+      },
+      {
+        "weights": "how_heavy",
+        "k_nn": 5,
+        "n_clusters": 24,
+        "modularity": 0.8669,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.0879,
+        "singletons": 0,
+        "density": 0.00404,
+        "components": 2,
+        "objective": 0.8669,
+        "ari": 0.2036,
+        "nmi": 0.4067,
+        "homogeneity": 0.4253,
+        "completeness": 0.3897
+      },
+      {
+        "weights": "how_heavy",
+        "k_nn": 10,
+        "n_clusters": 18,
+        "modularity": 0.8175,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1485,
+        "singletons": 0,
+        "density": 0.00782,
+        "components": 1,
+        "objective": 0.8175,
+        "ari": 0.1933,
+        "nmi": 0.38,
+        "homogeneity": 0.3744,
+        "completeness": 0.3857
+      },
+      {
+        "weights": "how_heavy",
+        "k_nn": 20,
+        "n_clusters": 15,
+        "modularity": 0.7648,
+        "cross_session_reuse": 1.0,
+        "largest_share": 0.1008,
+        "singletons": 0,
+        "density": 0.01519,
+        "components": 1,
+        "objective": 0.7648,
+        "ari": 0.177,
+        "nmi": 0.3301,
+        "homogeneity": 0.3203,
+        "completeness": 0.3404
+      }
+    ]
+  },
+  "case_studies": {
+    "1_same_process_different_route": {
+      "n_pairs_examined": 60,
+      "grouped_together_rate": 0.1333,
+      "examples": [
+        {
+          "code": "H",
+          "a": {
+            "session": "ses_20260630-121953-LAPTOP-R36BQBTE",
+            "routes": [
+              "/"
+            ],
+            "surfaces": [
+              "app:Microsoft Excel:m1_reference",
+              "web:http://127.0.0.1:5122/"
+            ]
+          },
+          "b": {
+            "session": "ses_20260630-125757-LAPTOP-R36BQBTE",
+            "routes": [],
+            "surfaces": [
+              "app:Google Chrome:受発注在庫管理システム",
+              "app:Google Chrome:財務会計システム",
+              "app:Notepad:launch_m1.ps1"
+            ]
+          },
+          "same_community": false,
+          "similarity": 0.2685
+        },
+        {
+          "code": "H",
+          "a": {
+            "session": "ses_20260630-121953-LAPTOP-R36BQBTE",
+            "routes": [
+              "/"
+            ],
+            "surfaces": [
+              "app:Microsoft Excel:m1_reference",
+              "web:http://127.0.0.1:5122/"
+            ]
+          },
+          "b": {
+            "session": "ses_20260630-125757-LAPTOP-R36BQBTE",
+            "routes": [],
+            "surfaces": [
+              "app:Google Chrome:HR人事給与システム",
+              "app:Google Chrome:財務会計システム"
+            ]
+          },
+          "same_community": true,
+          "similarity": 0.3717
+        },
+        {
+          "code": "H",
+          "a": {
+            "session": "ses_20260630-121953-LAPTOP-R36BQBTE",
+            "routes": [
+              "/"
+            ],
+            "surfaces": [
+              "app:Microsoft Excel:m1_reference",
+              "web:http://127.0.0.1:5122/"
+            ]
+          },
+          "b": {
+            "session": "ses_20260630-125757-LAPTOP-R36BQBTE",
+            "routes": [],
+            "surfaces": [
+              "app:Google Chrome:受発注在庫管理システム",
+              "app:Google Chrome:財務会計システム"
+            ]
+          },
+          "same_community": true,
+          "similarity": 0.4339
+        }
+      ]
+    },
+    "2_same_process_different_surface": {
+      "n_pairs_examined": 60,
+      "grouped_together_rate": 0.1333,
+      "examples": [
+        {
+          "code": "H",
+          "a": {
+            "session": "ses_20260630-121953-LAPTOP-R36BQBTE",
+            "routes": [
+              "/"
+            ],
+            "surfaces": [
+              "app:Microsoft Excel:m1_reference",
+              "web:http://127.0.0.1:5122/"
+            ]
+          },
+          "b": {
+            "session": "ses_20260630-125757-LAPTOP-R36BQBTE",
+            "routes": [],
+            "surfaces": [
+              "app:Google Chrome:受発注在庫管理システム",
+              "app:Google Chrome:財務会計システム",
+              "app:Notepad:launch_m1.ps1"
+            ]
+          },
+          "same_community": false,
+          "similarity": 0.2685
+        },
+        {
+          "code": "H",
+          "a": {
+            "session": "ses_20260630-121953-LAPTOP-R36BQBTE",
+            "routes": [
+              "/"
+            ],
+            "surfaces": [
+              "app:Microsoft Excel:m1_reference",
+              "web:http://127.0.0.1:5122/"
+            ]
+          },
+          "b": {
+            "session": "ses_20260630-125757-LAPTOP-R36BQBTE",
+            "routes": [],
+            "surfaces": [
+              "app:Google Chrome:HR人事給与システム",
+              "app:Google Chrome:財務会計システム"
+            ]
+          },
+          "same_community": true,
+          "similarity": 0.3717
+        },
+        {
+          "code": "H",
+          "a": {
+            "session": "ses_20260630-121953-LAPTOP-R36BQBTE",
+            "routes": [
+              "/"
+            ],
+            "surfaces": [
+              "app:Microsoft Excel:m1_reference",
+              "web:http://127.0.0.1:5122/"
+            ]
+          },
+          "b": {
+            "session": "ses_20260630-125757-LAPTOP-R36BQBTE",
+            "routes": [],
+            "surfaces": [
+              "app:Google Chrome:受発注在庫管理システム",
+              "app:Google Chrome:財務会計システム"
+            ]
+          },
+          "same_community": true,
+          "similarity": 0.4339
+        }
+      ]
+    },
+    "3_different_processes_structurally_similar": {
+      "n_pairs": 100,
+      "wrongly_grouped_rate": 0.99,
+      "examples": [
+        {
+          "codes": [
+            "A",
+            "O"
+          ],
+          "similarity": 0.8015,
+          "same_community": true,
+          "shared_surfaces": [
+            "web:http://127.0.0.1:5122/"
+          ]
+        },
+        {
+          "codes": [
+            "E",
+            "G"
+          ],
+          "similarity": 0.8472,
+          "same_community": true,
+          "shared_surfaces": [
+            "web:http://127.0.0.1:5122/"
+          ]
+        },
+        {
+          "codes": [
+            "G",
+            "O"
+          ],
+          "similarity": 0.8401,
+          "same_community": true,
+          "shared_surfaces": [
+            "web:http://127.0.0.1:5122/"
+          ]
+        }
+      ]
+    },
+    "4_interrupted_execution_fragments": {
+      "n_interrupted_with_multiple_matched_fragments": 97,
+      "all_fragments_same_community_rate": 0.2165,
+      "examples": [
+        {
+          "session_id": "ses_20260630-121953-LAPTOP-R36BQBTE",
+          "code": "B",
+          "n_fragments": 2,
+          "same_community": true,
+          "communities": [
+            12
+          ]
+        },
+        {
+          "session_id": "ses_20260630-124826-CHAITANYA0BCF",
+          "code": "K",
+          "n_fragments": 2,
+          "same_community": false,
+          "communities": [
+            5,
+            19
+          ]
+        },
+        {
+          "session_id": "ses_20260630-125757-LAPTOP-R36BQBTE",
+          "code": "L",
+          "n_fragments": 3,
+          "same_community": false,
+          "communities": [
+            10,
+            12
+          ]
+        }
+      ]
+    },
+    "5_rare_process": {
+      "n_rare_codes": 0,
+      "rows": []
+    }
+  },
+  "runtime_s": 173.5
+}

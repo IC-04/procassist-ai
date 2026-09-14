@@ -659,3 +659,74 @@ the two wrong numbers above were caught by re-deriving them, not by accepting th
 **Next** Phase F/G per the spec. Suite 267 passed, 1 skipped.
 
 **Time spent** ~2.5 h
+
+---
+
+## 2026-09-14 — S-E6: process identity as representation, similarity and grouping
+
+**Goal** Locate the identity ceiling and decide which grouping method is justified — by
+measurement, not by assuming the answer is an LLM. Segmentation frozen throughout; hard cap
+2 h 15 m; no LLM.
+
+**Contract** Every arm ran on the exact frozen S-E4 segmentation (1,717 segments, boundary F1
+0.6904 @ τ=2 s, count ratio 0.98), reproduced by `build_frozen.py` and asserted identical on
+every row of the results table and in `tests/test_identity.py`. Match rate is 0.760 on every
+row for the same reason. Every metric came from `evaluate.evaluate_all`; none was
+reimplemented.
+
+**Result** The graph arm beats the structural control at unchanged boundary F1:
+ARI **0.431 → 0.583**, NMI 0.563 → 0.688, homogeneity 0.622 → 0.679 **and** completeness
+0.514 → 0.698 (so neither over-merging nor over-splitting), 51 → 15 labels, cross-session reuse
+0.902 → 1.000, interruption_recall 0.122 → 0.337 — the last read beside the label count,
+because coarser labels raise it mechanically.
+
+**What failed, and what it taught**
+- **The reframe's own hypothesis was wrong.** It predicted the signature overweights WHERE and
+  needs WHAT and HOW. The per-view supervised probe says WHERE is the *strongest* view
+  (accuracy 0.851), HOW is nearly worthless (0.256 on 15 classes, chance ≈ 0.07), WHAT is real
+  and additive (0.741 alone, +0.040 on top of WHERE), all three 0.891. I reported that against
+  the brief rather than around it.
+- **My first unsupervised selection rule failed, and not by accident.** Modularity ×
+  cross-session reuse chose `how_heavy, k_nn=5` → ARI 0.204. Modularity is not comparable
+  across graphs of different density, so the rule was really picking the sparsest graph, and it
+  scored `how_heavy` and `where_heavy` *identically* at 0.8669 — blind to the difference
+  between the informative view and the uninformative one. Replaced by the Phase E rule
+  (stability × reuse, co-clustering Jaccard), declared before its ARI was inspected: it picks
+  `where_heavy, k_nn=20`, which the GT-informed sweep confirms is the grid optimum. Both rules
+  are reported; the failed one is not hidden.
+- **The merge-only oracle is small: +0.047 ARI.** 37 of 41 matched labels are impure and 30.2%
+  of matched members sit under a wrong-majority label. Impurity is not merge-fixable, so an
+  "LLM renames the clusters" design was bounded at 0.478 before it was written.
+- **Segmentation is not the limiter.** The same method on GT segments scores 0.427 — within
+  0.004 of the control on hypothesis segments. Perfect boundaries would not have fixed identity.
+- **Dataset A has no rare process.** All 15 codes appear ≥ 14 times, so case study 5 could not
+  be answered on A. Reported as a dataset limit rather than faked with the smallest cluster.
+- **`context.extracted_text` is not exposed** by the frozen `normalise.flatten_event` record,
+  and `normalise.py` was not modifiable. WHAT was built from titles, element labels, element ids
+  and field keys; recorded rather than worked around.
+
+**Decisions** ADR-021 — identity ships as three-view representation → weighted similarity →
+kNN graph → Louvain (`procmine/identity.py`, consumed by `label.py` as `method="graph"`), with
+the configuration selected unsupervised so Louvain picks its own community count on B.
+**Decision: CASE B by the letter of the criterion, with the qualification that matters** — the
+residual is *not* a missing-semantics gap (a logistic regression on the same features reaches
+0.891), so **no LLM is justified yet**; the next thing to try is IDF-weighting the surface
+Jaccard, aimed at the measured defect that 99% of the highest-similarity cross-code pairs share
+the portal dashboard root. "LLM identity normalisation" is explicitly not hard-coded and
+`STEP1_SPEC.md` §3.7 is unchanged.
+
+**Transfer** On `dataset_b` the same code re-runs its own sweep and Louvain selects **6**
+communities over 183 segments (vs 33 structural labels), 100% cross-session reuse. B has no GT;
+this is an observation, not a validation, and B was not tuned to resemble A. Flagged, not acted
+on: the committed `segments.jsonl` was emitted under the previous default and now diverges from
+it.
+
+**Generative AI use** GenAI-assisted implementation. Claude Code (Opus 5) wrote
+`procmine/identity.py`, the `label.py` wiring, the tests and the experiment under my direction.
+Every figure was produced by running the code; the failed selection rule was found by
+inspecting what it chose, not by trusting it.
+
+**Next** ADR-021's follow-up (IDF-weighted surface Jaccard) and Phase F/G per the spec. Suite
+275 passed, 1 skipped.
+
+**Time spent** ~2 h

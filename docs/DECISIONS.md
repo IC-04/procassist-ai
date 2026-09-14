@@ -324,3 +324,100 @@ must state which of the two it divides by.
 `procmine/decoder.py`, whose emitted segments are disjoint and whose test
 `test_decoder_emits_disjoint_segments_not_a_partition` asserts a gap between segments is
 representable.
+
+### ADR-021 · 2026-09-14 · accepted · Process identity is a graph-clustering problem, not an LLM problem
+**Context** S-E4 measured the structural labeller at ARI 0.431 / NMI 0.5625 at match_rate
+0.760 against 15 reference process codes, and diagnosed the weakness as representational:
+"nothing in the signature captures *same business purpose, different route*". That is a claim
+about representation, so S-E6 tested it as `representation -> similarity -> grouping ->
+identity` rather than assuming an LLM was the answer. Segmentation was frozen throughout: the
+exact 1,717 S-E4 segments, boundary F1 identical (0.6904 at τ=2 s) on every arm, asserted in
+`metrics.json.contract_boundary_f1` and in `tests/test_identity.py`.
+
+**The two ceilings, measured.**
+
+| Ceiling | Value | What it bounds |
+|---|---|---|
+| merge-only oracle | ARI **0.478** | *relabelling only* — membership of the 51 existing labels held fixed |
+| supervised probe, all three views | acc **0.891** · macro-F1 **0.888** · ARI **0.786** | any unsupervised method over this representation |
+
+The merge-only oracle is **small**: perfectly renaming the existing clusters buys +0.047 ARI,
+because 37 of 41 matched labels are *impure* — 30.2% of matched members sit under a label whose
+majority code is not their own — and impurity is not merge-fixable. All 15 reference codes are
+also split across labels. Relabelling was never the lever.
+
+**The per-view probe refutes the reframe's own hypothesis.** The claim was that the signature
+overweights WHERE and needs WHAT and HOW:
+
+| view | accuracy | macro-F1 | ARI |
+|---|---|---|---|
+| WHERE | **0.851** | 0.847 | 0.720 |
+| HOW | 0.256 | 0.216 | 0.141 |
+| WHAT (char 2-3-gram TF-IDF) | 0.741 | 0.734 | 0.535 |
+| all three | **0.891** | 0.888 | 0.786 |
+
+WHERE is the strongest view, not an overweighted one; HOW is close to worthless on its own
+(15 classes, chance ≈ 0.07, so 0.256 is weak); WHAT is real and adds +0.040 accuracy on top of
+WHERE. The signal was already in the representation — what was missing was a grouping that uses
+it.
+
+**Segmentation-inherited error is not the limiter.** The same representation and grouping run
+on GT segments scores ARI 0.427 — within 0.004 of the structural labeller on *hypothesis*
+segments. Identity error is caused by grouping, not by imperfect boundaries.
+
+**Decision** Identity ships as: three-view representation → weighted similarity → kNN graph →
+Louvain, in `procmine/identity.py`, consumed by `label.py` as `method="graph"`. **No LLM.**
+
+| arm (boundary F1 identical on every row) | ARI | NMI | hom | cmp | match_rate | labels | interruption_recall |
+|---|---|---|---|---|---|---|---|
+| S-E4 structural (control) | 0.431 | 0.563 | 0.622 | 0.514 | 0.760 | 51 | 0.122 |
+| k-means (k=30, vector space) | 0.222 | 0.444 | 0.487 | 0.407 | 0.760 | 30 | 0.102 |
+| agglomerative average / complete | 0.109 / 0.122 | — | — | — | 0.760 | 30 | — |
+| DBSCAN (eps 0.30 / 0.45) | 0.163 / −0.001 | — | — | — | 0.760 | 643 / 35 | — |
+| **graph kNN(k=20) + Louvain** | **0.583** | **0.688** | **0.679** | **0.698** | 0.760 | **15** | **0.337** |
+
+**Transferability of `k` selection is part of the decision, not a footnote.** Two unsupervised
+selection rules were measured, both declared before their ARI was inspected:
+
+* **modularity × cross-session reuse** → `how_heavy, k_nn=5` → ARI **0.204**. It fails for a
+  structural reason: modularity is not comparable across graphs of different density, so the
+  rule was really selecting the sparsest graph, and it scored `how_heavy` and `where_heavy`
+  identically at 0.8669 — it could not distinguish the view that carries the identity signal
+  from the one that carries almost none.
+* **stability under 80% node resampling × cross-session reuse** (the Phase E rule, co-clustering
+  Jaccard) → `where_heavy, k_nn=20` → ARI **0.583**, the best configuration in the grid.
+
+Rule 2 ships. Louvain then selects the community count itself, so nothing about A's `k`
+transfers to B (ADR-010): on Dataset B the same code re-runs the sweep and Louvain picks B's
+own count. **"15 reference process codes" is never a production assumption** — that A's chosen
+configuration happened to yield 15 communities is an outcome, not an input.
+
+**Is an LLM justified? Not yet, and the measurement says why.** This is **case B by the letter
+of the criterion** — grouping improves materially (ARI 0.431 → 0.583, NMI 0.563 → 0.688,
+homogeneity *and* completeness both up, so it is neither over-merging nor over-splitting) but
+closes only ~43% of the recoverable gap to the supervised probe. The qualification matters
+more than the label: the residual is **not** a missing-semantics gap. A logistic regression on
+exactly these features reaches 0.891 accuracy, so the information needed to separate the
+residual is already present and unlabelled clustering simply is not extracting it. The
+concrete failure is visible — 99% of the highest-similarity cross-code pairs are wrongly
+grouped, and what they share is the portal *dashboard root* `http://127.0.0.1:5122/`, a
+surface every process passes through. The cheap deterministic fix for that is IDF-weighting
+the surface Jaccard so a universal surface stops carrying evidence; that must be tried and
+ablated before a model is added. **`STEP1_SPEC.md` §3.7 is unchanged and "LLM identity
+normalisation" is explicitly NOT hard-coded into the architecture.** If a bounded semantic
+judge is ever added it is subject to ADR-018: it may normalise a label, clustering decides
+membership, and its value is established by ablation (S-E5) against the deterministic fix.
+
+**Consequences** `procmine/identity.py` is new and is an inference module: it imports no GT
+module, reads no GT artifact, and is covered by the AST leakage test. `label.py` defaults to
+`method="graph"` and falls back to the Phase E structural labeller when the optional numeric
+stack is absent, so `--no-llm` and a stdlib-only path both keep working. Interruption recall
+rises 0.122 → 0.337 at an unchanged count ratio of 0.98, but it must be read with the label
+count: 15 labels raise it partly by being coarser, which is why DBSCAN at eps 0.45 posts 0.857
+with 35 labels and ARI −0.001, and why B0-single posts 0.796 degenerately.
+
+**Evidence** `experiments/SE6-identity-grouping/` — `metrics.json`, `selection_rule_2.json`,
+`report.md`, `samples.jsonl`. 1,717 frozen segments, 1,332 matched to a reference code at
+IoU 0.5 (match_rate 0.760), 15 reference codes, 63 sessions. Every identity metric comes from
+`evaluate.identity_scores` / `evaluate.matched_identity` via `evaluate.evaluate_all`; none is
+reimplemented.
