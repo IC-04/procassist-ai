@@ -267,3 +267,101 @@ accepting the tool's first output.
 **Next** Gate G1. Phase 2 not started.
 
 **Time spent** ~2.5 h
+
+---
+
+## 2026-09-13 — Step 1 reorientation (specification only, no code)
+
+**What changed and why.** Phase 1 measured 59.9% of Dataset A GT boundaries within τ=2 s of a
+block edge, and the repository had begun treating that as a ceiling on the representation. It is
+not: it is the reachability of the block-edge **candidate space**. 74.5% of GT boundaries fall
+strictly inside a block, and the events that discriminate them survive into the retained stream.
+The correction is to keep the perception layer and add an event-level candidate layer beneath it.
+
+Separately, the project had specified retrieval/memory, agentic tools, vision, family/variant
+analysis, SOP generation and a Streamlit prototype before Step 1 worked, and `segments.jsonl` —
+Deliverables §1 — still does not exist. Scope is now Step 1 only.
+
+**Written**
+
+- `docs/STEP1_SPEC.md` — the authoritative Step 1 specification (two-level architecture, stage
+  contracts, six experiments with decision gates, implementation order, definition of done).
+- `CLAUDE.md` — rewritten around the Step 1 objective, with the source-of-truth hierarchy and
+  hard rules restated.
+- `docs/DECISIONS.md` — ADR-015 (block = container, refines ADR-004), ADR-016 (Step-1-only
+  scope; phase plan replaced), ADR-017 (accuracy reported on the scoreable canonical population;
+  τ grid to be unified), ADR-018 (LLM adjudicates the ambiguous tail, ablatable).
+- `docs/IMPLEMENTATION_PLAN.md` — replaced with the Step 1 order and its three gates.
+- `docs/EVALUATION_PROTOCOL.md` — §8 GT populations, §9 candidate reachability as a separate
+  measurement.
+- `docs/DATA_CONTRACT.md` — §10: blocks expose `first_seq`/`last_seq`; `candidates.jsonl`.
+- Supersession/deferral banners on `ARCHITECTURE.md`, `AI_REASONING_SPEC.md`, `RETRIEVAL_SPEC.md`,
+  `PROTOTYPE_SPEC.md`, `phases/PHASE_2..7.md`.
+
+**Measured during this review (no new analysis code committed)**
+
+`build/dataset_a/executions_canonical.jsonl`: 1,819 canonical executions · 230 with no usable
+interval · **1,589 scoreable** · 98 interrupted · confidence clean 1,756 / repaired 63. These
+confirm the populations recorded in ADR-017.
+
+**Defects found in our own prior reporting**
+
+1. The Phase 1 §8 ceiling analysis was computed ad hoc and never committed as an experiment
+   directory, contrary to `EXPERIMENT_PROTOCOL.md`. S-E1 repairs this.
+2. The τ grid disagrees between `PHASE_1_REPORT.md` and `experiments/E11-baselines/config.json`.
+3. The "98.4% of missed boundaries have no surface change" figure is over execution-to-execution
+   transitions, not over all boundary points; an independent recomputation over all boundary
+   points gave ≈69.8%. The denominator was not stated.
+4. The baseline scorecard was computed on a 5-session sample while the ceiling analysis used all
+   63 sessions; the two were read side by side.
+
+**Generative-AI use.** This reorientation — audit of existing specs, the new Step 1
+specification, the ADRs and these edits — was drafted with Claude (Opus 5) in an interactive
+session, then reviewed and accepted by the author. No code was written or changed.
+
+**Next action.** Hand `docs/STEP1_SPEC.md` to Claude Code and implement in the order of §7,
+stopping at the S-E3 gate.
+
+---
+
+### 2026-09-14 · Step 1 (safety net) · Provisional `segments.jsonl` for Dataset B
+
+**Goal** Put a contract-valid `segments.jsonl` on disk so the submission is never empty while
+the real Step 1 pipeline (`docs/STEP1_SPEC.md`) is built. Explicitly provisional: no candidate
+generation, no scoring, no decoder, no LLM, no Dataset A, **no accuracy claim**.
+
+**Did** `procmine/emit_segments.py` (reuses `baselines.b5_dwell` and `to_segments`; slugs each
+surface key into a stable label, merges adjacent same-label segments, absorbs sub-second
+slivers) and `procmine/validate_segments.py` (the five DATA_CONTRACT §6 constraints).
+`make segments`, `make validate-segments`; `run-b` now emits the file. 21 new tests.
+
+**Result** 958 segments · 15 sessions · 52 distinct labels · median 6.0 s (p90 21 s, max 125 s)
+· 39 labels reused across sessions. From 1,338 blocks: 380 merged by label, 277 sub-second
+slivers absorbed, **0 dropped**. Validator passes. `make test` 182 passed / 1 skipped; with
+`dataset_a/` physically removed, `make run-b` exits 0 and the suite is 183 passed.
+
+**Problems / things measured rather than assumed**
+- **"Merge adjacent blocks sharing a surface key" is a strict no-op.** `build_blocks` pass 1
+  already guarantees consecutive blocks never share a surface key — 0 of 1,323 adjacent pairs
+  on B. Merging on the emitted *label* is the operative step and is what was implemented.
+- **25.9% of blocks (346) begin and end inside the same second**, so they cannot satisfy
+  §6.2's `start < end` at second precision. They are absorbed into a neighbour rather than
+  dropped or given invented duration; the absorbed events take the neighbour's label.
+- **Route-only labels conflate backend systems.** 93.3% of B's web blocks sit on a route
+  served by more than one origin (`/payroll-items` appears on all three ports, which carry
+  three different system titles). The specified route slug is kept as the default and a
+  `--label-scheme surface` option preserves the origin. Reported, not silently changed.
+- **A strict "no boundary may touch a chunk edge" rule would be wrong**: 4 of 1,781 block
+  boundaries coincide with one legitimately. The check requires a boundary to be chunk-aligned
+  *and* otherwise unexplained.
+
+**Decisions** No ADR; nothing architectural changed. §6.5 (duration floor from A) is not
+enforced — it needs Dataset A and the B deliverable must not depend on A (ADR-010). §6.6 is
+guaranteed by construction and measured rather than asserted.
+
+**Generative AI use** GenAI-assisted implementation. Claude Code (Opus 5) wrote the two modules
+and their tests under my direction; every figure above was produced by running the code.
+
+**Next** The real Step 1 pipeline per `STEP1_SPEC.md`. This file is a floor to be replaced.
+
+**Time spent** ~0.5 h
