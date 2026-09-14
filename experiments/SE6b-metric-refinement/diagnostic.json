@@ -1,0 +1,111 @@
+{
+  "surface_document_frequency": [
+    {
+      "surface": "app:Notepad:Untitled",
+      "df": 546,
+      "df_share": 0.318,
+      "idf_weight": 1.4218
+    },
+    {
+      "surface": "web:http://127.0.0.1:5124/leave-applications",
+      "df": 205,
+      "df_share": 0.1194,
+      "idf_weight": 2.2381
+    },
+    {
+      "surface": "web:http://127.0.0.1:5123/resident-tax",
+      "df": 204,
+      "df_share": 0.1188,
+      "idf_weight": 2.2425
+    },
+    {
+      "surface": "web:http://127.0.0.1:5122/leave-applications",
+      "df": 183,
+      "df_share": 0.1066,
+      "idf_weight": 2.3401
+    },
+    {
+      "surface": "web:http://127.0.0.1:5122/resident-tax",
+      "df": 182,
+      "df_share": 0.106,
+      "idf_weight": 2.3451
+    },
+    {
+      "surface": "web:http://127.0.0.1:5123/leave-applications",
+      "df": 158,
+      "df_share": 0.092,
+      "idf_weight": 2.4738
+    }
+  ],
+  "idf_weight_of_a_singleton": 7.4489,
+  "case3": {
+    "n_pairs": 97,
+    "mean_similarity_plain": 0.9108,
+    "mean_similarity_idf": 0.9093,
+    "share_sharing_the_top_surface": 0.7113,
+    "mean_shared_surfaces": 1.35,
+    "mean_jaccard_surface_plain": 1.0,
+    "mean_jaccard_surface_idf": 1.0
+  },
+  "same_process_high_similarity_control": {
+    "n_pairs": 475,
+    "mean_similarity_plain": 0.8729,
+    "mean_similarity_idf": 0.8619
+  },
+  "separability": {
+    "plain": {
+      "mean_within_code": 0.324,
+      "mean_between_code": 0.0976,
+      "gap": 0.2263,
+      "cohens_d": 1.5353
+    },
+    "idf": {
+      "mean_within_code": 0.312,
+      "mean_between_code": 0.094,
+      "gap": 0.218,
+      "cohens_d": 1.5076
+    }
+  },
+  "per_view_separability": {
+    "where": {
+      "plain": {
+        "gap": 0.2622,
+        "cohens_d": 1.4249
+      },
+      "idf": {
+        "gap": 0.2541,
+        "cohens_d": 1.3846
+      }
+    },
+    "how": {
+      "plain": {
+        "gap": 0.1078,
+        "cohens_d": 0.4101
+      },
+      "idf": {
+        "gap": 0.1078,
+        "cohens_d": 0.4101
+      }
+    },
+    "what": {
+      "plain": {
+        "gap": 0.1309,
+        "cohens_d": 1.1895
+      },
+      "idf": {
+        "gap": 0.1095,
+        "cohens_d": 1.0965
+      }
+    },
+    "seq": {
+      "plain": {
+        "gap": 0.2914,
+        "cohens_d": 1.5446
+      },
+      "idf": {
+        "gap": 0.2914,
+        "cohens_d": 1.5446
+      }
+    }
+  }
+}

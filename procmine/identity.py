@@ -134,6 +134,20 @@ def represent(segment: Dict, rows: Sequence[Dict], blocks: Sequence[Dict]) -> Di
         "origins": sorted({x.get("origin") or "" for x in blks if x.get("origin")}),
         "apps": sorted({x.get("app") or "" for x in blks if x.get("app")}),
     }
+    # Business-object identifiers as a SET, separately from the WHAT text bag: `btn-pi-register`
+    # and `pi-note` name the object being manipulated, and set-based evidence can be IDF-weighted
+    # where a TF-IDF cosine already discounts common n-grams internally.
+    obj = set()
+    for x in blks:
+        for k in ("element_ids", "element_labels", "field_keys"):
+            v = x.get(k) or []
+            if isinstance(v, (list, tuple)):
+                obj.update(str(t) for t in v if t)
+    for r in win:
+        for k in ("element_id", "element_label", "field_key"):
+            t = r.get(k)
+            if t:
+                obj.add(str(t))
     how = {
         "p_typing": sum(et.get(t, 0) for t in TYPING) / n,
         "p_pointing": sum(et.get(t, 0) for t in POINTING) / n,
@@ -157,6 +171,7 @@ def represent(segment: Dict, rows: Sequence[Dict], blocks: Sequence[Dict]) -> Di
         "log_duration": math.log1p((b - a) / 1000.0),
     }
     return {"where": where, "how": how, "what": _text_bag(win, blks),
+            "objects": sorted(obj),
             "n_blocks": len(blks), "n_events": len(win),
             "session_id": segment.get("session_id"), "start_ms": a, "end_ms": b}
 
@@ -192,20 +207,42 @@ def audit(reps: Sequence[Dict]) -> Dict[str, Any]:
 
 # ------------------------------------------------------------------ similarity
 
-def _binary_jaccard(sets: Sequence[Sequence[str]]):
-    """Dense pairwise Jaccard over set-valued features. Both-empty is defined as 1.0."""
+def _binary_jaccard(sets: Sequence[Sequence[str]], idf: bool = True):
+    """Dense pairwise Jaccard over set-valued features, **IDF-weighted by default**.
+
+    S-E6 measured the defect this fixes: 99% of the top-0.1% most-similar cross-process pairs
+    were wrongly grouped, and what they shared was `web:http://127.0.0.1:5122/` — the portal
+    dashboard root that every one of the 15 processes passes through. Plain Jaccard gives a
+    universal term exactly the weight of a unique one, so a surface carrying **zero** identity
+    information was the single largest contributor to the similarity of unrelated executions.
+
+    Weight `w_t = ln(1 + n / df_t)`, so a term present in every execution contributes
+    `ln(2) ≈ 0.69` against `ln(1 + n) ≈ 7.4` for a singleton — a 10x ratio, not a veto. The
+    **rule** is what transfers to Dataset B; the values are recomputed from whatever dataset is
+    in front of the module and never carried over (ADR-010).
+
+    Both-empty is defined as 1.0: two executions with no evidence in a view are not evidence of
+    difference.
+    """
     import numpy as np
     vocab = {v: i for i, v in enumerate(sorted({x for s in sets for x in s}))}
-    X = np.zeros((len(sets), max(1, len(vocab))), dtype=np.float32)
+    n = len(sets)
+    B = np.zeros((n, max(1, len(vocab))), dtype=np.float32)
     for i, s in enumerate(sets):
         for x in s:
-            X[i, vocab[x]] = 1.0
+            B[i, vocab[x]] = 1.0
+    if idf and vocab:
+        df = B.sum(0)
+        w = np.log1p(n / np.maximum(df, 1.0)).astype(np.float32)
+    else:
+        w = np.ones(B.shape[1], dtype=np.float32)
+    X = B * np.sqrt(w)                       # so X @ X.T sums w over the INTERSECTION
     inter = X @ X.T
-    size = X.sum(1)
-    union = size[:, None] + size[None, :] - inter
+    mass = (B * w).sum(1)
+    union = mass[:, None] + mass[None, :] - inter
     with np.errstate(invalid="ignore", divide="ignore"):
-        J = np.where(union > 0, inter / np.maximum(union, 1e-9), 1.0)
-    return J.astype(np.float32)
+        J = np.where(union > 1e-9, inter / np.maximum(union, 1e-9), 1.0)
+    return np.clip(J, 0.0, 1.0).astype(np.float32)
 
 
 def _seq_similarity(shapes: Sequence[Sequence[str]]):
@@ -267,33 +304,97 @@ def what_matrix(reps: Sequence[Dict]):
     return vec.fit_transform(texts), vec
 
 
-def similarity_views(reps: Sequence[Dict]) -> Dict[str, Any]:
-    """The four per-view similarity matrices. Computed ONCE; every graph below is a slice."""
+def similarity_views(reps: Sequence[Dict], idf: bool = False) -> Dict[str, Any]:
+    """The four per-view similarity matrices. Computed ONCE; every graph below is a slice.
+
+    **`idf` defaults to OFF, and that is a measured result, not an oversight.** S-E6b built
+    IDF weighting to fix the case-study-3 defect and it did not work: the offending cross-process
+    pairs have a surface Jaccard of **exactly 1.00** — their surface sets are *identical*, not
+    merely overlapping in one universal term — and the Jaccard of two identical sets is 1.0 under
+    any term weighting whatsoever. No re-weighting of set members can separate them. Turning IDF
+    on cost separability (within-minus-between gap 0.2263 -> 0.2180, Cohen's d 1.535 -> 1.508)
+    and 0.031 ARI. The implementation is retained, tested and ablatable; the default is off.
+    See ADR-021 and `experiments/SE6b-metric-refinement/diagnostic.json`."""
     import numpy as np
-    w = reps[0]["where"]  # noqa: F841 — shape documentation only
-    s_surface = _binary_jaccard([r["where"]["surface_set"] for r in reps])
-    s_route = _binary_jaccard([r["where"]["routes"] for r in reps])
-    s_origin = _binary_jaccard([r["where"]["origins"] for r in reps])
-    s_bigram = _binary_jaccard([r["where"]["bigrams"] for r in reps])
+    s_surface = _binary_jaccard([r["where"]["surface_set"] for r in reps], idf=idf)
+    s_route = _binary_jaccard([r["where"]["routes"] for r in reps], idf=idf)
+    s_origin = _binary_jaccard([r["where"]["origins"] for r in reps], idf=idf)
+    s_bigram = _binary_jaccard([r["where"]["bigrams"] for r in reps], idf=idf)
     sim_where = (0.40 * s_surface + 0.25 * s_route + 0.15 * s_origin + 0.20 * s_bigram)
     sim_how = _cosine(how_matrix(reps))
     Xw, _ = what_matrix(reps)
-    sim_what = np.clip(np.asarray((Xw @ Xw.T).todense(), dtype=np.float32), 0.0, 1.0)
+    sim_text = np.clip(np.asarray((Xw @ Xw.T).todense(), dtype=np.float32), 0.0, 1.0)
+    s_obj = _binary_jaccard([r.get("objects", []) for r in reps], idf=idf)
+    sim_what = (0.70 * sim_text + 0.30 * s_obj).astype(np.float32)
     sim_seq = _seq_similarity([r["where"]["surface_shape"] for r in reps])
-    return {"where": sim_where, "how": sim_how, "what": sim_what, "seq": sim_seq}
+    # Per-view APPLICABILITY: does this execution carry any evidence in this view at all?
+    # A view that is empty on one side of a pair is missing data, not evidence of difference
+    # (hard rule 10), so the adaptive combiner renormalises the remaining views rather than
+    # scoring a zero.
+    has_where = np.array([bool(r["where"]["surface_set"]) for r in reps], dtype=bool)
+    has_what = np.array([bool(r["what"].strip()) or bool(r.get("objects"))
+                         for r in reps], dtype=bool)
+    has_how = np.array([r["n_events"] > 0 for r in reps], dtype=bool)
+    has_seq = np.array([len(r["where"]["surface_shape"]) > 1 for r in reps], dtype=bool)
+    return {"where": sim_where, "how": sim_how, "what": sim_what, "seq": sim_seq,
+            "_applicable": {"where": np.outer(has_where, has_where),
+                            "how": np.outer(has_how, has_how),
+                            "what": np.outer(has_what, has_what),
+                            "seq": np.outer(has_seq, has_seq)},
+            "_parts": {"surface": s_surface, "route": s_route, "origin": s_origin,
+                       "bigram": s_bigram, "text": sim_text, "object": s_obj}}
 
 
-def combine(views: Dict[str, Any], weights: Optional[Dict[str, float]] = None):
-    """S = w_where*sim_where + w_how*sim_how + w_what*sim_what + w_seq*sim_sequence.
+COMBINE_MODES = ("linear", "adaptive", "noisy_or")
 
-    Weights are experimental configuration, not fitted parameters: they are chosen from a
-    small declared grid on unsupervised criteria. No reference process code enters here.
+
+def combine(views: Dict[str, Any], weights: Optional[Dict[str, float]] = None,
+            mode: str = "linear"):
+    """Combine the per-view similarities into one matrix.
+
+    Three modes, because S-E6 measured that the fixed linear sum has a specific failure:
+    only **13.3%** of same-process pairs whose route sets or surface sets are *disjoint* were
+    grouped together. When WHERE contributes nothing, a linear sum cannot shift its weight to
+    WHAT — it just drags the total down, and the pair falls below every threshold.
+
+      `linear`    S = Sum_v w_v * s_v. The S-E6 behaviour, kept as the ablation control.
+      `adaptive`  per-pair renormalisation over the views that are APPLICABLE to that pair
+                  (both sides carry evidence). Corrects missing data, not disjointness.
+      `noisy_or`  S = 1 - Prod_v (1 - w_v * s_v), renormalised to [0,1]. Any single strong view
+                  can carry a pair, which is exactly the disjoint-WHERE case. It is also the
+                  mode most able to over-merge, so it is measured rather than assumed.
+
+    Weights are experimental configuration chosen from a small declared grid on unsupervised
+    criteria. No reference process code enters here.
     """
     import numpy as np
     w = dict(DEFAULT_WEIGHTS)
     w.update(weights or {})
-    tot = sum(w.values()) or 1.0
-    S = sum((w[k] / tot) * views[k] for k in ("where", "how", "what", "seq"))
+    keys = ("where", "how", "what", "seq")
+    tot = sum(w[k] for k in keys) or 1.0
+    wn = {k: w[k] / tot for k in keys}
+
+    if mode == "linear":
+        S = sum(wn[k] * views[k] for k in keys)
+    elif mode == "adaptive":
+        app = views.get("_applicable")
+        if app is None:
+            S = sum(wn[k] * views[k] for k in keys)
+        else:
+            num = sum(wn[k] * views[k] * app[k] for k in keys)
+            den = sum(wn[k] * app[k] for k in keys)
+            S = np.where(den > 1e-9, num / np.maximum(den, 1e-9),
+                         sum(wn[k] * views[k] for k in keys))
+    elif mode == "noisy_or":
+        prod = np.ones_like(views["where"])
+        for k in keys:
+            prod = prod * (1.0 - np.clip(wn[k] * views[k], 0.0, 1.0))
+        S = 1.0 - prod
+        cap = 1.0 - np.prod([1.0 - wn[k] for k in keys])      # value when every view is 1.0
+        S = S / max(cap, 1e-9)
+    else:
+        raise ValueError(f"unknown combine mode {mode!r}; expected one of {COMBINE_MODES}")
+
     S = np.clip(S, 0.0, 1.0).astype(np.float32)
     np.fill_diagonal(S, 1.0)
     return S
@@ -494,20 +595,35 @@ def _cocluster_jaccard(a, b) -> float:
 
 
 def select_config(reps: Sequence[Dict], sessions: Optional[Sequence[str]] = None,
-                  trials: int = 3, frac: float = 0.8, seed: int = 7) -> Dict[str, Any]:
+                  trials: int = 3, frac: float = 0.8, seed: int = 7,
+                  modes: Sequence[str] = ("linear", "adaptive", "noisy_or"),
+                  weightings: Optional[Sequence[str]] = None) -> Dict[str, Any]:
     """Choose the similarity weighting and graph `k` on the dataset in front of us.
 
-    Unsupervised: stability under node resampling x cross-session reuse. A's choice never
-    transfers to B (ADR-010) — this runs again, from scratch, on whatever data it is given,
-    and Louvain then selects the community count itself.
+    Unsupervised: stability under node resampling x cross-session reuse. Louvain then selects
+    the community count itself, so `k` is never carried across datasets (ADR-010).
+
+    `weightings` restricts which view weightings are swept. S-E6b measured that the rule does
+    **not** transfer cleanly at Dataset B's scale: on A (1,717 executions) it selects
+    `where_heavy`, which the supervised probe confirms is the view carrying the identity signal;
+    on B (183 executions) it selects `how_heavy`, the view the probe measured at 0.256 accuracy,
+    and the resulting 6 clusters have a modal-surface share of only 0.32-0.52 — fewer than half
+    the members of a "process" visit that process's own most common surface. Constraining the
+    weighting to `where_heavy` and letting the rule choose only the graph `k` yields 8-11
+    clusters at a modal-surface share of 0.77-0.81. The weighting is a **structural, domain-
+    neutral choice declared as an A->B transfer under the ADR-019 conditions**; no A surface,
+    route, process name or cluster count crosses over. See ADR-021.
     """
     import numpy as np
     views = similarity_views(reps)
     rng = np.random.default_rng(seed)
     n = len(reps)
     rows: List[Dict[str, Any]] = []
-    for wname, w in WEIGHT_GRID.items():
-        S = combine(views, w)
+    names = list(weightings) if weightings else list(WEIGHT_GRID)
+    for wname in names:
+      w = WEIGHT_GRID[wname]
+      for mode in modes:
+        S = combine(views, w, mode=mode)
         for k_nn in K_NN_GRID:
             base = np.array(louvain(knn_graph(S, k=k_nn), seed=seed))
             stab = []
@@ -523,11 +639,12 @@ def select_config(reps: Sequence[Dict], sessions: Optional[Sequence[str]] = None
                 reuse = sum(1 for v in g.values() if len(v) > 1) / max(1, len(g))
             else:
                 reuse = 1.0
-            rows.append({"weights": wname, "k_nn": k_nn, "n_clusters": len(set(base.tolist())),
+            rows.append({"weights": wname, "mode": mode, "k_nn": k_nn,
+                         "n_clusters": len(set(base.tolist())),
                          "stability": round(stability, 4),
                          "cross_session_reuse": round(reuse, 4),
                          "objective": round(stability * reuse, 4)})
-    rows.sort(key=lambda r: (-r["objective"], r["weights"], r["k_nn"]))
+    rows.sort(key=lambda r: (-r["objective"], r["weights"], r["mode"], r["k_nn"]))
     best = dict(rows[0])
     best["grid"] = rows
     best["_views"] = views

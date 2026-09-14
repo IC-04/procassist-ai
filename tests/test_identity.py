@@ -121,7 +121,8 @@ def test_two_shapes_are_more_similar_within_than_across():
 def test_views_are_present_and_named():
     _, reps = _reps()
     v = ID.similarity_views(reps)
-    assert set(v) == {"where", "how", "what", "seq"}
+    assert {"where", "how", "what", "seq"} <= set(v)
+    assert set(v["_applicable"]) == {"where", "how", "what", "seq"}
     a = ID.audit(reps)
     assert set(a) >= {"where", "how", "what", "n_executions"}
     assert 0.0 <= a["what"]["coverage"] <= 1.0
@@ -188,3 +189,36 @@ def test_selects_its_own_k_on_dataset_b():
     assert 1 < g["n_clusters"] <= len(reps)
     assert g["modularity"] is not None
     assert len(g["labels"]) == len(reps)
+
+
+# ---------------------------------------------------------------- S-E6b: IDF and combination
+
+def test_idf_discounts_a_universal_term():
+    """The measured S-E6 defect: a surface every execution visits carried the same weight as a
+    unique one. IDF must reduce the similarity of two executions whose ONLY shared surface is
+    universal, without reducing it for a shared rare surface."""
+    sets = [["universal", f"rare{i}"] for i in range(10)]
+    plain = ID._binary_jaccard(sets, idf=False)
+    idfed = ID._binary_jaccard(sets, idf=True)
+    assert idfed[0, 1] < plain[0, 1]
+    same = [["universal", "shared"] for _ in range(10)]
+    assert ID._binary_jaccard(same, idf=True)[0, 1] == pytest.approx(1.0, abs=1e-5)
+
+
+def test_combine_modes_agree_on_the_trivial_cases_and_differ_on_disjointness():
+    _, reps = _reps()
+    v = ID.similarity_views(reps)
+    import numpy as np
+    mats = {m: ID.combine(v, mode=m) for m in ID.COMBINE_MODES}
+    for m, S in mats.items():
+        assert np.allclose(np.diag(S), 1.0, atol=1e-5), m
+        assert np.allclose(S, S.T, atol=1e-5), m
+        assert float(S.min()) >= 0.0 and float(S.max()) <= 1.0, m
+    # noisy_or lets a single strong view carry a pair, so it is never below the linear sum
+    assert float(mats["noisy_or"].mean()) >= float(mats["linear"].mean())
+
+
+def test_unknown_combine_mode_is_an_error_not_a_silent_default():
+    _, reps = _reps()
+    with pytest.raises(ValueError):
+        ID.combine(ID.similarity_views(reps), mode="bogus")

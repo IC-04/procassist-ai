@@ -421,3 +421,84 @@ with 35 labels and ARI −0.001, and why B0-single posts 0.796 degenerately.
 IoU 0.5 (match_rate 0.760), 15 reference codes, 63 sessions. Every identity metric comes from
 `evaluate.identity_scores` / `evaluate.matched_identity` via `evaluate.evaluate_all`; none is
 reimplemented.
+
+#### ADR-021 · addendum · 2026-09-15 · S-E6b — the case-study-3 diagnosis was wrong
+
+ADR-021 named IDF-weighting the surface Jaccard as the next thing to try, on the strength of
+S-E6's case study 3: *"99% of the highest-similarity cross-code pairs are wrongly grouped, and
+what they share is the portal dashboard root."* It was built, measured, and **it does not work,
+because the diagnosis behind it was wrong.**
+
+**The measurement that settles it.** For those 97 offending pairs the surface Jaccard is
+**exactly 1.00** — their surface sets are *identical*, not merely overlapping in one universal
+term. The Jaccard of two identical sets is 1.0 under **any** term weighting whatsoever, so no
+IDF, BM25 or other re-weighting of set members can ever separate them. They share a mean of
+1.35 surfaces and that is every surface either one has: these are short executions that visit
+exactly the same page and differ only in business purpose. The observation "71% of them share
+the dashboard root" was true; the causal claim built on it was not, and it was not checked
+against the Jaccard before being written into an ADR.
+
+**Measured cost of turning IDF on** (frozen segmentation, boundary F1 0.6904 identical, shipped
+`where_heavy` / k_nn=20 configuration, only the factor named varying):
+
+| | ARI | NMI | hom | cmp | labels | case 1 | case 2 | case 3 |
+|---|---|---|---|---|---|---|---|---|
+| plain, linear | **0.580** | 0.685 | 0.676 | 0.695 | 15 | 0.017 | 0.017 | 1.000 |
+| plain, adaptive | **0.585** | **0.696** | 0.686 | **0.707** | 15 | 0.017 | 0.017 | 1.000 |
+| plain, noisy-OR | 0.588 | 0.683 | 0.695 | 0.672 | 17 | 0.017 | 0.017 | 1.000 |
+| IDF, linear | 0.549 | 0.669 | 0.671 | 0.667 | 17 | 0.017 | 0.017 | 0.991 |
+| IDF, adaptive | 0.567 | 0.678 | 0.674 | 0.682 | 16 | 0.017 | 0.017 | 1.000 |
+| IDF, noisy-OR | 0.541 | 0.654 | 0.666 | 0.642 | 18 | 0.017 | 0.017 | 1.000 |
+
+Separability over matched executions, within-code minus between-code: **0.2263 → 0.2180**,
+Cohen's *d* **1.535 → 1.508**. IDF makes the metric slightly *worse* on every axis and moves
+case study 3 by one pair in 97. **Decision: the IDF implementation is retained, unit-tested and
+ablatable, and its default is OFF.** Negative result recorded rather than shipped.
+
+**Case studies 1 and 2 must be restated.** S-E6 reported 13.3% under the *rule-1* arm
+(`how_heavy`, k_nn=5, 24 rhythm-driven communities). Measured under the **shipped** arm the
+figure is **1.7%**, and none of the three combination modes moves it. The number was not
+comparable across arms and should not have been carried between them. Same-process pairs with
+disjoint surface or route sets are essentially never grouped, by any variant tried here.
+
+**Adaptive combination is a small real gain and ships.** Per-pair renormalisation over the views
+applicable to that pair: ARI 0.580 → 0.585, NMI 0.685 → 0.696, with homogeneity *and*
+completeness both rising. Noisy-OR reaches 0.588 but at 17 labels with completeness falling to
+0.672 — it buys ARI by over-merging, which is the failure mode this project is meant to detect,
+so it is not the default.
+
+**Per-view separability**, which explains all of it (Cohen's *d* over matched executions):
+sequence 1.545 · WHERE 1.425 · WHAT 1.190 · HOW **0.410**. Consistent with the supervised probe
+and with what the residual is: the similarity is not weighting the wrong terms, it is being asked
+to separate executions whose structural footprints are genuinely identical.
+
+**Scaffolding contamination — reported, NOT removed.** 98 of 1,717 executions (5.7%) carry a
+structural scaffolding signature (terminal-only app set; `SETUP`/`launch`/`theme`/`_reference`
+filename tokens; terminal present with no web surface). 44 of them are in the matched population
+(3.3%), and they account for 39 of 411 misgrouped executions (**9.5%** of the residual error) —
+an enrichment of **2.9×** over their base rate. They are real contamination and they are a
+minority of the problem. Neither case study 1 nor 2 is driven by them. They remain in the
+pipeline: excluding inconvenient executions is fitting the evaluation set.
+
+**Dataset B: the 6-cluster result was NOT defensible, and the k-selection rule degrades.**
+On A (1,717 executions) the stability × reuse rule selects `where_heavy`. On B (183) it selects
+`how_heavy` — the view measured at 0.256 probe accuracy — and the resulting 6 clusters have a
+**modal-surface share of 0.32–0.52**: fewer than half the members of a "process" visit that
+process's own most common surface. That is not a process identity. Constrained to `where_heavy`
+and letting the rule choose only the graph `k`, B yields **8 clusters** at a modal-surface share
+of **0.77** and a modal-route share of **0.92**, 100% cross-session reuse, mean 8.25 sessions per
+label. **Decision:** the view weighting is fixed to `where_heavy` and declared as an A→B transfer
+under the ADR-019 conditions — it is a structural, domain-neutral choice, and no A surface,
+route, process name, vocabulary or cluster count crosses over; `k` is still selected on B, by B.
+`label.DEFAULT_CFG["weightings"]` carries the provenance, and `None` restores the full sweep.
+
+`segments.jsonl` regenerated under this configuration: 183 segments, **8 labels**, 15 sessions,
+100% cross-session reuse. It still trips the one known `validate_segments` false positive (an
+intra-block boundary at a chunk edge; the validator's `justified` set is built from *block*
+boundaries, a Phase B assumption predating ADR-015).
+
+**Still true after S-E6b:** no LLM is justified. The supervised probe (0.891 accuracy) shows the
+information is present; the residual is executions with identical structural footprints and
+different business purpose, which is where a semantic judge would have to earn its place — and
+whether it can must be established by ablation, not asserted. Metric learning from LLM
+pseudo-labels is recorded as future work and was not built.

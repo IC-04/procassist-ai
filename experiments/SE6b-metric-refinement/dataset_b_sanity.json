@@ -1,0 +1,544 @@
+{
+  "b_arms": {
+    "where_heavy/linear/k5": {
+      "n_clusters": 11,
+      "sizes": [
+        31,
+        27,
+        21,
+        21,
+        17,
+        16,
+        12,
+        11,
+        11,
+        9,
+        7
+      ],
+      "largest_share": 0.169,
+      "cross_session_reuse": 0.909,
+      "mean_modal_surface_share": 0.813,
+      "mean_modal_route_share": 0.871
+    },
+    "where_heavy/linear/k10": {
+      "n_clusters": 9,
+      "sizes": [
+        31,
+        26,
+        26,
+        24,
+        22,
+        21,
+        12,
+        11,
+        10
+      ],
+      "largest_share": 0.169,
+      "cross_session_reuse": 1.0,
+      "mean_modal_surface_share": 0.772,
+      "mean_modal_route_share": 0.821
+    },
+    "where_heavy/linear/k20": {
+      "n_clusters": 8,
+      "sizes": [
+        33,
+        29,
+        28,
+        27,
+        24,
+        17,
+        15,
+        10
+      ],
+      "largest_share": 0.18,
+      "cross_session_reuse": 1.0,
+      "mean_modal_surface_share": 0.765,
+      "mean_modal_route_share": 0.918
+    },
+    "balanced/linear/k5": {
+      "n_clusters": 11,
+      "sizes": [
+        27,
+        27,
+        21,
+        21,
+        18,
+        17,
+        12,
+        12,
+        10,
+        9,
+        9
+      ],
+      "largest_share": 0.148,
+      "cross_session_reuse": 0.909,
+      "mean_modal_surface_share": 0.803,
+      "mean_modal_route_share": 0.872
+    },
+    "balanced/linear/k10": {
+      "n_clusters": 8,
+      "sizes": [
+        37,
+        32,
+        32,
+        27,
+        19,
+        16,
+        11,
+        9
+      ],
+      "largest_share": 0.202,
+      "cross_session_reuse": 0.875,
+      "mean_modal_surface_share": 0.731,
+      "mean_modal_route_share": 0.818
+    },
+    "balanced/linear/k20": {
+      "n_clusters": 6,
+      "sizes": [
+        57,
+        38,
+        33,
+        32,
+        14,
+        9
+      ],
+      "largest_share": 0.311,
+      "cross_session_reuse": 0.833,
+      "mean_modal_surface_share": 0.669,
+      "mean_modal_route_share": 0.825
+    },
+    "where_heavy/adaptive/k5": {
+      "n_clusters": 11,
+      "sizes": [
+        30,
+        27,
+        21,
+        21,
+        17,
+        16,
+        12,
+        12,
+        11,
+        9,
+        7
+      ],
+      "largest_share": 0.164,
+      "cross_session_reuse": 0.909,
+      "mean_modal_surface_share": 0.81,
+      "mean_modal_route_share": 0.864
+    },
+    "where_heavy/adaptive/k10": {
+      "n_clusters": 8,
+      "sizes": [
+        47,
+        31,
+        26,
+        24,
+        22,
+        12,
+        11,
+        10
+      ],
+      "largest_share": 0.257,
+      "cross_session_reuse": 1.0,
+      "mean_modal_surface_share": 0.781,
+      "mean_modal_route_share": 0.843
+    },
+    "where_heavy/adaptive/k20": {
+      "n_clusters": 7,
+      "sizes": [
+        42,
+        34,
+        28,
+        28,
+        24,
+        17,
+        10
+      ],
+      "largest_share": 0.23,
+      "cross_session_reuse": 1.0,
+      "mean_modal_surface_share": 0.724,
+      "mean_modal_route_share": 0.909
+    },
+    "balanced/adaptive/k5": {
+      "n_clusters": 11,
+      "sizes": [
+        27,
+        27,
+        21,
+        21,
+        18,
+        17,
+        12,
+        12,
+        10,
+        9,
+        9
+      ],
+      "largest_share": 0.148,
+      "cross_session_reuse": 0.909,
+      "mean_modal_surface_share": 0.803,
+      "mean_modal_route_share": 0.872
+    },
+    "balanced/adaptive/k10": {
+      "n_clusters": 9,
+      "sizes": [
+        32,
+        32,
+        29,
+        27,
+        16,
+        15,
+        12,
+        11,
+        9
+      ],
+      "largest_share": 0.175,
+      "cross_session_reuse": 0.889,
+      "mean_modal_surface_share": 0.738,
+      "mean_modal_route_share": 0.843
+    },
+    "balanced/adaptive/k20": {
+      "n_clusters": 6,
+      "sizes": [
+        44,
+        38,
+        34,
+        32,
+        26,
+        9
+      ],
+      "largest_share": 0.24,
+      "cross_session_reuse": 0.833,
+      "mean_modal_surface_share": 0.621,
+      "mean_modal_route_share": 0.826
+    },
+    "where_heavy/noisy_or/k5": {
+      "n_clusters": 11,
+      "sizes": [
+        34,
+        28,
+        21,
+        20,
+        16,
+        14,
+        12,
+        11,
+        11,
+        9,
+        7
+      ],
+      "largest_share": 0.186,
+      "cross_session_reuse": 0.909,
+      "mean_modal_surface_share": 0.81,
+      "mean_modal_route_share": 0.864
+    },
+    "where_heavy/noisy_or/k10": {
+      "n_clusters": 8,
+      "sizes": [
+        42,
+        29,
+        26,
+        24,
+        22,
+        19,
+        11,
+        10
+      ],
+      "largest_share": 0.23,
+      "cross_session_reuse": 1.0,
+      "mean_modal_surface_share": 0.765,
+      "mean_modal_route_share": 0.842
+    },
+    "where_heavy/noisy_or/k20": {
+      "n_clusters": 8,
+      "sizes": [
+        33,
+        30,
+        28,
+        27,
+        23,
+        17,
+        15,
+        10
+      ],
+      "largest_share": 0.18,
+      "cross_session_reuse": 1.0,
+      "mean_modal_surface_share": 0.765,
+      "mean_modal_route_share": 0.918
+    },
+    "balanced/noisy_or/k5": {
+      "n_clusters": 11,
+      "sizes": [
+        28,
+        27,
+        21,
+        21,
+        18,
+        17,
+        12,
+        11,
+        10,
+        9,
+        9
+      ],
+      "largest_share": 0.153,
+      "cross_session_reuse": 0.909,
+      "mean_modal_surface_share": 0.799,
+      "mean_modal_route_share": 0.872
+    },
+    "balanced/noisy_or/k10": {
+      "n_clusters": 8,
+      "sizes": [
+        37,
+        34,
+        32,
+        27,
+        19,
+        14,
+        11,
+        9
+      ],
+      "largest_share": 0.202,
+      "cross_session_reuse": 0.875,
+      "mean_modal_surface_share": 0.731,
+      "mean_modal_route_share": 0.813
+    },
+    "balanced/noisy_or/k20": {
+      "n_clusters": 6,
+      "sizes": [
+        43,
+        41,
+        34,
+        34,
+        22,
+        9
+      ],
+      "largest_share": 0.235,
+      "cross_session_reuse": 0.833,
+      "mean_modal_surface_share": 0.633,
+      "mean_modal_route_share": 0.865
+    }
+  },
+  "b_selected": {
+    "weights": "how_heavy",
+    "mode": "linear",
+    "k_nn": 20,
+    "n_clusters": 6,
+    "stability": 0.7564,
+    "cross_session_reuse": 1.0,
+    "objective": 0.7564
+  },
+  "b_selection_grid": [
+    {
+      "weights": "how_heavy",
+      "mode": "linear",
+      "k_nn": 20,
+      "n_clusters": 6,
+      "stability": 0.7564,
+      "cross_session_reuse": 1.0,
+      "objective": 0.7564
+    },
+    {
+      "weights": "where_heavy",
+      "mode": "adaptive",
+      "k_nn": 20,
+      "n_clusters": 7,
+      "stability": 0.7519,
+      "cross_session_reuse": 1.0,
+      "objective": 0.7519
+    },
+    {
+      "weights": "how_heavy",
+      "mode": "noisy_or",
+      "k_nn": 10,
+      "n_clusters": 6,
+      "stability": 0.7234,
+      "cross_session_reuse": 1.0,
+      "objective": 0.7234
+    },
+    {
+      "weights": "balanced",
+      "mode": "noisy_or",
+      "k_nn": 5,
+      "n_clusters": 11,
+      "stability": 0.7454,
+      "cross_session_reuse": 0.9091,
+      "objective": 0.6776
+    },
+    {
+      "weights": "uniform",
+      "mode": "adaptive",
+      "k_nn": 10,
+      "n_clusters": 8,
+      "stability": 0.7398,
+      "cross_session_reuse": 0.875,
+      "objective": 0.6473
+    },
+    {
+      "weights": "uniform",
+      "mode": "linear",
+      "k_nn": 5,
+      "n_clusters": 11,
+      "stability": 0.707,
+      "cross_session_reuse": 0.9091,
+      "objective": 0.6427
+    },
+    {
+      "weights": "balanced",
+      "mode": "linear",
+      "k_nn": 10,
+      "n_clusters": 8,
+      "stability": 0.734,
+      "cross_session_reuse": 0.875,
+      "objective": 0.6423
+    },
+    {
+      "weights": "how_heavy",
+      "mode": "noisy_or",
+      "k_nn": 20,
+      "n_clusters": 6,
+      "stability": 0.6405,
+      "cross_session_reuse": 1.0,
+      "objective": 0.6405
+    },
+    {
+      "weights": "balanced",
+      "mode": "adaptive",
+      "k_nn": 5,
+      "n_clusters": 11,
+      "stability": 0.701,
+      "cross_session_reuse": 0.9091,
+      "objective": 0.6372
+    },
+    {
+      "weights": "balanced",
+      "mode": "noisy_or",
+      "k_nn": 10,
+      "n_clusters": 8,
+      "stability": 0.7236,
+      "cross_session_reuse": 0.875,
+      "objective": 0.6331
+    }
+  ],
+  "b_chosen_clusters": [
+    {
+      "cluster": 0,
+      "size": 46,
+      "sessions": 12,
+      "distinct_surfaces": 38,
+      "distinct_routes": 6,
+      "modal_surface_share": 0.326,
+      "modal_route_share": 0.478,
+      "top_surface": "web:http://127.0.0.1:5132/onboarding",
+      "top_route": "/onboarding"
+    },
+    {
+      "cluster": 1,
+      "size": 38,
+      "sessions": 15,
+      "distinct_surfaces": 54,
+      "distinct_routes": 7,
+      "modal_surface_share": 0.421,
+      "modal_route_share": 0.632,
+      "top_surface": "app:Notepad:精算確認メモ",
+      "top_route": "/payroll-items"
+    },
+    {
+      "cluster": 2,
+      "size": 32,
+      "sessions": 13,
+      "distinct_surfaces": 25,
+      "distinct_routes": 6,
+      "modal_surface_share": 0.406,
+      "modal_route_share": 0.594,
+      "top_surface": "web:http://127.0.0.1:5132/payroll-items",
+      "top_route": "/payroll-items"
+    },
+    {
+      "cluster": 3,
+      "size": 25,
+      "sessions": 13,
+      "distinct_surfaces": 31,
+      "distinct_routes": 7,
+      "modal_surface_share": 0.32,
+      "modal_route_share": 0.44,
+      "top_surface": "web:http://127.0.0.1:5134/leave-applications",
+      "top_route": "/leave-applications"
+    },
+    {
+      "cluster": 4,
+      "size": 21,
+      "sessions": 9,
+      "distinct_surfaces": 32,
+      "distinct_routes": 5,
+      "modal_surface_share": 0.524,
+      "modal_route_share": 0.619,
+      "top_surface": "app:Microsoft Excel:Opening",
+      "top_route": "/payroll-items"
+    },
+    {
+      "cluster": 5,
+      "size": 21,
+      "sessions": 10,
+      "distinct_surfaces": 41,
+      "distinct_routes": 7,
+      "modal_surface_share": 0.429,
+      "modal_route_share": 0.476,
+      "top_surface": "web:http://127.0.0.1:5134/dashboard",
+      "top_route": "/dashboard"
+    }
+  ],
+  "b_n_clusters": 6,
+  "b_n_segments": 183,
+  "b_n_sessions": 15,
+  "b_label_report": {
+    "n_segments": 183,
+    "n_labels": 8,
+    "n_sessions": 15,
+    "labels_in_more_than_one_session": 8,
+    "cross_session_label_rate": 1.0,
+    "segments_under_a_cross_session_label": 183,
+    "most_common": [
+      [
+        "payroll-items__p00",
+        42
+      ],
+      [
+        "payroll-items__p01",
+        29
+      ],
+      [
+        "leave-applications-social-insurance__p02",
+        26
+      ],
+      [
+        "social-insurance__p03",
+        24
+      ],
+      [
+        "onboarding__p04",
+        22
+      ],
+      [
+        "leave-applications-resident-tax__p05",
+        19
+      ],
+      [
+        "onboarding__p06",
+        11
+      ],
+      [
+        "keiyaku_kaijo_tetsuzuki__p07",
+        10
+      ]
+    ],
+    "mean_sessions_per_label": 8.25
+  },
+  "segments_jsonl": {
+    "path": "segments.jsonl",
+    "n": 183,
+    "n_labels": 8
+  },
+  "runtime_s": 2.9
+}

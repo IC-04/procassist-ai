@@ -45,6 +45,14 @@ DEFAULT_CFG = {
     # being coarser. Homogeneity and completeness are reported because ARI alone cannot tell
     # over-merging from over-splitting, and here both rise.
     "method": "graph",
+    # The view weighting is fixed rather than swept: S-E6b measured the unsupervised sweep
+    # selecting `how_heavy` on Dataset B's 183 executions — the view the supervised probe scored
+    # at 0.256 accuracy — producing 6 clusters whose members mostly do not share the cluster's
+    # own modal surface. Constrained to `where_heavy`, B yields 8 clusters at a modal-surface
+    # share of 0.77 against 0.32-0.52. Declared as an A->B transfer under the ADR-019 conditions:
+    # structural and domain-neutral, no A surface, route, process name or cluster count crosses.
+    # Set to None to sweep every weighting (the S-E6 behaviour).
+    "weightings": ("where_heavy",),
     # Distance below which two signatures are the same process, "structural" method only.
     # Structural: a similarity on shapes, not a value fitted to A's content.
     "merge_distance": 0.42,
@@ -247,8 +255,10 @@ def _graph_assign(segs: Sequence[Dict], rows_by_session: Dict[str, Sequence[Dict
         reps = [ID.represent(s, rows_by_session.get(s.get("session_id"), []),
                              blocks_by_session.get(s.get("session_id"), [])) for s in segs]
         sel = ID.select_config(reps, [s.get("session_id") for s in segs],
-                               seed=int(cfg.get("seed", 7)))
-        S = ID.combine(sel.pop("_views"), ID.WEIGHT_GRID[sel["weights"]])
+                               seed=int(cfg.get("seed", 7)),
+                               weightings=cfg.get("weightings"))
+        S = ID.combine(sel.pop("_views"), ID.WEIGHT_GRID[sel["weights"]],
+                       mode=sel.get("mode", "linear"))
         return ID.louvain(ID.knn_graph(S, k=sel["k_nn"]), seed=int(cfg.get("seed", 7)))
     except ImportError:
         return None

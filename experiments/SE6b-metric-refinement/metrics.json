@@ -1,0 +1,424 @@
+{
+  "frozen": {
+    "n_segments": 1717,
+    "boundary_time": {
+      "1000": {
+        "precision": 0.5344,
+        "recall": 0.5515,
+        "f1": 0.5428,
+        "tp": 1835,
+        "fp": 1599,
+        "fn": 1492
+      },
+      "2000": {
+        "precision": 0.6797,
+        "recall": 0.7015,
+        "f1": 0.6904,
+        "tp": 2334,
+        "fp": 1100,
+        "fn": 993
+      },
+      "5000": {
+        "precision": 0.7289,
+        "recall": 0.7523,
+        "f1": 0.7404,
+        "tp": 2503,
+        "fp": 931,
+        "fn": 824
+      },
+      "10000": {
+        "precision": 0.7813,
+        "recall": 0.8064,
+        "f1": 0.7937,
+        "tp": 2683,
+        "fp": 751,
+        "fn": 644
+      }
+    },
+    "count_ratio": 0.98
+  },
+  "n_matched": 1332,
+  "n_reference_codes": 15,
+  "ablation_grid": [
+    {
+      "idf": false,
+      "mode": "linear",
+      "weights": "where_heavy",
+      "k_nn": 20,
+      "n_labels": 15,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.5801,
+      "nmi": 0.6852,
+      "homogeneity": 0.6761,
+      "completeness": 0.6945,
+      "match_rate": 0.7603,
+      "interruption_recall": 0.3265,
+      "cross_session_reuse": 1.0,
+      "case1_same_process_disjoint_routes_grouped": 0.0167,
+      "case2_same_process_disjoint_surfaces_grouped": 0.0167,
+      "case3_n_pairs": 97,
+      "case3_threshold": 0.8412,
+      "case3_wrongly_grouped": 1.0
+    },
+    {
+      "idf": false,
+      "mode": "adaptive",
+      "weights": "where_heavy",
+      "k_nn": 20,
+      "n_labels": 15,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.5852,
+      "nmi": 0.6962,
+      "homogeneity": 0.686,
+      "completeness": 0.7068,
+      "match_rate": 0.7603,
+      "interruption_recall": 0.3469,
+      "cross_session_reuse": 1.0,
+      "case1_same_process_disjoint_routes_grouped": 0.0167,
+      "case2_same_process_disjoint_surfaces_grouped": 0.0167,
+      "case3_n_pairs": 127,
+      "case3_threshold": 0.8173,
+      "case3_wrongly_grouped": 1.0
+    },
+    {
+      "idf": false,
+      "mode": "noisy_or",
+      "weights": "where_heavy",
+      "k_nn": 20,
+      "n_labels": 17,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.5881,
+      "nmi": 0.683,
+      "homogeneity": 0.6945,
+      "completeness": 0.6719,
+      "match_rate": 0.7603,
+      "interruption_recall": 0.3061,
+      "cross_session_reuse": 1.0,
+      "case1_same_process_disjoint_routes_grouped": 0.0167,
+      "case2_same_process_disjoint_surfaces_grouped": 0.0167,
+      "case3_n_pairs": 97,
+      "case3_threshold": 0.919,
+      "case3_wrongly_grouped": 1.0
+    },
+    {
+      "idf": true,
+      "mode": "linear",
+      "weights": "where_heavy",
+      "k_nn": 20,
+      "n_labels": 17,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.5492,
+      "nmi": 0.669,
+      "homogeneity": 0.6707,
+      "completeness": 0.6674,
+      "match_rate": 0.7603,
+      "interruption_recall": 0.2449,
+      "cross_session_reuse": 1.0,
+      "case1_same_process_disjoint_routes_grouped": 0.0167,
+      "case2_same_process_disjoint_surfaces_grouped": 0.0167,
+      "case3_n_pairs": 105,
+      "case3_threshold": 0.8299,
+      "case3_wrongly_grouped": 0.9905
+    },
+    {
+      "idf": true,
+      "mode": "adaptive",
+      "weights": "where_heavy",
+      "k_nn": 20,
+      "n_labels": 16,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.5665,
+      "nmi": 0.6777,
+      "homogeneity": 0.6737,
+      "completeness": 0.6816,
+      "match_rate": 0.7603,
+      "interruption_recall": 0.3061,
+      "cross_session_reuse": 1.0,
+      "case1_same_process_disjoint_routes_grouped": 0.0167,
+      "case2_same_process_disjoint_surfaces_grouped": 0.0167,
+      "case3_n_pairs": 141,
+      "case3_threshold": 0.8049,
+      "case3_wrongly_grouped": 1.0
+    },
+    {
+      "idf": true,
+      "mode": "noisy_or",
+      "weights": "where_heavy",
+      "k_nn": 20,
+      "n_labels": 18,
+      "boundary_f1_2000": 0.6904,
+      "boundary_f1_all": {
+        "1000": 0.5428,
+        "2000": 0.6904,
+        "5000": 0.7404,
+        "10000": 0.7937
+      },
+      "count_ratio": 0.98,
+      "ari": 0.5413,
+      "nmi": 0.6543,
+      "homogeneity": 0.6664,
+      "completeness": 0.6425,
+      "match_rate": 0.7603,
+      "interruption_recall": 0.2653,
+      "cross_session_reuse": 1.0,
+      "case1_same_process_disjoint_routes_grouped": 0.0167,
+      "case2_same_process_disjoint_surfaces_grouped": 0.0167,
+      "case3_n_pairs": 106,
+      "case3_threshold": 0.9134,
+      "case3_wrongly_grouped": 1.0
+    }
+  ],
+  "unsupervised_selection": {
+    "_rule": "stability under 80% node resampling x cross-session reuse — unchanged from S-E6, now sweeping the combination mode as well. No GT enters it.",
+    "chosen": {
+      "weights": "where_heavy",
+      "mode": "linear",
+      "k_nn": 20,
+      "n_clusters": 17,
+      "stability": 0.7879,
+      "cross_session_reuse": 1.0,
+      "objective": 0.7879
+    },
+    "grid": [
+      {
+        "weights": "where_heavy",
+        "mode": "linear",
+        "k_nn": 20,
+        "n_clusters": 17,
+        "stability": 0.7879,
+        "cross_session_reuse": 1.0,
+        "objective": 0.7879
+      },
+      {
+        "weights": "where_heavy",
+        "mode": "adaptive",
+        "k_nn": 20,
+        "n_clusters": 16,
+        "stability": 0.7627,
+        "cross_session_reuse": 1.0,
+        "objective": 0.7627
+      },
+      {
+        "weights": "how_heavy",
+        "mode": "noisy_or",
+        "k_nn": 10,
+        "n_clusters": 19,
+        "stability": 0.726,
+        "cross_session_reuse": 1.0,
+        "objective": 0.726
+      },
+      {
+        "weights": "uniform",
+        "mode": "linear",
+        "k_nn": 20,
+        "n_clusters": 18,
+        "stability": 0.7258,
+        "cross_session_reuse": 1.0,
+        "objective": 0.7258
+      },
+      {
+        "weights": "balanced",
+        "mode": "adaptive",
+        "k_nn": 10,
+        "n_clusters": 21,
+        "stability": 0.7244,
+        "cross_session_reuse": 1.0,
+        "objective": 0.7244
+      },
+      {
+        "weights": "how_heavy",
+        "mode": "noisy_or",
+        "k_nn": 20,
+        "n_clusters": 13,
+        "stability": 0.7166,
+        "cross_session_reuse": 1.0,
+        "objective": 0.7166
+      },
+      {
+        "weights": "balanced",
+        "mode": "linear",
+        "k_nn": 20,
+        "n_clusters": 17,
+        "stability": 0.7069,
+        "cross_session_reuse": 1.0,
+        "objective": 0.7069
+      },
+      {
+        "weights": "uniform",
+        "mode": "adaptive",
+        "k_nn": 20,
+        "n_clusters": 13,
+        "stability": 0.7053,
+        "cross_session_reuse": 1.0,
+        "objective": 0.7053
+      },
+      {
+        "weights": "balanced",
+        "mode": "noisy_or",
+        "k_nn": 20,
+        "n_clusters": 16,
+        "stability": 0.6895,
+        "cross_session_reuse": 1.0,
+        "objective": 0.6895
+      },
+      {
+        "weights": "balanced",
+        "mode": "linear",
+        "k_nn": 10,
+        "n_clusters": 21,
+        "stability": 0.682,
+        "cross_session_reuse": 1.0,
+        "objective": 0.682
+      },
+      {
+        "weights": "what_heavy",
+        "mode": "linear",
+        "k_nn": 20,
+        "n_clusters": 12,
+        "stability": 0.6782,
+        "cross_session_reuse": 1.0,
+        "objective": 0.6782
+      },
+      {
+        "weights": "where_heavy",
+        "mode": "noisy_or",
+        "k_nn": 20,
+        "n_clusters": 18,
+        "stability": 0.6723,
+        "cross_session_reuse": 1.0,
+        "objective": 0.6723
+      }
+    ]
+  },
+  "chosen_arm": {
+    "idf": true,
+    "mode": "linear",
+    "weights": "where_heavy",
+    "k_nn": 20,
+    "n_labels": 17,
+    "boundary_f1_2000": 0.6904,
+    "boundary_f1_all": {
+      "1000": 0.5428,
+      "2000": 0.6904,
+      "5000": 0.7404,
+      "10000": 0.7937
+    },
+    "count_ratio": 0.98,
+    "ari": 0.5492,
+    "nmi": 0.669,
+    "homogeneity": 0.6707,
+    "completeness": 0.6674,
+    "match_rate": 0.7603,
+    "interruption_recall": 0.2449,
+    "cross_session_reuse": 1.0,
+    "case1_same_process_disjoint_routes_grouped": 0.0167,
+    "case2_same_process_disjoint_surfaces_grouped": 0.0167,
+    "case3_n_pairs": 105,
+    "case3_threshold": 0.8299,
+    "case3_wrongly_grouped": 0.9905
+  },
+  "scaffolding": {
+    "_policy": "COUNTED AND REPORTED, NEVER REMOVED. Excluding inconvenient executions is fitting the evaluation set.",
+    "_detector": "structural: terminal-only app set; scaffold-like filename or theme/reference token in the WHAT bag; terminal present with no web surface. No A process name or code is used.",
+    "n_executions_flagged": 98,
+    "share_of_all": 0.0571,
+    "n_matched_flagged": 44,
+    "share_of_matched": 0.033,
+    "by_signature": {
+      "terminal_only": 11,
+      "scaffold_filename": 80,
+      "terminal_present": 72,
+      "no_web_surface": 188
+    },
+    "misgrouped_total": 411,
+    "misgrouped_flagged": 39,
+    "share_of_residual_error": 0.0949,
+    "enrichment_vs_base_rate": 2.873,
+    "case1_pairs_touching_scaffolding": "26/60",
+    "case2_pairs_touching_scaffolding": "26/60",
+    "examples": [
+      {
+        "session_id": "ses_20260630-121953-LAPTOP-R36BQBTE",
+        "apps": [
+          "Google Chrome",
+          "Microsoft Excel",
+          "Notepad",
+          "WindowsTerminal"
+        ],
+        "what": "Theme M1 - Mixed Multi-Domain (HR / Finance / Ops) b5c02ccf4c454d125778876ed1a15bd2 Notepad SETUP.md Untitled "
+      },
+      {
+        "session_id": "ses_20260630-121953-LAPTOP-R36BQBTE",
+        "apps": [
+          "Google Chrome",
+          "Microsoft Word",
+          "Notepad"
+        ],
+        "what": "財務会計システム 208a4897b3b2e986eb399d6034b6dcd1 939d5faa8fbfbadc4f0c22e05da1adc5 Opening HR_Policy 4eecd1c7074e12f66"
+      },
+      {
+        "session_id": "ses_20260630-121953-LAPTOP-R36BQBTE",
+        "apps": [
+          "Google Chrome",
+          "Microsoft Word",
+          "Notepad"
+        ],
+        "what": "HR人事給与システム 208a4897b3b2e986eb399d6034b6dcd1 307db4c31bba6836851f6ac404266bdd 59d0077601344d5a244c44e3d71f8836 "
+      },
+      {
+        "session_id": "ses_20260630-121953-LAPTOP-R36BQBTE",
+        "apps": [
+          "Google Chrome",
+          "Notepad"
+        ],
+        "what": "HR人事給与システム 04da4cba9dfaf65c3c3ceaa978324a94 208a4897b3b2e986eb399d6034b6dcd1 4e83a2b3886e7898fdf057f3fbd8a777 "
+      }
+    ]
+  },
+  "contract_boundary_f1": {
+    "frozen": {
+      "1000": 0.5428,
+      "2000": 0.6904,
+      "5000": 0.7404,
+      "10000": 0.7937
+    },
+    "identical_on_every_arm": true,
+    "violations": []
+  },
+  "runtime_s": 42.8
+}

@@ -730,3 +730,68 @@ inspecting what it chose, not by trusting it.
 275 passed, 1 skipped.
 
 **Time spent** ~2 h
+
+---
+
+## 2026-09-15 — S-E6b: the fixes S-E6 proposed, measured
+
+**Goal** Build and measure the two fixes ADR-021 named: IDF-weighted set similarity, and
+adaptive view combination. Assess Dataset B's 6-cluster result. Cap 75 minutes; segmentation
+frozen; no LLM.
+
+**Headline: the main fix does not work, because my own diagnosis in ADR-021 was wrong.**
+S-E6 reported that 99% of the highest-similarity cross-process pairs were wrongly grouped and
+that *"what they share is the portal dashboard root"*. That observation was true (71% share it)
+but the causal claim built on it was not, and I did not check it before writing it into an ADR.
+Measured now: those pairs have a surface **Jaccard of exactly 1.00** — identical surface sets,
+mean 1.35 shared surfaces and that is all either has. The Jaccard of two identical sets is 1.0
+under any term weighting, so IDF could never have moved them. It moved case study 3 by one pair
+in 97, and cost separability (gap 0.2263 → 0.2180, Cohen's d 1.535 → 1.508) and 0.031 ARI. IDF
+is implemented, unit-tested, ablatable and **off by default**.
+
+This is the same failure mode as the four denominator errors before it: a real observation
+promoted to a mechanism without the one check that would have falsified it.
+
+**A number I had been carrying across arms.** S-E6's case studies 1 and 2 (13.3%) were computed
+under the *rule-1* arm, not the shipped one. Under the shipped arm the figure is **1.7%**, and
+no combination mode moves it. Case-study rates are only comparable within one arm; they should
+not have been quoted across them.
+
+**What did work.** Adaptive per-pair renormalisation over applicable views: ARI 0.580 → 0.585,
+NMI 0.685 → 0.696, homogeneity *and* completeness both up, at identical boundary F1. Small and
+real. Noisy-OR reaches 0.588 but at 17 labels with completeness falling — it buys ARI by
+over-merging, so it is not the default.
+
+**Scaffolding, reported and not removed.** 98/1,717 executions (5.7%) carry a structural
+scaffolding signature; 44 are in the matched population and they account for 39 of 411
+misgrouped executions — 9.5% of the residual, a 2.9× enrichment. Real contamination, a minority
+of the problem, and not what drives case studies 1/2. Left in the pipeline: excluding
+inconvenient executions is fitting the evaluation set.
+
+**Dataset B: 6 clusters was not defensible, and I should have caught it last session.**
+The selection rule picks `where_heavy` on A's 1,717 executions and `how_heavy` on B's 183 —
+the view the probe scored at 0.256. Its 6 clusters have a modal-surface share of 0.32–0.52:
+fewer than half the members of a "process" visit that process's own most common surface.
+Constraining the weighting to `where_heavy` and letting the rule choose only `k`, B yields
+**8 clusters** at modal-surface 0.77 / modal-route 0.92, 100% cross-session reuse. The
+weighting is declared as an A→B transfer under the ADR-019 conditions; no A content crosses.
+`segments.jsonl` regenerated: 183 segments, 8 labels, 15 sessions. It still trips the one known
+`validate_segments` false positive (block-derived `justified` set, predating ADR-015).
+
+**Not done** Task 5 (pretrained multilingual embedding probe) was conditional on 60 minutes
+remaining and was not reached. No dependency was added. The prior stated in the brief —
+that a corpus of code identifiers and filenames suits char n-grams — is untested and remains
+open.
+
+**Decisions** ADR-021 addendum: IDF default off with the measured reason; adaptive combination
+ships; B's weighting fixed to `where_heavy` with provenance; no LLM still justified.
+
+**Generative AI use** GenAI-assisted implementation. Claude Code (Opus 5) wrote the IDF and
+combination code, the diagnostic and the experiments under my direction. The diagnostic that
+falsified the premise was written specifically to test it, and reported against my own prior
+conclusion.
+
+**Next** Open questions: the identical-footprint residual; whether a semantic judge can earn its
+place there, by ablation; task 5's embedding question. Suite 278 passed, 1 skipped.
+
+**Time spent** ~1.2 h

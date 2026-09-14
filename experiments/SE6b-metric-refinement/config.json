@@ -1,0 +1,25 @@
+{
+  "exp_id": "SE6b-metric-refinement",
+  "question": "S-E6 measured two similarity defects and proposed fixes. Do the fixes work?",
+  "decision_it_changes": "Whether IDF weighting and adaptive view combination ship, and whether Dataset B's 6-cluster result is defensible. Recorded as the ADR-021 addendum.",
+  "dataset": "dataset_a (frozen S-E4 segmentation) for tasks 1-3; dataset_b for task 4",
+  "segmentation": "FROZEN — 1,717 segments, boundary F1 0.6904 @ tau=2 s, count ratio 0.98. Asserted identical on every arm in metrics.json.contract_boundary_f1.",
+  "tasks": {
+    "1": "IDF-weight every set-based similarity (surfaces, routes, origins, bigrams, element ids, field keys). Acceptance test: case study 3's 99%.",
+    "2": "adaptive / noisy-OR view combination. Acceptance test: case studies 1 and 2's 13.3%.",
+    "3": "scaffolding contamination — counted and reported, NEVER removed from the pipeline.",
+    "4": "Dataset B internal consistency; regenerate segments.jsonl."
+  },
+  "ablation_design": "The shipped S-E6 configuration (where_heavy, k_nn=20) is held fixed; only IDF on/off and the combination mode vary, so each delta is attributable to one factor.",
+  "population": "scoreable canonical, tiers clean+repaired, 63 sessions; 1,332 of 1,752 reference fragments matched at IoU 0.5 (match_rate 0.760), 15 reference codes",
+  "taus_ms": [1000, 2000, 5000, 10000],
+  "seed": 7,
+  "reuse": "procmine/evaluate.py evaluate_all -> identity_scores / matched_identity / interruption_recall. No metric reimplemented.",
+  "non_goals": ["no LLM", "no boundary change", "no decoder/scorer/gate/candidate change", "no resumption model", "no metric learning from LLM pseudo-labels", "no Step 2 or Step 3 work"],
+  "not_done": "Task 5 (pretrained multilingual embedding probe) was optional on 60 minutes remaining. It was not reached and no dependency was added.",
+  "reporting_rules": [
+    "ARI never without match_rate, homogeneity and completeness",
+    "a case-study rate is only comparable within one arm",
+    "scaffolding is reported, never removed"
+  ]
+}
