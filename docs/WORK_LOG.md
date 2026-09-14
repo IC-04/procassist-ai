@@ -365,3 +365,58 @@ and their tests under my direction; every figure above was produced by running t
 **Next** The real Step 1 pipeline per `STEP1_SPEC.md`. This file is a floor to be replaced.
 
 **Time spent** ~0.5 h
+
+---
+
+### 2026-09-14 · Step 1 · D-1 / D-2 fixes and experiment S-E1
+
+**Goal** Establish the empirical baseline. No algorithm: no candidate generator, no scorer,
+no decoder, no LLM.
+
+**Did** D-1 (`normalise._TITLE_STRIP` generalised structurally — trailing separator, optional
+`Profile N`, one to three Capitalised tokens; no browser allow-list, ADR-013 stands) and D-2
+(bare `"Untitled"` removed from `blocks.NOISE_TITLE_HINTS`), each with regression tests.
+Created `experiments/SE1-gt-metric-correction/`.
+
+**Result**
+- Block-count deltas, both well inside the ~10% STOP threshold: A 4,968 → 4,957 (−0.2%),
+  B 1,338 → 1,338 (0.0%); distinct surfaces A 134 → 130 (−4, exactly the D-1 defect).
+- **Reported because it is a finding, not a detail:** `noise_blocks` A 652 → **1** (−99.8%),
+  B 53 → 36 (−32.1%). 651 of A's 652 noise flags came from that one `"Untitled"` hint — almost
+  all of A's "noise" was Notepad work. Nothing gates on `is_noise`, so no behaviour changed.
+- GT populations verified **exactly, zero disagreements**: canonical 1,819 · unscoreable 230 ·
+  scoreable canonical 1,589 · interrupted 98 · clean 1,756 / repaired 63 · raw 2,009 with 257
+  lacking `end_ts`.
+- τ unified to **{1000, 2000, 5000, 10000} ms**, justified from the scoreable canonical
+  fragment durations (median 31.7 s; the grid spans 3.2–31.5% of it). Both prior grids
+  superseded.
+- **Block-edge reachability survives correction: 60.6% at τ=2 s** on 3,504 boundary points,
+  against the prior ad-hoc 59.9%. 74.1% inside a block (was 74.5%); median distance 1,026 ms
+  (was 1,040). Candidate density 0.059/event, 1.95/block.
+- Baselines re-scored on all 63 sessions: **every arm reproduces its prior value to three
+  decimals** (B5-dwell 0.258). E11 had already been scoring the scoreable population without
+  naming it.
+
+**Problems / things measured rather than assumed**
+- The `PHASE_1_REPORT.md` §8 numbers came from three **uncommitted** scratchpad scripts
+  (`ceiling.py`, `why_missed.py`, `offset.py`). No committed artifact produced them. They
+  happened to be close to correct; that was not knowable before S-E1.
+- The "98.4% vs ≈69.8%" question has **three** readings, not two, and the distinction is
+  *conditioning*, not granularity: of missed transitions 98.5%, of missed boundary points
+  97.5%, of all boundary points 73.2%. The first two agree; the third is a different statistic.
+- τ=5 s reachability moves 82.8% → 76.9%, purely because the prior was measured at 5,250 ms.
+  82.8% must not be quoted again.
+- `segments.jsonl` is now **stale** after D-1/D-2 — 958 segments still, but 65 lines differ and
+  distinct labels drop 52 → 50. It was outside this change's modification budget; `make
+  segments` regenerates it.
+
+**Decisions** No ADR; nothing architectural changed. D-2 chose removal over scoping because it
+is the smaller change and the only one inside the stated budget (`NOISE_TITLE_HINTS` only).
+
+**Generative AI use** GenAI-assisted implementation. Claude Code (Opus 5) applied the fixes and
+wrote the experiment under my direction; every figure was produced by running the code.
+
+**Next** S-E2 (miss attribution) and S-E3 (intra-block candidate reachability — the decisive
+experiment). Suite: 194 passed, 1 skipped.
+
+**Time spent** ~1 h
