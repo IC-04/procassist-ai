@@ -1,0 +1,43 @@
+{
+  "exp_id": "SE6-identity-grouping",
+  "question": "Where is the process-identity ceiling, and which grouping method is justified? Is an LLM required, or is the gap a representation gap that classical or graph clustering closes?",
+  "decision_it_changes": "Whether Step 1's identity stage ships a classical/graph grouping (no LLM) or a bounded LLM semantic judge. Recorded as ADR-021.",
+  "dataset": "dataset_a",
+  "segmentation": "FROZEN — the exact S-E4 output (LOSO fit, percentile calibration, gate, decoder). No arm may add, delete, move or merge a boundary. Reproduced by build_frozen.py and cached at build/dataset_a/se6_frozen.pkl.",
+  "contract": "boundary F1 identical on every arm, asserted in metrics.json.contract_boundary_f1 and in tests/test_identity.py",
+  "population": "scoreable canonical, tiers clean+repaired, 63 sessions (EVALUATION_PROTOCOL §8)",
+  "taus_ms": [1000, 2000, 5000, 10000],
+  "iou_for_identity": 0.5,
+  "seed": 7,
+  "views": {
+    "WHERE": "surface-key sequence and set, surface bigrams, route set, origin set, app set",
+    "HOW": "20-dim interaction profile: event-type proportions, per-minute rates, surface-switch and revisit ratios, log gap quantiles, burstiness, log duration — normalised per event or per unit duration",
+    "WHAT": "character 2-3-gram TF-IDF over window titles, element labels, element ids and field keys. Character n-grams because Dataset A's titles are Japanese and B's are romanised; no tokeniser exists for both and none may be added. context.extracted_text is NOT exposed by the frozen normalise.flatten_event record and is therefore absent."
+  },
+  "similarity": "S = w_where*sim_where + w_how*sim_how + w_what*sim_what + w_seq*sim_sequence; weighted Jaccard for sets, cosine for HOW and for TF-IDF, rapidfuzz normalised Levenshtein similarity over the surface-visit shape. Dense 1717x1717, computed once, every graph a slice of it.",
+  "weight_grid": ["uniform", "where_heavy", "what_heavy", "how_heavy", "balanced"],
+  "configuration_selection": "UNSUPERVISED — modularity x cross-session reuse. Reference process codes never enter the similarity or the selection rule. A GT-informed sweep is reported separately and labelled a development analysis.",
+  "arms": [
+    "S-E4 structural labeller (control)",
+    "k-means on the explicit vector space (S is not a proper metric)",
+    "agglomerative average / complete, metric=precomputed on (1-S)",
+    "DBSCAN, metric=precomputed, two settings only",
+    "graph kNN + Louvain",
+    "graph mutual-kNN + Louvain",
+    "graph threshold(p99.5) + connected components",
+    "graph threshold(p99.5) + Louvain",
+    "spectral on the precomputed affinity"
+  ],
+  "ceilings": {
+    "merge_only_oracle": "bounds RELABELLING only — membership fixed. Re-clustering arms are NOT bounded by it.",
+    "supervised_probe": "DIAGNOSTIC ONLY — logistic regression, LOSO by session, per view. An upper bound on any unsupervised method over this representation. Never runs on Dataset B.",
+    "segmentation_inherited": "DIAGNOSTIC ONLY — the same representation and grouping run on GT segments, to separate error caused by imperfect segmentation from error caused by grouping."
+  },
+  "reuse": "procmine/evaluate.py: evaluate_all -> identity_scores / matched_identity / interruption_recall. No metric is reimplemented.",
+  "non_goals": ["no LLM", "no boundary change", "no decoder change", "no new dependency", "no ARI maximisation", "no Step 2 or Step 3 work"],
+  "reporting_rules": [
+    "ARI is never reported without match_rate, homogeneity and completeness",
+    "interruption_recall is always read beside count ratio and label count",
+    "a ceiling row is never presented as an arm"
+  ]
+}
