@@ -19,6 +19,7 @@ BLOCK_REQUIRED = (
     "n_keystrokes", "n_clicks", "n_form_inputs", "n_nav", "n_clipboard",
     "field_keys", "element_ids", "element_labels", "value_hashes", "screenshots",
     "absorbed_excursions", "is_noise", "operator", "machine",
+    "first_seq", "last_seq",          # DATA_CONTRACT §10.1
 )
 
 # DATA_CONTRACT.md §2 — the surface grammar:

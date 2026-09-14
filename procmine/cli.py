@@ -4,6 +4,7 @@ import json, os, sys, time, argparse, logging, collections
 from typing import Dict, List
 
 from . import normalise as N, blocks as B, tekg as G, context as C, schemas as S
+from . import candidates as CA
 
 log = logging.getLogger("procmine")
 
@@ -35,12 +36,14 @@ def _tekg_document(session_id: str, graph: Dict) -> Dict:
 
 
 def build(dataset_root: str, out_root: str, window: int = 5, min_events: int = 3,
-          min_ms: int = 1500, max_lag: int = 12, write_windows: bool = True) -> dict:
+          min_ms: int = 1500, max_lag: int = 12, write_windows: bool = True,
+          write_candidates: bool = True) -> dict:
     """Run the deterministic pipeline over one dataset and write its artifacts."""
     t0 = time.time()
     os.makedirs(out_root, exist_ok=True)
     os.makedirs(os.path.join(out_root, "tekg"), exist_ok=True)
     all_blocks: List[Dict] = []
+    all_cands: List[Dict] = []
     all_stats: List[Dict] = []
     payload_count = 0
     edge_counter: collections.Counter = collections.Counter()
@@ -75,6 +78,9 @@ def build(dataset_root: str, out_root: str, window: int = 5, min_events: int = 3
                     json.dump(p, fh, ensure_ascii=False, indent=1)
                 payload_count += 1
 
+        if write_candidates:
+            all_cands.extend(CA.generate(rows, blks))
+
         all_blocks.extend(blks)
         all_stats.append({"session": sid, "events": len(rows), **B.block_stats(blks)})
         log.info("%s: %d events -> %d blocks", sid, len(rows), len(blks))
@@ -83,6 +89,13 @@ def build(dataset_root: str, out_root: str, window: int = 5, min_events: int = 3
     with open(os.path.join(out_root, "blocks.jsonl"), "w", encoding="utf-8") as fh:
         for b in all_blocks:
             fh.write(json.dumps(b, ensure_ascii=False) + "\n")
+
+    if write_candidates:
+        # DATA_CONTRACT §10.2, ordered by (session_id, at_seq)
+        all_cands.sort(key=lambda c: (c["session_id"], c["at_seq"]))
+        with open(os.path.join(out_root, "candidates.jsonl"), "w", encoding="utf-8") as fh:
+            for c in all_cands:
+                fh.write(json.dumps(c, ensure_ascii=False) + "\n")
 
     n_events = sum(s["events"] for s in all_stats)
     summary = {
@@ -99,6 +112,9 @@ def build(dataset_root: str, out_root: str, window: int = 5, min_events: int = 3
         "empty_surface_blocks": sum(1 for b in all_blocks
                                     if b["surface"] in ("app:", "app:None")),
         "absorbed_excursions": sum(b["absorbed_excursions"] for b in all_blocks),
+        "candidates": len(all_cands),
+        "candidates_per_event": (round(len(all_cands) / n_events, 4)
+                                 if write_candidates and n_events else None),
         "reasoner_windows": payload_count,
         "dataflow_edges": dataflow_edges,
         "edges_by_type": dict(edge_counter),
@@ -122,6 +138,8 @@ def main(argv=None) -> int:
     ap.add_argument("--max-lag", type=int, default=12, help="TEKG locality bound")
     ap.add_argument("--no-windows", action="store_true",
                     help="skip reasoner payloads (parameter sweeps do not need them)")
+    ap.add_argument("--no-candidates", action="store_true",
+                    help="skip candidates.jsonl (DATA_CONTRACT §10.2)")
     ap.add_argument("-v", "--verbose", action="store_true")
     a = ap.parse_args(argv)
 
@@ -141,7 +159,8 @@ def main(argv=None) -> int:
     out = a.out or os.path.join("build", os.path.basename(root))
     try:
         s = build(root, out, window=a.window, min_events=a.min_events, min_ms=a.min_ms,
-                  max_lag=a.max_lag, write_windows=not a.no_windows)
+                  max_lag=a.max_lag, write_windows=not a.no_windows,
+                  write_candidates=not a.no_candidates)
     except ArtifactInvalid as e:
         print(f"ARTIFACT CONTRACT VIOLATION: {e}", file=sys.stderr)
         return 2

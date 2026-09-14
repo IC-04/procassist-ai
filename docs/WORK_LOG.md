@@ -479,3 +479,63 @@ experiment and tests under my direction; every figure was produced by running th
 Suite: 208 passed, 1 skipped.
 
 **Time spent** ~1 h
+
+---
+
+### 2026-09-14 · Step 1 · S-E3 — intra-block candidate generation and reachability
+
+**Goal** Build the event-level candidate layer and measure whether it recovers the boundaries
+S-E2 showed are present inside blocks. Ends at GATE-2. No scorer, gate, decoder or LLM.
+
+**Did** Task 0 corrections (see the previous entry's commit), `first_seq`/`last_seq` on blocks
+(DATA_CONTRACT §10.1), `procmine/candidates.py`, candidates wired into `cli.py`,
+`experiments/SE3-candidate-reachability/`, 15 generator tests.
+
+**Result — GATE-2: PROCEED.**
+
+| τ | block-edge | candidates | ceiling | ceiling-adjusted |
+|---|---|---|---|---|
+| 1 s | 48.2% | **77.2%** | 77.8% | **99.3%** |
+| **2 s** | 60.6% | **88.0%** | 90.0% | **97.8%** |
+| 5 s | 76.9% | 92.2% | 98.7% | 93.4% |
+| 10 s | 92.4% | 98.7% | 98.9% | 99.8% |
+
+- Density **0.165/event** on A, 0.127 on B — both well inside the 0.30 gate. Per-session mean
+  87.5%, sd 12.7, range [27.8, 98.4]; the floor is the truncated session, retained.
+- **Recovery of S-E2's missed boundaries confirms its prediction exactly:** (b) 858/892 =
+  96.2%, (c) 125/126 = 99.2%, (d) 7/14, **(e) 0/349 = 0.0%**. The 349 unreachable-in-principle
+  records are the entire gap between 90.0% and 100%.
+- (c) is recovered **without touching absorption** — the events the excursion was made of are
+  still in the block. That removes most of the reason to change it.
+
+**Problems / things measured rather than assumed**
+- **Two design tensions resolved by measurement, not judgement.** (i) Contract 3 says nominate
+  at *every* self-referential `app_switch`; those arrive in bursts with p50 inter-arrival
+  **55 ms**, so the literal reading costs 0.3769/event for **0.0 points** of reachability.
+  Dedup at 250 ms — a quarter of the tightest τ — saves 56% density for nothing. (ii)
+  `mode_transition` fires on 77.7% of intra-block positions and pushed **dataset_b density to
+  0.330/event, over the gate**; demoted to a feature (which §3.2.1 requires anyway) at a cost
+  of 1.9 points.
+- **The dominant evidence is negative**: `shortcut_w` lift **0.01**, `keystroke_w` 0.02,
+  `browser_click_w` 0.03. A boundary is a *lull*, not an event. Deliberately not used to prune
+  — a suppressed candidate cannot be recovered downstream.
+- **The two contingency tables disagree as predicted**: `app_switch_self_at` lift 1.48 over all
+  boundaries vs 1.81 over missed-only. Fitting a scorer on missed-only would mis-rank the 60.6%
+  the block-edge space already handles.
+- My first `_features` rebuilt the session timeline per candidate — quadratic, unusable on A's
+  162k events. Fixed by precomputing once.
+- My first GT-isolation test grepped the source and failed on the module's own docstring
+  *explaining* that it reads no GT. Rewritten to parse with `ast` so only real imports and
+  non-docstring string literals count.
+
+**Decisions** No ADR. Verdict: 88.0% absolute / 97.8% of ceiling / 0.165 density — all three
+GATE-2 criteria pass with margin. Carried forward honestly: the ceiling is **90.0%** at τ=2 s,
+so any end-to-end recall must be read against 90.0%, not 100%.
+
+**Generative AI use** GenAI-assisted implementation. Claude Code (Opus 5) wrote the generator,
+experiment and tests under my direction; every figure was produced by running the code.
+
+**Next** Scoring (stage 4) — a separate prompt, after GATE-2 review. Suite: 223 passed,
+1 skipped.
+
+**Time spent** ~1.5 h

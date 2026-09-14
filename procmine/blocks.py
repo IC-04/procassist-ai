@@ -227,6 +227,12 @@ def _summarise(merged: List[Dict]) -> List[Dict]:
             "machine": head["machine"],
             "start_iso": first["ts_iso"],
             "end_iso": last["ts_iso"],
+            # DATA_CONTRACT §10.1 / ADR-015: a block is a CONTAINER, so a boundary may be
+            # placed between two events inside it. These expose the block's own rows as a
+            # span into the normalised event stream, which `candidates.py` recovers
+            # deterministically from the same session load.
+            "first_seq": first.get("seq"),
+            "last_seq": last.get("seq"),
         })
     return out
 

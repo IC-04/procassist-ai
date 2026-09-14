@@ -1,0 +1,49 @@
+{
+  "exp_id": "SE3-candidate-reachability",
+  "hypothesis": "An event-level candidate space recovers the boundaries S-E2 showed are present inside blocks, at a density that is not indiscriminate.",
+  "dataset": "dataset_a",
+  "population_source": "experiments/SE1-gt-metric-correction",
+  "population": "scoreable canonical, tiers clean+repaired",
+  "tau_grid_ms": [
+    1000,
+    2000,
+    5000,
+    10000
+  ],
+  "arms": [
+    "candidates",
+    "candidates_with_mode_transition",
+    "candidates_no_dedup"
+  ],
+  "generator_cfg_default": {
+    "enabled_triggers": [
+      "app_change",
+      "app_switch",
+      "app_switch_self",
+      "browser_navigation",
+      "browser_tab_event",
+      "dialog_closed",
+      "dialog_opened",
+      "field_key_change",
+      "large_relative_gap",
+      "origin_change",
+      "route_change",
+      "title_change",
+      "window_title_change"
+    ],
+    "dedup_ms": 250,
+    "gap_percentile": 0.95,
+    "window_ms": 2000,
+    "window_events": 3
+  },
+  "non_goals": [
+    "scorer",
+    "gate",
+    "decoder",
+    "labelling",
+    "LLM"
+  ],
+  "git_sha": "15a5d43110976eeffc42d27f5ac1c01d97fbf3b9",
+  "started_at": "2026-09-14T12:32:11Z",
+  "finished_at": "2026-09-14T12:32:35Z"
+}

@@ -1,0 +1,523 @@
+{
+  "arms": {
+    "candidates": {
+      "boundary_points": 3504,
+      "reachability_pct": {
+        "1000": 77.2,
+        "2000": 88.0,
+        "5000": 92.2,
+        "10000": 98.7
+      },
+      "reachability_n": {
+        "1000": 2706,
+        "2000": 3085,
+        "5000": 3230,
+        "10000": 3459
+      },
+      "block_edge_pct": {
+        "1000": 48.2,
+        "2000": 60.6,
+        "5000": 76.9,
+        "10000": 92.4
+      },
+      "ceiling_pct": {
+        "1000": 77.8,
+        "2000": 90.0,
+        "5000": 98.7,
+        "10000": 98.9
+      },
+      "ceiling_adjusted_pct": {
+        "1000": 99.3,
+        "2000": 97.8,
+        "5000": 93.4,
+        "10000": 99.8
+      },
+      "density": {
+        "candidates": 26860,
+        "events": 162768,
+        "blocks": 4957,
+        "intra_block": 21903,
+        "per_event": 0.165,
+        "per_block": 5.42
+      },
+      "per_session_tau2000": {
+        "mean": 87.5,
+        "sd": 12.7,
+        "min": 27.8,
+        "max": 98.4,
+        "n_sessions": 63
+      },
+      "recovery_by_se2_category": {
+        "b_preserved_inside_block": {
+          "total": 892,
+          "reached_1000": 811,
+          "reached_2000": 858,
+          "reached_5000": 877,
+          "reached_10000": 890,
+          "pct_2000": 96.2
+        },
+        "c_absorbed_micro_excursion": {
+          "total": 126,
+          "reached_1000": 124,
+          "reached_2000": 125,
+          "reached_5000": 126,
+          "reached_10000": 126,
+          "pct_2000": 99.2
+        },
+        "d_ambiguous_no_evidence": {
+          "total": 14,
+          "reached_1000": 2,
+          "reached_2000": 7,
+          "reached_5000": 8,
+          "reached_10000": 12,
+          "pct_2000": 50.0
+        },
+        "e_gt_telemetry_mismatch": {
+          "total": 349,
+          "reached_1000": 0,
+          "reached_2000": 0,
+          "reached_5000": 103,
+          "reached_10000": 308,
+          "pct_2000": 0.0
+        }
+      }
+    },
+    "candidates_with_mode_transition": {
+      "boundary_points": 3504,
+      "reachability_pct": {
+        "1000": 77.7,
+        "2000": 89.9,
+        "5000": 98.4,
+        "10000": 98.9
+      },
+      "reachability_n": {
+        "1000": 2723,
+        "2000": 3150,
+        "5000": 3448,
+        "10000": 3466
+      },
+      "block_edge_pct": {
+        "1000": 48.2,
+        "2000": 60.6,
+        "5000": 76.9,
+        "10000": 92.4
+      },
+      "ceiling_pct": {
+        "1000": 77.8,
+        "2000": 90.0,
+        "5000": 98.7,
+        "10000": 98.9
+      },
+      "ceiling_adjusted_pct": {
+        "1000": 99.9,
+        "2000": 99.8,
+        "5000": 99.7,
+        "10000": 100.0
+      },
+      "density": {
+        "candidates": 44217,
+        "events": 162768,
+        "blocks": 4957,
+        "intra_block": 39260,
+        "per_event": 0.2717,
+        "per_block": 8.92
+      },
+      "per_session_tau2000": {
+        "mean": 89.5,
+        "sd": 11.9,
+        "min": 27.8,
+        "max": 98.4,
+        "n_sessions": 63
+      },
+      "recovery_by_se2_category": {
+        "b_preserved_inside_block": {
+          "total": 892,
+          "reached_1000": 824,
+          "reached_2000": 892,
+          "reached_5000": 892,
+          "reached_10000": 892,
+          "pct_2000": 100.0
+        },
+        "c_absorbed_micro_excursion": {
+          "total": 126,
+          "reached_1000": 124,
+          "reached_2000": 126,
+          "reached_5000": 126,
+          "reached_10000": 126,
+          "pct_2000": 100.0
+        },
+        "d_ambiguous_no_evidence": {
+          "total": 14,
+          "reached_1000": 3,
+          "reached_2000": 14,
+          "reached_5000": 14,
+          "reached_10000": 14,
+          "pct_2000": 100.0
+        },
+        "e_gt_telemetry_mismatch": {
+          "total": 349,
+          "reached_1000": 0,
+          "reached_2000": 0,
+          "reached_5000": 293,
+          "reached_10000": 311,
+          "pct_2000": 0.0
+        }
+      }
+    },
+    "candidates_no_dedup": {
+      "boundary_points": 3504,
+      "reachability_pct": {
+        "1000": 77.2,
+        "2000": 88.0,
+        "5000": 92.2,
+        "10000": 98.7
+      },
+      "reachability_n": {
+        "1000": 2706,
+        "2000": 3085,
+        "5000": 3231,
+        "10000": 3459
+      },
+      "block_edge_pct": {
+        "1000": 48.2,
+        "2000": 60.6,
+        "5000": 76.9,
+        "10000": 92.4
+      },
+      "ceiling_pct": {
+        "1000": 77.8,
+        "2000": 90.0,
+        "5000": 98.7,
+        "10000": 98.9
+      },
+      "ceiling_adjusted_pct": {
+        "1000": 99.3,
+        "2000": 97.8,
+        "5000": 93.4,
+        "10000": 99.8
+      },
+      "density": {
+        "candidates": 61342,
+        "events": 162768,
+        "blocks": 4957,
+        "intra_block": 56385,
+        "per_event": 0.3769,
+        "per_block": 12.37
+      },
+      "per_session_tau2000": {
+        "mean": 87.5,
+        "sd": 12.7,
+        "min": 27.8,
+        "max": 98.4,
+        "n_sessions": 63
+      },
+      "recovery_by_se2_category": {
+        "b_preserved_inside_block": {
+          "total": 892,
+          "reached_1000": 811,
+          "reached_2000": 858,
+          "reached_5000": 877,
+          "reached_10000": 890,
+          "pct_2000": 96.2
+        },
+        "c_absorbed_micro_excursion": {
+          "total": 126,
+          "reached_1000": 124,
+          "reached_2000": 125,
+          "reached_5000": 126,
+          "reached_10000": 126,
+          "pct_2000": 99.2
+        },
+        "d_ambiguous_no_evidence": {
+          "total": 14,
+          "reached_1000": 2,
+          "reached_2000": 7,
+          "reached_5000": 8,
+          "reached_10000": 12,
+          "pct_2000": 50.0
+        },
+        "e_gt_telemetry_mismatch": {
+          "total": 349,
+          "reached_1000": 0,
+          "reached_2000": 0,
+          "reached_5000": 104,
+          "reached_10000": 308,
+          "pct_2000": 0.0
+        }
+      }
+    }
+  },
+  "contingency": {
+    "all_boundaries": {
+      "n_boundary_candidates": 6034,
+      "n_non_boundary_candidates": 20826,
+      "features": {
+        "app_switch_w": {
+          "boundary_n": 5564,
+          "boundary_pct": 92.2,
+          "non_boundary_n": 17840,
+          "non_boundary_pct": 85.7
+        },
+        "app_switch_at": {
+          "boundary_n": 4762,
+          "boundary_pct": 78.9,
+          "non_boundary_n": 14609,
+          "non_boundary_pct": 70.1
+        },
+        "mode_transition": {
+          "boundary_n": 3298,
+          "boundary_pct": 54.7,
+          "non_boundary_n": 13885,
+          "non_boundary_pct": 66.7
+        },
+        "is_web_surface": {
+          "boundary_n": 5016,
+          "boundary_pct": 83.1,
+          "non_boundary_n": 11062,
+          "non_boundary_pct": 53.1
+        },
+        "app_switch_self_at": {
+          "boundary_n": 4089,
+          "boundary_pct": 67.8,
+          "non_boundary_n": 9553,
+          "non_boundary_pct": 45.9
+        },
+        "mouse_click_w": {
+          "boundary_n": 104,
+          "boundary_pct": 1.7,
+          "non_boundary_n": 11348,
+          "non_boundary_pct": 54.5
+        },
+        "keystroke_w": {
+          "boundary_n": 63,
+          "boundary_pct": 1.0,
+          "non_boundary_n": 10112,
+          "non_boundary_pct": 48.6
+        },
+        "browser_click_w": {
+          "boundary_n": 79,
+          "boundary_pct": 1.3,
+          "non_boundary_n": 9803,
+          "non_boundary_pct": 47.1
+        },
+        "shortcut_w": {
+          "boundary_n": 18,
+          "boundary_pct": 0.3,
+          "non_boundary_n": 9005,
+          "non_boundary_pct": 43.2
+        },
+        "large_relative_gap": {
+          "boundary_n": 1558,
+          "boundary_pct": 25.8,
+          "non_boundary_n": 5876,
+          "non_boundary_pct": 28.2
+        },
+        "mouse_scroll_w": {
+          "boundary_n": 73,
+          "boundary_pct": 1.2,
+          "non_boundary_n": 6650,
+          "non_boundary_pct": 31.9
+        },
+        "clipboard_change_w": {
+          "boundary_n": 8,
+          "boundary_pct": 0.1,
+          "non_boundary_n": 6099,
+          "non_boundary_pct": 29.3
+        },
+        "browser_navigation_w": {
+          "boundary_n": 3609,
+          "boundary_pct": 59.8,
+          "non_boundary_n": 2271,
+          "non_boundary_pct": 10.9
+        },
+        "route_change": {
+          "boundary_n": 1154,
+          "boundary_pct": 19.1,
+          "non_boundary_n": 3939,
+          "non_boundary_pct": 18.9
+        },
+        "origin_change": {
+          "boundary_n": 875,
+          "boundary_pct": 14.5,
+          "non_boundary_n": 3666,
+          "non_boundary_pct": 17.6
+        },
+        "title_change": {
+          "boundary_n": 152,
+          "boundary_pct": 2.5,
+          "non_boundary_n": 3892,
+          "non_boundary_pct": 18.7
+        },
+        "app_change": {
+          "boundary_n": 143,
+          "boundary_pct": 2.4,
+          "non_boundary_n": 2995,
+          "non_boundary_pct": 14.4
+        },
+        "window_title_change_w": {
+          "boundary_n": 7,
+          "boundary_pct": 0.1,
+          "non_boundary_n": 1110,
+          "non_boundary_pct": 5.3
+        },
+        "browser_form_input_w": {
+          "boundary_n": 4,
+          "boundary_pct": 0.1,
+          "non_boundary_n": 393,
+          "non_boundary_pct": 1.9
+        },
+        "at_chunk_edge": {
+          "boundary_n": 6,
+          "boundary_pct": 0.1,
+          "non_boundary_n": 28,
+          "non_boundary_pct": 0.1
+        },
+        "field_key_change": {
+          "boundary_n": 0,
+          "boundary_pct": 0.0,
+          "non_boundary_n": 1,
+          "non_boundary_pct": 0.0
+        }
+      }
+    },
+    "missed_only": {
+      "n_boundary_candidates": 2287,
+      "n_non_boundary_candidates": 20826,
+      "features": {
+        "app_switch_w": {
+          "boundary_n": 2278,
+          "boundary_pct": 99.6,
+          "non_boundary_n": 17840,
+          "non_boundary_pct": 85.7
+        },
+        "app_switch_at": {
+          "boundary_n": 2194,
+          "boundary_pct": 95.9,
+          "non_boundary_n": 14609,
+          "non_boundary_pct": 70.1
+        },
+        "mode_transition": {
+          "boundary_n": 1230,
+          "boundary_pct": 53.8,
+          "non_boundary_n": 13885,
+          "non_boundary_pct": 66.7
+        },
+        "is_web_surface": {
+          "boundary_n": 1418,
+          "boundary_pct": 62.0,
+          "non_boundary_n": 11062,
+          "non_boundary_pct": 53.1
+        },
+        "app_switch_self_at": {
+          "boundary_n": 1902,
+          "boundary_pct": 83.2,
+          "non_boundary_n": 9553,
+          "non_boundary_pct": 45.9
+        },
+        "mouse_click_w": {
+          "boundary_n": 4,
+          "boundary_pct": 0.2,
+          "non_boundary_n": 11348,
+          "non_boundary_pct": 54.5
+        },
+        "keystroke_w": {
+          "boundary_n": 29,
+          "boundary_pct": 1.3,
+          "non_boundary_n": 10112,
+          "non_boundary_pct": 48.6
+        },
+        "browser_click_w": {
+          "boundary_n": 0,
+          "boundary_pct": 0.0,
+          "non_boundary_n": 9803,
+          "non_boundary_pct": 47.1
+        },
+        "shortcut_w": {
+          "boundary_n": 7,
+          "boundary_pct": 0.3,
+          "non_boundary_n": 9005,
+          "non_boundary_pct": 43.2
+        },
+        "mouse_scroll_w": {
+          "boundary_n": 21,
+          "boundary_pct": 0.9,
+          "non_boundary_n": 6650,
+          "non_boundary_pct": 31.9
+        },
+        "large_relative_gap": {
+          "boundary_n": 489,
+          "boundary_pct": 21.4,
+          "non_boundary_n": 5876,
+          "non_boundary_pct": 28.2
+        },
+        "clipboard_change_w": {
+          "boundary_n": 4,
+          "boundary_pct": 0.2,
+          "non_boundary_n": 6099,
+          "non_boundary_pct": 29.3
+        },
+        "route_change": {
+          "boundary_n": 93,
+          "boundary_pct": 4.1,
+          "non_boundary_n": 3939,
+          "non_boundary_pct": 18.9
+        },
+        "title_change": {
+          "boundary_n": 10,
+          "boundary_pct": 0.4,
+          "non_boundary_n": 3892,
+          "non_boundary_pct": 18.7
+        },
+        "origin_change": {
+          "boundary_n": 93,
+          "boundary_pct": 4.1,
+          "non_boundary_n": 3666,
+          "non_boundary_pct": 17.6
+        },
+        "app_change": {
+          "boundary_n": 10,
+          "boundary_pct": 0.4,
+          "non_boundary_n": 2995,
+          "non_boundary_pct": 14.4
+        },
+        "browser_navigation_w": {
+          "boundary_n": 400,
+          "boundary_pct": 17.5,
+          "non_boundary_n": 2271,
+          "non_boundary_pct": 10.9
+        },
+        "window_title_change_w": {
+          "boundary_n": 2,
+          "boundary_pct": 0.1,
+          "non_boundary_n": 1110,
+          "non_boundary_pct": 5.3
+        },
+        "browser_form_input_w": {
+          "boundary_n": 0,
+          "boundary_pct": 0.0,
+          "non_boundary_n": 393,
+          "non_boundary_pct": 1.9
+        },
+        "at_chunk_edge": {
+          "boundary_n": 2,
+          "boundary_pct": 0.1,
+          "non_boundary_n": 28,
+          "non_boundary_pct": 0.1
+        },
+        "field_key_change": {
+          "boundary_n": 0,
+          "boundary_pct": 0.0,
+          "non_boundary_n": 1,
+          "non_boundary_pct": 0.0
+        }
+      }
+    }
+  },
+  "tau_grid_from_SE1": [
+    1000,
+    2000,
+    5000,
+    10000
+  ],
+  "elapsed_s": 24.1
+}
