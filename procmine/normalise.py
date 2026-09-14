@@ -38,12 +38,38 @@ def _g(d: Any, *path, default=None):
 
 
 # Window-title noise that carries no business meaning.
+# A window title is "<document or page> - <chrome the application appended>". The trailing
+# chrome is not part of the surface, and when it is stripped for one browser but not another
+# the SAME page keys as two different surfaces (defect D-1, STEP1_SPEC §3.1).
+#
+# The rule is STRUCTURAL — the shape of an appended application suffix — not an allow-list of
+# browser names. ADR-013 deleted the BROWSERS allow-list deliberately and that decision stands.
+# Measured across dataset_a + dataset_b, the trailing " - X" segment IS the application's own
+# name in 92.8% (A) / 74.0% (B) of titles that have one, which is what makes the shape reliable:
+#
+#     A: 'Google Chrome' x118,102 · 'Notepad' x29,506 · 'Word' · 'PowerPoint' · 'File Explorer'
+#     B: 'Microsoft Edge' x13,200 · 'Word' · 'Excel' · 'Notepad'
+#
+# _APP_SUFFIX therefore matches a trailing separator followed by an optional "Profile N"
+# segment and one to three Capitalised tokens. It deliberately does NOT match a tail containing
+# punctuation or lower-case words, so a real title such as
+# "Mixed Multi-Domain (HR / Finance / Ops)" survives intact.
+#
+# `Microsoft\u200bEdge` really does carry a zero-width space, so it is allowed inside a token.
+_APP_TOKEN = r"[A-Z][\w.\u200b]*"
+_APP_SUFFIX = re.compile(
+    r"\s*[-–—]\s*"                                    # " - " / en / em dash
+    r"(?:Profile\s+\d+\s*[-–—]\s*)?"                # optional "Profile 1 - "
+    rf"(?:{_APP_TOKEN}(?:\s+{_APP_TOKEN}){{0,2}})"          # 1-3 Capitalised tokens
+    r"\s*$"
+)
+
 _TITLE_STRIP = [
-    (re.compile(r"\s*-\s*Profile \d+\s*-\s*Microsoft.?\s*Edge\s*$"), ""),
     (re.compile(r"\s+and \d+ more pages?\b"), ""),
     (re.compile(r"\s*-\s*Compatibility Mode\s*"), " "),
-    (re.compile(r"\s*-\s*(Word|Excel|PowerPoint)\s*$"), ""),
+    (_APP_SUFFIX, ""),                   # D-1: trailing application/browser chrome
     (re.compile(r"^\*"), ""),            # unsaved-document marker
+    (re.compile(r"\s*[-–—]\s*$"), ""),                # separator left behind
     (re.compile(r"\s{2,}"), " "),
 ]
 

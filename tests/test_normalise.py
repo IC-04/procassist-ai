@@ -34,6 +34,44 @@ def test_normalise_title(raw, want):
     assert N.normalise_title(raw) == want
 
 
+# ---------------------------------------------------------------- D-1 regression
+
+@pytest.mark.parametrize("title,want", [
+    # the same page, as three different browsers render the window title
+    ("HR\u4eba\u4e8b\u7d66\u4e0e\u30b7\u30b9\u30c6\u30e0 - Profile 1 - Microsoft\u200b Edge", "HR\u4eba\u4e8b\u7d66\u4e0e\u30b7\u30b9\u30c6\u30e0"),
+    ("HR\u4eba\u4e8b\u7d66\u4e0e\u30b7\u30b9\u30c6\u30e0 - Google Chrome", "HR\u4eba\u4e8b\u7d66\u4e0e\u30b7\u30b9\u30c6\u30e0"),
+    ("HR\u4eba\u4e8b\u7d66\u4e0e\u30b7\u30b9\u30c6\u30e0 - Profile 2 - Google Chrome", "HR\u4eba\u4e8b\u7d66\u4e0e\u30b7\u30b9\u30c6\u30e0"),
+    ("HR\u4eba\u4e8b\u7d66\u4e0e\u30b7\u30b9\u30c6\u30e0 \u2014 Mozilla Firefox", "HR\u4eba\u4e8b\u7d66\u4e0e\u30b7\u30b9\u30c6\u30e0"),
+    ("HR\u4eba\u4e8b\u7d66\u4e0e\u30b7\u30b9\u30c6\u30e0 - Brave", "HR\u4eba\u4e8b\u7d66\u4e0e\u30b7\u30b9\u30c6\u30e0"),
+])
+def test_d1_browser_chrome_is_stripped_whichever_browser_appended_it(title, want):
+    """D-1: the Edge suffix was stripped and the Chrome one was not, so the SAME page keyed
+    as two different surfaces. The rule is structural — no browser allow-list (ADR-013)."""
+    assert N.normalise_title(title) == want
+
+
+def test_d1_one_page_yields_one_surface_across_browsers():
+    """The defect stated as the property that matters, not as a string comparison."""
+    titles = ["\u53d7\u767a\u6ce8\u5728\u5eab\u7ba1\u7406\u30b7\u30b9\u30c6\u30e0 - Profile 1 - Microsoft\u200b Edge",
+              "\u53d7\u767a\u6ce8\u5728\u5eab\u7ba1\u7406\u30b7\u30b9\u30c6\u30e0 - Google Chrome",
+              "\u53d7\u767a\u6ce8\u5728\u5eab\u7ba1\u7406\u30b7\u30b9\u30c6\u30e0"]
+    assert len({N.normalise_title(t) for t in titles}) == 1
+
+
+def test_d1_does_not_eat_a_real_title_that_merely_contains_a_dash():
+    """The structural rule must not strip a tail that is part of the document name."""
+    for t in ("Mixed Multi-Domain (HR / Finance / Ops)",
+              "Q3 report - final draft",          # lower-case tail -> not app chrome
+              "\u4f4f\u6c11\u7a0e\u901a\u77e5\u78ba\u8a8d",
+              "budget - 2026 q1 revision"):
+        assert N.normalise_title(t) == t.strip()
+
+
+def test_d1_leaves_a_bare_title_untouched():
+    assert N.normalise_title("Untitled") == "Untitled"
+    assert N.normalise_title("expense_calc") == "expense_calc"
+
+
 def test_normalise_title_strips_the_zero_width_space_in_edge_titles():
     # The recorder writes "Microsoft\u200b Edge" (U+200B). A strip rule that assumed a
     # plain space would leave the whole browser chrome in the surface key.

@@ -130,6 +130,41 @@ def test_row_with_no_application_at_all_attaches_to_the_open_block():
     assert keys(bl) == ["app:Word:doc"]
 
 
+# ---------------------------------------------------------------- D-2 regression
+
+def test_d2_notepad_untitled_is_work_not_noise():
+    """D-2: the bare hint "Untitled" was a substring test against the normalised title, so
+    Notepad's default document name was flagged as noise. 651 of dataset_a's 652 noise
+    blocks came from this one hint."""
+    bl = B.build_blocks(flat(
+        ev(0, app="Notepad", title="Untitled - Notepad", et="keystroke"),
+        ev(1000, app="Notepad", title="Untitled - Notepad", et="keystroke"),
+    ))
+    assert len(bl) == 1
+    assert bl[0]["title"] == "Untitled"          # D-1 strips the " - Notepad" chrome
+    assert bl[0]["is_noise"] is False, "genuine Notepad work must not be marked noise"
+
+
+def test_d2_genuine_browser_chrome_is_still_noise():
+    """Removing "Untitled" must not disarm the rest of the seed list."""
+    for title in ("Turn off extensions in developer mode", "Restore pages?",
+                  "New tab", "Settings | Microsoft Teams"):
+        bl = B.build_blocks(flat(ev(0, app="Chrome", title=title),
+                                 ev(1000, app="Chrome", title=title)))
+        assert bl[0]["is_noise"] is True, title
+
+
+def test_d2_untitled_is_no_longer_in_the_hint_list():
+    assert "Untitled" not in B.NOISE_TITLE_HINTS
+    assert len(B.NOISE_TITLE_HINTS) == 5
+
+
+def test_empty_surface_is_still_noise():
+    """The key-based half of _is_noise is untouched by D-2."""
+    assert B._is_noise("app:", "") is True
+    assert B._is_noise("app:None", "") is True
+
+
 # ---------------------------------------------------------------- preserved signal
 
 def test_a_document_switch_within_one_application_is_preserved():

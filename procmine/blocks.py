@@ -15,8 +15,16 @@ from .normalise import USER_LAYERS
 
 # Surfaces that are never business work. Kept as a tiny, auditable seed list;
 # the vocabulary compiler (Stage B2) replaces this with typed entries.
+# D-2 (STEP1_SPEC §3.1): the bare hint "Untitled" was removed. It was meant to catch a blank
+# browser tab, but it is a substring test against the normalised window title, so it also
+# matched Notepad's default document name and marked genuine work as noise — 52 blocks
+# (14.3%) in the Phase 1 dataset_a sample against 4.0% in dataset_b. After D-1 strips the
+# trailing " - Notepad", such a title is exactly "Untitled", so the collision got worse rather
+# than better. Removing the hint is the smaller of the two sanctioned fixes; scoping it to
+# `web:` surfaces would require changing `_is_noise`, which is outside this change's budget.
+# Nothing gates on `is_noise` today — it is descriptive metadata on the block record.
 NOISE_TITLE_HINTS = (
-    "Turn off extensions", "Restore pages", "New tab", "Untitled",
+    "Turn off extensions", "Restore pages", "New tab",
     "Settings |", "Address and search bar",
 )
 
