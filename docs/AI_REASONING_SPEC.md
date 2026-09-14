@@ -1,3 +1,14 @@
+> **⚠ RESCOPED by ADR-018.** The LLM is a **bounded adjudicator on the ambiguous tail**, not
+> the primary segmenter, and it is **ablatable** (experiment S-E5).
+> **Still in force:** §2 payload shape, §3 output schema + post-validation, §4 what the model may
+> never do, §5 versioned domain-neutral prompt, §6 pinned model config, §7 content-hash cache,
+> §8 retries and the mandatory `--no-llm` mode, §9 cost/latency logging, §13 the ambiguity gate
+> (target routing now **≤15%**).
+> **Out of scope for the first implementation:** §10 few-shot retrieval, §11 agentic tools,
+> §12 vision. See `docs/STEP1_SPEC.md` §3.5.
+
+---
+
 # AI_REASONING_SPEC — Execution Reasoner
 
 ## 1. Job

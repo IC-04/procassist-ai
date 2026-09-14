@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 from . import normalise as N, blocks as B, tekg as G, context as C, schemas as S
 from . import candidates as CA
 from . import score as SC, gate as GA, decoder as DE, label as LB, identity as ID
+from . import validate_segments as VS
 
 log = logging.getLogger("procmine")
 
@@ -130,6 +131,19 @@ def build(dataset_root: str, out_root: str, window: int = 5, min_events: int = 3
 # ---------------------------------------------------------------- Step 1 chain
 
 SCORER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scorer_v1.json")
+
+# The submitted artifact (DATA_CONTRACT.md §6). Exactly ONE code path writes it: `segment()`,
+# below. `emit_segments.py` — the Phase B block-run safety net — used to default to this same
+# path, so `make run-b` silently replaced a Phase D/E deliverable with a block-edge-only one.
+# That happened, during the S-E7 leakage check, and was caught only because a downstream
+# experiment reported a segment count that could not be right.
+DELIVERABLE = "segments.jsonl"
+
+
+def _iso(ms: int) -> str:
+    """Epoch ms -> ISO-8601 UTC at second precision (DATA_CONTRACT §6.2)."""
+    from datetime import datetime, timezone
+    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def fit_scorer(dataset_root: str, out_path: str = SCORER_PATH, tau_ms: int = 2000) -> Dict:
@@ -290,12 +304,19 @@ def thresholds_manifest(cfg_cand: Dict, cfg_gate: Dict, cfg_dec: Dict,
 
 def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
             no_llm: bool = True, cfg_gate: Optional[Dict] = None,
-            cfg_dec: Optional[Dict] = None, calibration: str = "percentile") -> Dict:
+            cfg_dec: Optional[Dict] = None, calibration: str = "percentile",
+            deliverable: Optional[str] = DELIVERABLE) -> Dict:
     """The full deterministic chain: candidates -> score -> CALIBRATE -> gate -> decode.
 
     Calibration is applied across the WHOLE dataset before gating, because the operating point
     is a fraction of that dataset's own score distribution (score.calibrate). Decoding then
     proceeds per session.
+
+    **This function writes the deliverable.** `deliverable` is the path of the four-key
+    `segments.jsonl` required by `DATA_CONTRACT.md` §6; pass `None` to write only the internal
+    `segments_rich.jsonl`. It is written here, and nowhere else, because STEP1_SPEC §8 requires
+    the submitted file to be produced by the same frozen code that was validated on A — not by
+    an experiment script, and not by the Phase B safety net (see `emit_segments.py`).
     """
     if not no_llm:
         raise NotImplementedError("only --no-llm is implemented; the adjudicator is a later "
@@ -358,11 +379,30 @@ def segment(dataset_root: str, out_root: str, scorer_path: str = SCORER_PATH,
     with open(os.path.join(out_root, "segments_rich.jsonl"), "w", encoding="utf-8") as fh:
         for r in rich:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+
+    # --- the deliverable: exactly four keys, validated before it is considered written.
+    # An invalid artifact is a hard failure, never a warning (schemas.py convention): a
+    # malformed segments.jsonl is the one file a reviewer actually reads.
+    delivered: Optional[str] = None
+    if deliverable:
+        rows_out: List[Dict] = []
+        for r in sorted(rich, key=lambda x: (x["session_id"], x["start_ms"])):
+            rows_out.append({"session_id": r["session_id"], "start": _iso(r["start_ms"]),
+                             "end": _iso(r["end_ms"]), "label": r["label"]})
+        _check(VS.validate(rows_out, session_ids=set(rows_by)),
+               f"{deliverable} (DATA_CONTRACT §6)")
+        with open(deliverable, "w", encoding="utf-8") as fh:
+            for r in rows_out:
+                fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+        delivered = deliverable
+        log.info("wrote %s — %d segments, %d labels", deliverable, len(rows_out),
+                 lab.get("n_labels"))
     with open(os.path.join(out_root, "thresholds.json"), "w", encoding="utf-8") as fh:
         json.dump(thresholds_manifest(CA.DEFAULT_CFG, g_cfg, d_cfg, scorer, calibration), fh,
                   ensure_ascii=False, indent=1, default=list)
 
     return {"dataset": dataset_root, "segments": n_seg,
+            "deliverable": delivered,
             "calibration": calibration,
             "candidates": len(pooled),
             "conversion_pct": round(100 * 2 * n_seg / len(pooled), 2) if pooled else None,

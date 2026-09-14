@@ -1,3 +1,8 @@
+> **⛔ SUPERSEDED — do not implement from this document.**
+> Replaced by `docs/STEP1_SPEC.md` (ADR-016). Retained for history only.
+
+---
+
 # PHASE 2 — Blocks and TEKG validated on A; the ambiguity gate
 
 **Objective** Prove the representation holds on Dataset A, and build the gate that decides what

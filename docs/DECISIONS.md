@@ -544,6 +544,18 @@ is `structural`; **`label.k` is explicitly not transferred** — Louvain selects
 Two consecutive runs produce byte-identical `segments.jsonl`. `make run-b` verified with
 `dataset_a/` moved out of the tree.
 
+**The deliverable has exactly one writer (fixed at the freeze).** `make run-b` was `build-b`
+plus `emit_segments.py`, the Phase B block-run safety net, which defaulted to `segments.jsonl`.
+Running the ADR-010 leakage check therefore replaced the Phase D/E deliverable with a
+958-segment block-edge-only file, silently. `cli.segment()` now writes `segments.jsonl` — and
+validates it against DATA_CONTRACT §6 before considering it written — `run-b` calls that instead,
+the safety net defaults to `build/<dataset>/segments_provisional.jsonl` and refuses the
+deliverable path without `--force`, and a test walks the package AST to assert exactly one module
+writes it. This also makes STEP1_SPEC §8's requirement literally true for the first time: the
+submitted file is produced by the same frozen code that was validated on A, not by an experiment
+script. Verified by re-running the gate that broke it: `dataset_a/` moved out, `make run-b`, and
+the deliverable comes back byte-identical.
+
 **S-E8 — consecutive same-process executions.** A cannot test the case at all: 0 of 1,689
 consecutive execution pairs share a process code. On B the frozen system emits them readily —
 **67 of 168** consecutive segment pairs within a session share a label (39.9%), at a median gap

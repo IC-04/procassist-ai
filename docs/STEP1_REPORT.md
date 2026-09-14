@@ -233,9 +233,17 @@ discriminating; and B was never tuned to resemble A.
 
 ## 10. Dataset B output — no accuracy claims
 
-`segments.jsonl`, produced by the frozen code with no B-specific branch. `make run-b` succeeds
-with `dataset_a/` absent from disk (verified by moving it out of the tree). Two consecutive runs
-produce byte-identical output.
+`segments.jsonl`, produced by the frozen code with no B-specific branch: `make run-b` is
+`build-b` + `segment-b`, and `cli.segment()` is the **single** writer of the deliverable, which
+it validates against `DATA_CONTRACT.md` §6 before the file is considered written. `make run-b`
+succeeds with `dataset_a/` absent from disk (verified by moving it out of the tree), and two
+consecutive runs produce byte-identical output.
+
+Until the freeze this was not true, and it bit: `run-b` ended in the Phase B block-run safety
+net, which defaulted to the same path, so running the leakage check silently replaced the
+Phase D/E deliverable with a 958-segment block-edge-only file. The safety net now writes to
+`build/<dataset>/segments_provisional.jsonl` and refuses the deliverable path without `--force`;
+a test asserts that exactly one module in the package writes it.
 
 | | |
 |---|---|

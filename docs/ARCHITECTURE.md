@@ -1,3 +1,11 @@
+> **⚠ PARTIALLY SUPERSEDED.** §3 (pipeline) and §5 are replaced by `docs/STEP1_SPEC.md` §2 and
+> §3.6 (ADR-015, ADR-016, ADR-018). Stages 7–10 of §3 — family/variant, automation scoring,
+> SOP/workflow, prototype — are **Step 2 / Step 3 scope and deferred**.
+> **Still in force:** §1 (the problem), §4 (division of responsibility between deterministic
+> code and the LLM), §6 (approved dependencies), §7 (known risks).
+
+---
+
 # ARCHITECTURE
 
 Status: **CLOSED**. Change only via an ADR in `DECISIONS.md`.

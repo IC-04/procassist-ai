@@ -4,7 +4,7 @@ The validator tests are the important ones: a contract checker that cannot rejec
 is decoration, so each of the five constraints gets a case that must FAIL.
 """
 from __future__ import annotations
-import json
+import json, os
 import pytest
 
 from procmine import emit_segments as ES, validate_segments as V
@@ -205,3 +205,60 @@ def test_emitter_reports_an_absent_dataset_without_writing(tmp_path, capsys):
 
 def test_validator_reports_a_missing_file():
     assert V.validate_file("does_not_exist.jsonl") != []
+
+
+# ---------------------------------------------------------------- the clobbering trap
+#
+# `make run-b` was `build-b` + this emitter, and this emitter defaulted to "segments.jsonl".
+# So running the ADR-010 leakage check silently replaced a Phase D/E deliverable with
+# block-edge-only segments. It happened during the S-E7 freeze and was caught only because a
+# downstream experiment reported a segment count that could not be right.
+#
+# Three things now prevent it, and each has a test: the emitter does not default to the
+# deliverable path, it refuses that path when asked explicitly, and exactly one code path in
+# the package writes the deliverable.
+
+def test_provisional_emitter_does_not_default_to_the_deliverable():
+    from procmine import emit_segments as ES
+    assert ES.default_out("dataset_b") != ES.DELIVERABLE
+    assert os.path.basename(ES.default_out("dataset_b")) == "segments_provisional.jsonl"
+    assert "build" in ES.default_out("dataset_b")
+    assert ES.default_out("dataset_b") != ES.default_out("dataset_a")
+
+
+def test_provisional_emitter_refuses_the_deliverable_path_without_force():
+    """argparse errors exit 2; the point is that it does not silently write."""
+    from procmine import emit_segments as ES
+    with pytest.raises(SystemExit) as e:
+        ES.main(["--dataset", "dataset_b", "--out", "segments.jsonl"])
+    assert e.value.code != 0
+
+
+def test_exactly_one_module_writes_the_deliverable():
+    """A grep would be the wrong test — the string appears in docstrings explaining the rule.
+    This walks the AST and looks for an actual open() of the deliverable path."""
+    import ast
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    pkg = os.path.join(root, "procmine")
+    writers = set()
+    for fn in sorted(os.listdir(pkg)):
+        if not fn.endswith(".py"):
+            continue
+        tree = ast.parse(open(os.path.join(pkg, fn), encoding="utf-8").read())
+        for node in ast.walk(tree):
+            if not (isinstance(node, ast.Call) and getattr(node.func, "id", None) == "open"):
+                continue
+            mode = ""
+            for kw in node.keywords:
+                if kw.arg == "mode" and isinstance(kw.value, ast.Constant):
+                    mode = kw.value.value
+            if len(node.args) > 1 and isinstance(node.args[1], ast.Constant):
+                mode = node.args[1].value
+            if "w" not in (mode or ""):
+                continue
+            target = node.args[0] if node.args else None
+            named = (isinstance(target, ast.Name) and target.id == "deliverable") or (
+                isinstance(target, ast.Constant) and target.value == "segments.jsonl")
+            if named:
+                writers.add(fn)
+    assert writers == {"cli.py"}, f"deliverable writers: {sorted(writers)}"

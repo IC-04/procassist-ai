@@ -157,3 +157,51 @@ waiting time is compressed; judge comparatively).
 
 `experiments/<exp_id>/{config.json,metrics.json,samples.jsonl,report.md}` —
 see `EXPERIMENT_PROTOCOL.md`.
+
+---
+
+## 10. Step 1 additions (2026-09-13, ADR-015)
+
+### 10.1 Blocks must expose their events
+
+`blocks.jsonl` records gain two fields so a boundary can be placed **between two events inside a
+block** (ADR-015):
+
+```jsonc
+"first_seq": 8107,   // global event index of the block's first row, from normalise's `seq`
+"last_seq":  8142    // inclusive
+```
+
+Invariant: `first_seq <= last_seq`; `last_seq` of block `i` is `first_seq - 1` of block `i+1`
+within a session. Consumers recover the rows deterministically from the same session load.
+Nothing else about the block record changes.
+
+### 10.2 `build/<dataset>/candidates.jsonl` — boundary candidates
+
+One JSON object per line, ordered by `(session_id, at_seq)`.
+
+```jsonc
+{
+  "cand_id": "ses_...#c00412",
+  "session_id": "ses_...",
+  "at_seq": 8123,                 // the boundary sits BEFORE this event index
+  "at_ms": 1782931329501,
+  "block_id": "ses_...#b0042",    // the enclosing block
+  "kind": "block_edge" | "intra_block",
+  "features": {"...": 0.0},       // deterministic, numeric or boolean only
+  "score": 0.41,                  // added by score.py, [0,1]
+  "top_features": ["browser_navigation_w2", "rel_gap"],
+  "route": "rule" | "llm",        // added by gate.py
+  "ambiguity": 0.37,
+  "decision": true                // final boundary / no-boundary
+}
+```
+
+Invariants: every block edge appears as a `block_edge` candidate (the old candidate space is a
+strict subset); `at_seq` is strictly increasing within a session; no candidate is generated at a
+chunk boundary *because* of the chunk (ADR-001); no field is derived from any GT artifact.
+
+### 10.3 `segments_rich.jsonl`
+
+The four `segments.jsonl` keys plus `exec_uid`, `confidence`, `evidence`, `fragments`,
+`candidate_ids`. Internal only — **never submitted**.

@@ -1,9 +1,19 @@
-"""Provisional `segments.jsonl` emission for Dataset B, from activity blocks.
+"""Provisional segment emission for Dataset B, from activity blocks.
 
-**This is a safety-net deliverable, not the final one.** It contains no candidate boundary
-generation, no scoring, no decoder and no LLM. It asserts nothing about accuracy. Its only
-purpose is that a contract-valid `segments.jsonl` exists on disk from now on, so the
-submission is never empty while the real Step 1 pipeline (`docs/STEP1_SPEC.md`) is built.
+**Superseded. This is the Phase B safety net, not the deliverable.** It contains no candidate
+boundary generation, no scoring, no decoder and no LLM. It asserts nothing about accuracy. Its
+purpose was that a contract-valid segment file existed on disk while the real Step 1 pipeline
+(`docs/STEP1_SPEC.md`) was built. That pipeline now exists and is frozen, so this module is
+retained only as the block-edge-only reference arm and for reproducing the provisional output.
+
+**It no longer writes `segments.jsonl`.** It used to default to exactly that path, which made
+`make run-b` — `build-b` plus this emitter — silently replace a Phase D/E deliverable with a
+block-edge-only one. That happened during the S-E7 leakage check and was caught only because a
+downstream experiment reported a segment count that could not be right. The default output is
+now `build/<dataset>/segments_provisional.jsonl`; `procmine/cli.py --segment` is the single
+writer of the deliverable, as STEP1_SPEC §8 requires ("the same frozen code produced it that
+was validated on A"). Passing `--out segments.jsonl` explicitly is refused unless `--force` is
+also given, so the trap cannot be re-sprung by habit.
 
 Method, in full:
 
@@ -40,7 +50,10 @@ from . import normalise as N, blocks as B, baselines as BL
 log = logging.getLogger("procmine.emit_segments")
 
 Interval = Tuple[int, int]
-DEFAULT_OUT = "segments.jsonl"
+# NOT "segments.jsonl". See the module docstring: exactly one code path writes the deliverable,
+# and it is `cli.segment()`.
+DEFAULT_OUT = os.path.join("build", "{dataset}", "segments_provisional.jsonl")
+DELIVERABLE = "segments.jsonl"
 
 # Label schemes. `route` is the default and follows the shape asked for: the route alone,
 # e.g. web:http://127.0.0.1:5132/payroll-items -> "payroll-items". `surface` additionally
@@ -147,9 +160,19 @@ def segments_for_session(blocks: Sequence[Dict], scheme: str = "route"
     return segs, {"blocks": n0, "merged": n0 - len(segs), "absorbed": absorbed}
 
 
-def emit(dataset_root: str, out_path: str = DEFAULT_OUT, scheme: str = "route",
+def default_out(dataset_root: str) -> str:
+    """Where the provisional output goes — under `build/`, never the deliverable path."""
+    return DEFAULT_OUT.format(dataset=os.path.basename(dataset_root.rstrip("/\\")))
+
+
+def emit(dataset_root: str, out_path: Optional[str] = None, scheme: str = "route",
          min_events: int = 3, min_ms: int = 1500) -> Dict:
-    """Write `segments.jsonl` for every session in `dataset_root`. Returns a summary."""
+    """Write the PROVISIONAL segment file for every session in `dataset_root`.
+
+    `out_path` defaults to `build/<dataset>/segments_provisional.jsonl`. This function does not
+    write the deliverable — `cli.segment()` does.
+    """
+    out_path = out_path or default_out(dataset_root)
     rows_out: List[Dict] = []
     per_session: List[Dict] = []
     dropped_unrepresentable = 0
@@ -169,6 +192,9 @@ def emit(dataset_root: str, out_path: str = DEFAULT_OUT, scheme: str = "route",
         per_session.append({"session": sid, "segments": len(keep), **stats})
         log.info("%s: %d blocks -> %d segments", sid, stats["blocks"], len(keep))
 
+    parent = os.path.dirname(out_path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as fh:
         for r in rows_out:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
@@ -205,13 +231,25 @@ def _iso_to_ms(s: str) -> int:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="procmine.emit_segments")
     ap.add_argument("--dataset", default="dataset_b")
-    ap.add_argument("--out", default=DEFAULT_OUT)
+    ap.add_argument("--out", default=None,
+                    help="default: build/<dataset>/segments_provisional.jsonl. This emitter "
+                         "does NOT write the deliverable; cli.py --segment does.")
+    ap.add_argument("--force", action="store_true",
+                    help="permit --out to be the deliverable path. Refused without it.")
     ap.add_argument("--label-scheme", choices=LABEL_SCHEMES, default="route")
     ap.add_argument("--min-events", type=int, default=3)
     ap.add_argument("--min-ms", type=int, default=1500)
     ap.add_argument("--no-validate", action="store_true")
     ap.add_argument("-v", "--verbose", action="store_true")
     a = ap.parse_args(argv)
+    out = a.out or default_out(a.dataset)
+    if os.path.abspath(out) == os.path.abspath(DELIVERABLE) and not a.force:
+        ap.error(
+            f"refusing to write {DELIVERABLE!r}: this is the Phase B safety net, and the "
+            f"deliverable is written by `python -m procmine.cli --dataset {a.dataset} "
+            f"--segment` (STEP1_SPEC §8). Re-run without --out, or pass --force if you "
+            f"really mean to overwrite the submission with block-edge-only segments.")
+    a.out = out
     logging.basicConfig(level=logging.INFO if a.verbose else logging.WARNING,
                         format="%(levelname)s %(message)s")
 

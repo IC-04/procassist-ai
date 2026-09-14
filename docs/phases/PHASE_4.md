@@ -1,3 +1,8 @@
+> **⛔ SUPERSEDED — do not implement from this document.**
+> Replaced by `docs/STEP1_SPEC.md` (ADR-016). Retained for history only.
+
+---
+
 # PHASE 4 — Constrained decoder, full reconstruction, `segments.jsonl`
 
 **Objective** Produce the contractual deliverable: `segments.jsonl` for Dataset B, with

@@ -1,4 +1,4 @@
-.PHONY: setup test build-b build-a run-b segments validate-segments clean help
+.PHONY: setup test build-b build-a run-b segment-b segments-provisional validate-segments clean help
 .DEFAULT_GOAL := help
 
 VENV    := .venv
@@ -20,8 +20,9 @@ help:
 	@echo "test     run the pytest suite"
 	@echo "build-b  build perception + TEKG artifacts for dataset_b"
 	@echo "build-a  same for dataset_a; degrades gracefully when it is absent"
-	@echo "run-b    full dataset_b run: perception artifacts + provisional segments.jsonl"
-	@echo "segments emit the provisional segments.jsonl for dataset_b"
+	@echo "run-b    full dataset_b run: perception artifacts + THE deliverable segments.jsonl"
+	@echo "segment-b            run the Step 1 chain and write segments.jsonl (the deliverable)"
+	@echo "segments-provisional Phase B block-edge safety net -> build/dataset_b/ (NOT the deliverable)"
 	@echo "validate-segments  check segments.jsonl against DATA_CONTRACT.md 6"
 	@echo "clean    remove build/ and Python caches"
 
@@ -54,7 +55,16 @@ build-a:
 	@if [ -x "$(PY)" ]; then $(PY) -m procmine.cli --dataset dataset_a; \
 	else python3 -m procmine.cli --dataset dataset_a; fi
 
-segments:
+# The ONE writer of segments.jsonl. STEP1_SPEC §8 requires the submitted file to be produced by
+# the same frozen code that was validated on A.
+segment-b:
+	@if [ -x "$(PY)" ]; then $(PY) -m procmine.cli --dataset dataset_b --segment; \
+	else python3 -m procmine.cli --dataset dataset_b --segment; fi
+
+# The Phase B safety net, superseded. Writes to build/dataset_b/segments_provisional.jsonl and
+# is refused if pointed at the deliverable: it used to default to segments.jsonl, which made
+# `run-b` silently overwrite a Phase D/E deliverable with block-edge-only segments.
+segments-provisional:
 	@if [ -x "$(PY)" ]; then $(PY) -m procmine.emit_segments --dataset dataset_b; \
 	else python3 -m procmine.emit_segments --dataset dataset_b; fi
 
@@ -63,7 +73,7 @@ validate-segments:
 	else python3 -m procmine.validate_segments segments.jsonl --dataset dataset_b; fi
 
 # ADR-010: this target must succeed with dataset_a/ absent from disk.
-run-b: build-b segments
+run-b: build-b segment-b
 
 clean:
 	rm -rf build

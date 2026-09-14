@@ -834,3 +834,40 @@ the tie-break, the validator fix, the freeze tests and the closing report under 
 **Next** Step 2. Step 1 is frozen; `docs/STEP1_REPORT.md` is the closing document.
 
 **Time spent** ~1.5 h
+
+---
+
+## 2026-09-15 — Fix the `make run-b` deliverable-clobbering trap
+
+**The bug.** `run-b` was `build-b` + `segments`, and the `segments` target ran
+`procmine/emit_segments.py` — the superseded Phase B block-run safety net — which defaulted to
+writing `segments.jsonl`. So the ADR-010 leakage check, the one command whose whole purpose is to
+prove the deliverable is reproducible, destroyed it: 183 Phase D/E segments replaced by 958
+block-edge-only ones, with a zero exit code and no warning.
+
+Underneath it was a worse fact I had not stated: **the real chain never wrote the deliverable at
+all.** `cli.segment()` wrote `segments_rich.jsonl` and nothing else, and the submitted file was
+being produced by an experiment script — which quietly violates STEP1_SPEC §8 ("the same frozen
+code produced it that was validated on A, no manual edit").
+
+**The fix, three independent layers.**
+1. `cli.segment()` now writes `segments.jsonl` and validates it against DATA_CONTRACT §6 before
+   the file is considered written — an invalid artifact is a hard failure, per the `schemas.py`
+   convention.
+2. `run-b` calls that (`segment-b`); the safety net moved to a `segments-provisional` target
+   writing `build/<dataset>/segments_provisional.jsonl`, and it now refuses the deliverable path
+   unless `--force` is passed, with an error naming the correct command.
+3. A test walks the package AST and asserts **exactly one module writes the deliverable**. A grep
+   would have been the wrong test: the string appears in several docstrings explaining the rule.
+
+**Verified by re-running the command that broke it**: `dataset_a/` moved out of the tree,
+`make run-b`, exit 0 — and the deliverable comes back **byte-identical** to the file the chain
+produced before. That is also the first proof that the chain and the experiment script agreed.
+
+**What this says about the original failure.** It was not caught by a test or by the exit code;
+it was caught because a downstream experiment reported 958 segments where 183 were expected. A
+deliverable with two writers and no ownership test is exactly the kind of defect that survives a
+green suite. Suite now 302 passed, 1 skipped.
+
+**Generative AI use** GenAI-assisted implementation. Claude Code (Opus 5) implemented the fix and
+the regression tests under my direction.

@@ -1,3 +1,8 @@
+> **⛔ SUPERSEDED — do not implement from this document.**
+> Replaced by `docs/STEP1_SPEC.md` (ADR-016). Retained for history only.
+
+---
+
 # PHASE 3 — AI execution reasoner experiment
 
 **Objective** Determine, with evidence, whether contextual AI reasoning improves execution

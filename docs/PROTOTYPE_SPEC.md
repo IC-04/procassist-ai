@@ -1,3 +1,9 @@
+> **⏸ DEFERRED — Step 2 / Step 3 scope. Not in effect.**
+> The current objective is Step 1 only (`docs/STEP1_SPEC.md`, ADR-016). Do not implement from
+> this document until Step 1 exits at S-DONE. Retained because the design may be revived.
+
+---
+
 # PROTOTYPE_SPEC — Streamlit application
 
 ## 1. What it must demonstrate

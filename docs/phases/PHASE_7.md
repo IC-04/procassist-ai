@@ -1,3 +1,9 @@
+> **⏸ DEFERRED — Step 2 / Step 3 scope. Not in effect.**
+> The current objective is Step 1 only (`docs/STEP1_SPEC.md`, ADR-016). Do not implement from
+> this document until Step 1 exits at S-DONE. Retained because the design may be revived.
+
+---
+
 # PHASE 7 — Hardening, final evaluation, report and submission
 
 **Objective** Turn a working repository into a submission. **Needs Dataset A: for final metrics**
