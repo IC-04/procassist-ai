@@ -1,0 +1,228 @@
+{
+  "population": "scoreable canonical (ADR-017), tiers clean+repaired",
+  "tau_ms": 2000,
+  "tau_grid_from_SE1": [
+    1000,
+    2000,
+    5000,
+    10000
+  ],
+  "boundary_points_total": 3504,
+  "missed_boundaries": 1381,
+  "reachable_pct_check": 60.6,
+  "annotation_lead": {
+    "n": 3504,
+    "p25_ms": 169,
+    "median_ms": 176,
+    "p75_ms": 803,
+    "mean_ms": -4920.2,
+    "note": "nearest retained event minus GT timestamp; positive = GT leads telemetry"
+  },
+  "lead_used_ms": 176,
+  "categories": {
+    "a_information_destroyed": {
+      "n": 0,
+      "pct": 0.0
+    },
+    "b_preserved_inside_block": {
+      "n": 892,
+      "pct": 64.6
+    },
+    "c_absorbed_micro_excursion": {
+      "n": 126,
+      "pct": 9.1
+    },
+    "d_ambiguous_no_evidence": {
+      "n": 14,
+      "pct": 1.0
+    },
+    "e_gt_telemetry_mismatch": {
+      "n": 349,
+      "pct": 25.3
+    }
+  },
+  "subcategories": {
+    "b_preserved_inside_block|signal_present": 892,
+    "c_absorbed_micro_excursion|absorb_a_x_a": 126,
+    "d_ambiguous_no_evidence|inside_block": 14,
+    "e_gt_telemetry_mismatch|annotation_lead": 4,
+    "e_gt_telemetry_mismatch|outside_telemetry": 37,
+    "e_gt_telemetry_mismatch|telemetry_gap": 308
+  },
+  "preprocessing_audit": {
+    "raw_events_in_source_chunks": 162768,
+    "events_in_normalised_stream": 162768,
+    "malformed_raw_lines_skipped": 0,
+    "note": "normalise.load_session drops only malformed JSON lines; blocks assigns every retained row to exactly one block. Category (a) is therefore expected to be near zero and is PROVEN per boundary, not assumed."
+  },
+  "absorption": {
+    "blocks_default": 4957,
+    "blocks_absorption_disabled": 5565,
+    "note": "min_events=0 disables blocks._absorb; blocks.py is not modified"
+  },
+  "contingency": {
+    "2000": {
+      "n_missed_boundaries": 1381,
+      "n_control_points": 2649,
+      "window_half_ms": 1000,
+      "control_offset_ms": 2000,
+      "windows_overlap": false,
+      "signals": {
+        "app_switch": {
+          "boundary_n": 932,
+          "boundary_pct": 67.5,
+          "control_n": 526,
+          "control_pct": 19.9
+        },
+        "large_relative_gap": {
+          "boundary_n": 748,
+          "boundary_pct": 54.2,
+          "control_n": 235,
+          "control_pct": 8.9
+        },
+        "browser_form_input": {
+          "boundary_n": 0,
+          "boundary_pct": 0.0,
+          "control_n": 257,
+          "control_pct": 9.7
+        },
+        "browser_navigation": {
+          "boundary_n": 0,
+          "boundary_pct": 0.0,
+          "control_n": 154,
+          "control_pct": 5.8
+        },
+        "origin_change": {
+          "boundary_n": 4,
+          "boundary_pct": 0.3,
+          "control_n": 147,
+          "control_pct": 5.5
+        },
+        "route_change": {
+          "boundary_n": 4,
+          "boundary_pct": 0.3,
+          "control_n": 141,
+          "control_pct": 5.3
+        },
+        "shortcut": {
+          "boundary_n": 12,
+          "boundary_pct": 0.9,
+          "control_n": 28,
+          "control_pct": 1.1
+        },
+        "app_change": {
+          "boundary_n": 6,
+          "boundary_pct": 0.4,
+          "control_n": 16,
+          "control_pct": 0.6
+        },
+        "clipboard_change": {
+          "boundary_n": 4,
+          "boundary_pct": 0.3,
+          "control_n": 8,
+          "control_pct": 0.3
+        },
+        "dialog_closed": {
+          "boundary_n": 0,
+          "boundary_pct": 0.0,
+          "control_n": 8,
+          "control_pct": 0.3
+        },
+        "browser_tab_event": {
+          "boundary_n": 0,
+          "boundary_pct": 0.0,
+          "control_n": 4,
+          "control_pct": 0.2
+        },
+        "window_title_change": {
+          "boundary_n": 2,
+          "boundary_pct": 0.1,
+          "control_n": 0,
+          "control_pct": 0.0
+        }
+      }
+    },
+    "5000": {
+      "n_missed_boundaries": 1381,
+      "n_control_points": 2690,
+      "window_half_ms": 2000,
+      "control_offset_ms": 5000,
+      "windows_overlap": false,
+      "signals": {
+        "app_switch": {
+          "boundary_n": 980,
+          "boundary_pct": 71.0,
+          "control_n": 1718,
+          "control_pct": 63.9
+        },
+        "large_relative_gap": {
+          "boundary_n": 841,
+          "boundary_pct": 60.9,
+          "control_n": 1145,
+          "control_pct": 42.6
+        },
+        "shortcut": {
+          "boundary_n": 22,
+          "boundary_pct": 1.6,
+          "control_n": 1184,
+          "control_pct": 44.0
+        },
+        "origin_change": {
+          "boundary_n": 123,
+          "boundary_pct": 8.9,
+          "control_n": 1078,
+          "control_pct": 40.1
+        },
+        "route_change": {
+          "boundary_n": 123,
+          "boundary_pct": 8.9,
+          "control_n": 912,
+          "control_pct": 33.9
+        },
+        "clipboard_change": {
+          "boundary_n": 8,
+          "boundary_pct": 0.6,
+          "control_n": 713,
+          "control_pct": 26.5
+        },
+        "app_change": {
+          "boundary_n": 8,
+          "boundary_pct": 0.6,
+          "control_n": 554,
+          "control_pct": 20.6
+        },
+        "browser_form_input": {
+          "boundary_n": 60,
+          "boundary_pct": 4.3,
+          "control_n": 448,
+          "control_pct": 16.7
+        },
+        "browser_navigation": {
+          "boundary_n": 117,
+          "boundary_pct": 8.5,
+          "control_n": 54,
+          "control_pct": 2.0
+        },
+        "dialog_opened": {
+          "boundary_n": 0,
+          "boundary_pct": 0.0,
+          "control_n": 15,
+          "control_pct": 0.6
+        },
+        "dialog_closed": {
+          "boundary_n": 0,
+          "boundary_pct": 0.0,
+          "control_n": 6,
+          "control_pct": 0.2
+        },
+        "window_title_change": {
+          "boundary_n": 2,
+          "boundary_pct": 0.1,
+          "control_n": 1,
+          "control_pct": 0.0
+        }
+      }
+    }
+  },
+  "elapsed_s": 21.6
+}

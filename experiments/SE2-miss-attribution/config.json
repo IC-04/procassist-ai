@@ -1,0 +1,49 @@
+{
+  "exp_id": "SE2-miss-attribution",
+  "hypothesis": "Each missed GT boundary is explained by exactly one of five causes. A large (a) means the perception layer must be rebuilt and S-E3 does not run; a large (b)+(c) confirms the candidate-layer plan.",
+  "dataset": "dataset_a",
+  "sessions": 63,
+  "population_source": "experiments/SE1-gt-metric-correction (not recomputed)",
+  "tau_ms": 2000,
+  "control_offsets_ms": [
+    2000,
+    5000
+  ],
+  "seed": 7,
+  "categories": [
+    "a_information_destroyed",
+    "b_preserved_inside_block",
+    "c_absorbed_micro_excursion",
+    "d_ambiguous_no_evidence",
+    "e_gt_telemetry_mismatch"
+  ],
+  "discriminating_event_types": [
+    "app_switch",
+    "browser_form_input",
+    "browser_navigation",
+    "browser_tab_event",
+    "clipboard_change",
+    "dialog_closed",
+    "dialog_opened",
+    "mouse_drag_drop",
+    "shortcut",
+    "window_title_change"
+  ],
+  "state_signals": [
+    "route_change",
+    "origin_change",
+    "app_change",
+    "field_key_change",
+    "large_relative_gap"
+  ],
+  "non_goals": [
+    "candidate generator",
+    "scorer",
+    "decoder",
+    "LLM",
+    "any repair"
+  ],
+  "git_sha": "fbbf0859f100052f4681a71928bfbcd3d9af63d5",
+  "started_at": "2026-09-14T12:07:50Z",
+  "finished_at": "2026-09-14T12:08:12Z"
+}

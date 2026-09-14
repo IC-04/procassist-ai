@@ -420,3 +420,62 @@ wrote the experiment under my direction; every figure was produced by running th
 experiment). Suite: 194 passed, 1 skipped.
 
 **Time spent** ~1 h
+
+---
+
+### 2026-09-14 · Step 1 · Experiment S-E2 — miss attribution
+
+**Goal** For every GT boundary unreachable within τ=2 s of a block edge, decide mechanically
+which of five causes explains it. Measure only; repair nothing.
+
+**Did** `experiments/SE2-miss-attribution/` with the classifier factored into `classify.py`
+so each rule is unit-tested. Population and τ grid taken from S-E1, not recomputed. Category
+(c) is proven by rebuilding blocks with `min_events=0`, which makes the `len(rows) < min_events`
+guard in `blocks._absorb` unsatisfiable — **`blocks.py` was not modified**.
+
+**Result** — 1,381 missed boundaries of 3,504, partitioned exactly:
+
+| category | n | % |
+|---|---|---|
+| (a) information destroyed | **0** | **0.0%** |
+| (b) preserved inside a block | 892 | 64.6% |
+| (c) absorbed micro-excursion | 126 | 9.1% |
+| (d) ambiguous | 14 | 1.0% |
+| (e) GT/telemetry mismatch | 349 | 25.3% |
+
+- **GATE-1: (a) = 0%**, far below the ~25% threshold; (b)+(c) = 73.7%. Stopped for review as
+  the gate's second branch requires.
+- (a)=0 is backed by a whole-corpus trace, not an argument: raw events **162,768** =
+  normalised **162,768**, 0 malformed lines skipped.
+- Contingency: `app_switch` **71.0%** at missed boundaries vs 63.9% at controls, while
+  `app_change` is only **0.6%** — these are the self-referential `app_switch` events ADR-014
+  declined to suppress. They sit at seven in ten missed boundaries and create no block edge.
+- The strong signals are **inverse**: `shortcut` 1.6% vs 44.0%, `clipboard_change` 0.6% vs
+  26.5%, `origin_change` 8.9% vs 40.1%. Absence of transactional activity is itself evidence.
+
+**Problems / things measured rather than assumed**
+- **The "+820 ms annotation lead" is not the GT-to-event lead.** Re-measured on the corrected
+  population it is **176 ms** (p50). 820 ms is the GT-to-**block-edge** distance — the quantity
+  under test, so correcting for it would have been circular. Using the true 176 ms lead, only
+  4 boundaries are explained by it. Second definitional confusion of the same shape S-E1 found.
+- My first contingency table returned **zero** control points. At control offset = window half,
+  every control's window contains the boundary it was offset from and is rejected. Fixed by
+  making the window narrower than the offset, and both tables are reported with their windows
+  stated.
+- **Category (a) has no quoted examples because there are zero instances.** Stated as the
+  finding rather than padded.
+- A ceiling S-E3 must respect: 308 missed boundaries (22.3%) have **no retained event within
+  2 s**, so no event-level candidate generator can reach them. Arithmetic upper bound for any
+  event-level candidate space is ≈**74.7%** at τ=2 s — below the "high 80s" S-E3's decision
+  table treats as a clean pass. Worth knowing before S-E3 runs, not after.
+
+**Decisions** No ADR; nothing architectural changed. Verdict: **the representation does not
+need to change** — this is candidate-space limitation, exactly as ADR-015 predicted.
+
+**Generative AI use** GenAI-assisted implementation. Claude Code (Opus 5) wrote the classifier,
+experiment and tests under my direction; every figure was produced by running the code.
+
+**Next** S-E3 (intra-block candidate reachability) — a separate prompt, after review.
+Suite: 208 passed, 1 skipped.
+
+**Time spent** ~1 h
