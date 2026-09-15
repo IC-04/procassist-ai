@@ -923,3 +923,66 @@ a verification claim rather than in the code under test.
 **Generative AI use** GenAI-assisted implementation. Claude Code (Opus 5) implemented the fix,
 the manifest and the tests under my direction; the defect itself was found by external
 verification, not by me.
+
+---
+
+## 2026-09-15 — Step 2: Dataset B process inventory and candidate analysis
+
+**Goal** Answer the README's Step 2 questions from the frozen Step 1 output: what processes, how
+often, how much time, how many people, what handling patterns — then a priority order with its
+reasoning. No Dataset A, no fabricated business variables, no absolute-time claims.
+
+**Built** `analysis/step2_inventory.py` (metrics, gates declared in advance, ordinal banding on
+two axes that are never summed), `analysis/step2_figures.py`, `tests/test_step2_inventory.py`
+(23 tests), three figures, and `reports/STEP2_ANALYSIS.md`.
+
+**The attribution rule earned its keep.** Attributing by `start_seq`/`end_seq` rather than block
+containment is not a stylistic choice: measured, containment attributes only **12,620 of 14,809
+events (85.2%)**, and the loss is concentrated exactly where it does most damage —
+`payroll-items__p05` (0.85 contained blocks per execution) would lose **60%** of its events and
+`leave-applications-payroll-items__p11` (0.67) would lose **72%**. The two labels most easily
+dismissed as small are the two containment shrinks most.
+
+**Three things Task 7 validation caught that a green exit code did not.**
+1. **Absence read as perfection.** `hr人事給与システム__p09` has zero routes, and the both-empty
+   Jaccard convention is 1.0 — so it printed as *perfectly deterministic*. Now returns `null`.
+2. **Tofu boxes.** The CJK label rendered as squares in every figure; matplotlib's default font
+   has no Japanese coverage. Fixed with a host-font probe plus an ASCII fallback.
+3. **Illegible and mis-attached labels** in two figures. Fixed by stacking in the matrix and
+   side-placing on the scatter. All three were found by *looking at the output*.
+
+**A measurement distortion I reported rather than corrected away.** `distinct_apps` counts
+capture and OS shells — `procmine-desktop-agent` (the recorder itself) appears in 2 labels,
+`prl_cc` in 4. `resident-tax__p02` shows 10 applications of which 5 are business systems. I added
+`distinct_business_apps` as a reported column but **did not re-tune the suitability band**, which
+was declared before the numbers were seen. Re-tuning it afterwards would make the banding
+unfalsifiable; naming the distortion and its direction lets a reader discount it.
+
+**The finding that most changes Step 3.** The whole dataset contains **12 distinct element ids**,
+following one convention: `btn-{module}-ok` and `{module}-note` for module ∈ {la, ob, pi, rt, si}.
+`btn-pi-ok` appears in 9 of 13 labels. These are not five systems — it is **one web application
+with uniform widget naming**, and the apparent cross-system complexity is largely Edge + Word +
+OS shells. A selector-level automation surface is recoverable from the logs alone.
+
+**What surprised me.** The largest process by time is the least automatable: `resident-tax__p02`
+is 19.2% of segmented time and the only High-impact label, and bands **Low** on suitability
+(route Jaccard 0.35, surface Jaccard 0.13 — the lowest in the dataset). **No process reaches High
+on both axes.** That is the research review's frequency-vs-automability tension appearing intact
+in the data, and it is why no composite score exists in this analysis.
+
+**Gates.** Two labels excluded, both on G1 (single session, single operator). G2 excluded nothing
+— and `dashboard__p08` survived it on a technicality: both its interaction thresholds fail, but
+not *all* its routes are navigational. Left as declared, flagged in the report.
+
+**Dependency note.** `matplotlib` is not on the ARCHITECTURE §6 list and would normally need an
+ADR (CLAUDE.md §7); `docs/DECISIONS.md` is frozen for this phase, so it is declared as an
+optional `analysis` extra and flagged for an ADR when that file is writable.
+
+**Generative AI use** GenAI-assisted implementation. Claude Code (Opus 5) wrote the analysis
+script, figures, tests and report draft under my direction; every figure in the report was
+re-derived from the artifacts and two (a band count and an element-label column) were wrong on
+the first pass and corrected.
+
+**Next** Step 3 is not started. Suite 330 passed, 1 skipped.
+
+**Time spent** ~2 h
