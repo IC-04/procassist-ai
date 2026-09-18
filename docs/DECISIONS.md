@@ -672,3 +672,84 @@ recorder's stored `active_browser_tab.url` are written by different code paths.
 **Evidence** `docs/STEP2_MODULE_KEY_RECONCILIATION.md`;
 `build/dataset_b/evidence/module_key_reconciliation.json`;
 `analysis/evidence/module_key_reconcile.py`. Step 1 is untouched.
+
+### ADR-023 · 2026-09-18 · accepted · Pillow and matplotlib accepted; the VLM is a new dependency CLASS
+
+**Context** Three dependencies entered the project without an ADR, two of them because
+`DECISIONS.md` was frozen at the time. ADR-007 rejects "global OCR pipelines" and that rejection
+stands; what follows is a different thing and the distinction has to be recorded rather than
+argued in a commit message.
+
+**Decision**
+1. **`matplotlib` — accepted, analysis only.** Added during Step 2 for the three inventory
+   figures, with the ADR deferred because this file was frozen. It is an optional `analysis`
+   extra in `pyproject.toml` and is never on the Step 1 critical path.
+2. **`Pillow` — accepted, analysis only.** Used by `analysis/evidence/pass1_states.py` to decode
+   JPEGs for perceptual hashing. The DCT is written out as a NumPy matrix product rather than
+   taken from `scipy`, so the module runs under either interpreter on this machine, and
+   `imagehash` is deliberately not added.
+3. **The VLM is a new dependency CLASS, not a package**, and is governed accordingly: an
+   outbound paid call to a third party, over user data, whose output is non-deterministic.
+   Governance is in code, not in policy: a `VisualExtractor` protocol whose default backend is
+   `null`; the key read only from an environment variable, never hard-coded, never prompted for,
+   with **no silent fallback** — a missing key is a non-zero exit naming the variable; a hard
+   cap of 60 images across all questions; `--dry-run` as the default; and a per-call ledger at
+   `build/dataset_b/evidence/vlm_ledger.jsonl` that every `VLM_INTERPRETATION` claim must cite.
+
+**ADR-007 is not weakened.** A global OCR pipeline processes every frame because it exists.
+Phase 4-Micro would have processed a frame only when a named question needed it and cheaper
+evidence had been measured to be absent — and in the event, **it processed none**.
+
+**Consequences** Spend to date: 0 images, 0 calls, $0.00, 0 ledger rows
+(`docs/PHASE4_SCOPE_DECISION.md`). The capability remains in place so that not spending is a
+measured decision rather than an absence.
+
+**Evidence** `tesseract` is not installed on this machine, so OCR proper was never available.
+The recorder's own `extensions.ocr_v1` ran on 15 events and renders 第1条(目的) as 第1条(白的),
+interleaved with Word ribbon chrome — corroborating that OCR is the wrong tool here, not merely
+the unavailable one.
+
+### ADR-024 · 2026-09-18 · accepted · The strong hypothesis is refuted; Step 3 targets preparation
+
+**Context** The programme set out to test whether operators apply recoverable written rules to
+record variables, such that an AI system could learn that decision function. Four gates were
+declared and each was tested against telemetry rather than argued.
+
+| Gate | Criterion | Verdict |
+|---|---|---|
+| G1 | task, record type and outcome are OBSERVED, not inferred | **PASS** — 3,011 records, 549 outcomes, 216 queue tables, zero VLM |
+| G2 | a governing rule is recoverable from a content-identified document | **PASS** — 112 content-hashed documents; the 接待交際費 threshold parses to `<¥50k→部門長 / ≥¥50k→役員 / ≥¥100k→社長` |
+| G3 | the record carries the variables that rule needs | **FAIL** — 金額 present on 1.0–9.1% of records on four modules |
+| G4 | the outcome varies enough to distinguish rule-application from confirm-and-proceed | **FAIL for the system disposition** — 225/225 positive, 0 backward transitions over 25,495,968 characters. **REOPENED for the operator's annotation** — 26 of 481 typed comments carry 差異あり / 要注意 / 要確認 |
+
+**Decision** The hypothesis is **refuted in its strong form**. With no negative outcome, there is
+no supervision signal for a decision function: a model trained here learns `return approve` and
+scores 100% while being worth nothing. The refutation is **structural, not a sampling artifact**,
+because G3 and G4 fail compatibly — if the deciding variable is absent from 91–99% of records,
+the operator is not deciding from the record.
+
+**What survives** H3, SUPPORTED in 10 of 11 modules at rates 0.66–1.00 against a permutation
+null, most p < 0.001: operators open a governing document before disposing, far above chance.
+Step 3's target is therefore **prepare-and-present** — assemble the record, surface the governing
+document, pre-fill the templated comment, flag incomplete fields — **and the human decides**.
+
+**And AI does not yet earn its place inside it.** On the one non-trivial sub-task, governing-
+document retrieval, a deterministic `(module, record type) → document` lookup reaches **64.2%**
+(95% Wilson CI 56.2–71.5%) against 5.4% random, on n=148 labelled pairs over 17 document labels.
+A learned retriever would have to exceed **71.5%** before this evidence could tell it apart from
+the table. **The recommendation is the lookup table plus a good UI, instrumented so the residual
+decides later.**
+
+**Consequences** `docs/STEP2_AUTOMATION_OPPORTUNITY.md` §12 is superseded in place. The target
+module is `FI|請求書承認・経費精算` — the only module whose operator annotation varies (19 差異あり vs
+36 差異なし) and which carries 金額 on 87.1% of records. The system may not decide, cannot detect
+errors, and cannot be evaluated against rejection behaviour even though the UI supports 差戻し —
+a branch that never occurred in this capture window.
+
+**The strongest reason this may still be wrong** H3 measures sequence, not causation. If the
+document-open is procedural or habitual, surfacing it faster saves keystrokes and changes
+nothing. No amount of Dataset B can settle that; it needs an operator interview or an A/B test
+with the document suppressed.
+
+**Evidence** `docs/STEP2_HYPOTHESIS_VERIFICATION.md`; `docs/STEP3_TARGET_REFRAME.md`;
+`build/dataset_b/evidence/{hypothesis_tests,outcome_variance_sweep,retrieval_feasibility}.json`.
