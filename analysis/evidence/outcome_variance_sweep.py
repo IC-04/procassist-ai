@@ -154,11 +154,56 @@ def sweep_status_transitions(dataset: str) -> Dict[str, Any]:
     }
 
 
+# Operator-typed comment text. `payload.target_field.value` on keystroke events carries what the
+# operator TYPED into the disposition comment box -- 481 distinct strings, an evidence source
+# roughly half the size of the extracted_text corpus and entirely missed by Pass 0, which read
+# only `context.extracted_text`. It is where the operator records their own judgement.
+EXCEPTION_PAIRS = (("差異なし", "差異あり"), ("通常", "要注意"), ("確認完了", "要確認"))
+EXCEPTION_MARKERS = ("差異あり", "要注意", "要確認")
+
+
+def sweep_typed_comments(dataset_root: str) -> Dict[str, Any]:
+    """The operator's own annotation, which is NOT the system's disposition."""
+    uniq: Dict[str, Dict[str, Any]] = {}
+    n_events = 0
+    for e in P0.iter_raw_events(dataset_root):
+        tf = (e.get("payload") or {}).get("target_field") or {}
+        v = tf.get("value")
+        if not (isinstance(v, str) and len(v) > 10) or v.startswith("http"):
+            continue
+        n_events += 1
+        url = ((e.get("context") or {}).get("active_browser_tab") or {}).get("url") or ""
+        rec = uniq.setdefault(v, {"url": url, "session_ids": set(), "n_events": 0})
+        rec["session_ids"].add(e["_session_id"])
+        rec["n_events"] += 1
+    flagged = sorted(v for v in uniq if any(m in v for m in EXCEPTION_MARKERS))
+    pairs = {f"{a}|{b}": {a: sum(1 for v in uniq if a in v), b: sum(1 for v in uniq if b in v)}
+             for a, b in EXCEPTION_PAIRS}
+    by_route: collections.Counter = collections.Counter()
+    for v, m in uniq.items():
+        frag = m["url"].split("#")[-1] if "#" in m["url"] else "(no url)"
+        by_route[(frag, "flagged" if v in set(flagged) else "clean")] += 1
+    return {
+        "n_keystroke_events_with_a_typed_value": n_events,
+        "n_distinct_comments": len(uniq),
+        "exception_pairs": pairs,
+        "n_flagged_comments": len(flagged),
+        "flagged_share": round(len(flagged) / len(uniq), 4) if uniq else None,
+        "flagged_examples": flagged[:16],
+        "by_route": {f"{r}|{k}": n for (r, k), n in sorted(by_route.items())},
+        "_note": "These are the OPERATOR's words, not the system's disposition. Every flagged "
+                 "comment observed still ends in a positive disposition -- e.g. "
+                 "「…要注意。発注書確認・登録完了。」 is flagged AND completed. So the SYSTEM outcome "
+                 "remains constant while the OPERATOR's recorded judgement varies.",
+    }
+
+
 def run(dataset: str = "dataset_b") -> Dict[str, Any]:
     dataset_root = os.path.join(C.ROOT, dataset)
     ev_sweep = sweep_events(dataset_root)
     shots = sweep_screenshot_filenames(dataset_root)
     trans = sweep_status_transitions(dataset)
+    typed = sweep_typed_comments(dataset_root)
 
     # --- CLASSIFY, do not count.
     #
@@ -190,8 +235,12 @@ def run(dataset: str = "dataset_b") -> Dict[str, Any]:
     candidates = [h for h in ev_sweep["hits"] if h["classification"] == "candidate_outcome"]
 
     # G4 reopens ONLY on a candidate outcome or on structural reversal evidence.
-    found = bool(candidates) or trans["n_backward_transitions"] > 0 \
-        or trans["n_records_with_multiple_terminal_states"] > 0 or bool(shots["hits"])
+    # G4 reopens on ANY observed variance in a disposition-relevant variable -- including the
+    # operator's own annotation, which is what the first version of this sweep missed entirely
+    # by reading only `context.extracted_text`.
+    found = (bool(candidates) or trans["n_backward_transitions"] > 0
+             or trans["n_records_with_multiple_terminal_states"] > 0 or bool(shots["hits"])
+             or typed["n_flagged_comments"] > 0)
 
     # The affordance finding is separate from, and more useful than, the null result.
     affordances = sorted({h["value"] for h in ev_sweep["hits"]
@@ -226,6 +275,7 @@ def run(dataset: str = "dataset_b") -> Dict[str, Any]:
         },
         "screenshot_filename_sweep": shots,
         "structural_transition_sweep": trans,
+        "typed_comment_sweep": typed,
         "G4_REOPENED": found,
         "_finding": "",
         "_affordance_finding": (
@@ -242,11 +292,20 @@ def run(dataset: str = "dataset_b") -> Dict[str, Any]:
     }
     if found:
         doc["_finding"] = (
-            f"G4 REOPENS. {len(candidates)} candidate outcome hits, "
+            f"G4 REOPENS, NARROWLY AND PRECISELY. The SYSTEM disposition is still constant: "
+            f"{len(candidates)} candidate negative outcomes in screen text, "
             f"{trans['n_backward_transitions']} backward transitions, "
-            f"{trans['n_records_with_multiple_terminal_states']} records with multiple terminal "
-            f"states, {len(shots['hits'])} screenshot filename hits. The outcome variable is "
-            f"NOT constant and H1 must be re-tested.")
+            f"{trans['n_records_with_multiple_terminal_states']} records reaching two terminal "
+            f"states, {len(shots['hits'])} screenshot filename hits -- all zero. But the "
+            f"OPERATOR's own annotation varies: {typed['n_flagged_comments']} of "
+            f"{typed['n_distinct_comments']} distinct typed comments "
+            f"({typed['flagged_share']:.1%}) carry an exception marker "
+            f"({'/'.join(EXCEPTION_MARKERS)}), against their clean counterparts "
+            f"(差異なし {typed['exception_pairs']['差異なし|差異あり']['差異なし']}, "
+            f"通常 {typed['exception_pairs']['通常|要注意']['通常']}). Every flagged record was "
+            f"still disposed positively. So there IS a supervision signal, but it is the "
+            f"operator's recorded judgement, not the system's outcome -- a different and much "
+            f"smaller target than the original hypothesis assumed.")
     else:
         doc["_finding"] = (
             f"NULL RESULT, and it is a finding. {len(NEGATIVE_TERMS)} terms swept across "

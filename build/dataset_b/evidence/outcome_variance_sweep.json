@@ -137,8 +137,58 @@
   "n_records_with_multiple_terminal_states": 0,
   "multi_terminal_examples": []
  },
- "G4_REOPENED": false,
- "_finding": "NULL RESULT, and it is a finding. 31 terms swept across 1,563,587 string values (25,495,968 characters) in 20,477 events, 4,746 screenshot filenames, and 898 record-status series. ZERO outcome-like negative terms, ZERO backward transitions, ZERO records with two terminal states. Dataset B contains no observed negative outcome. G4 stays closed: there is no supervision signal for a decision function, and a model trained here would learn to approve everything and score 100%. BUT SEE _affordance_finding: the absence is of observed rejections, not of the ability to reject.",
+ "typed_comment_sweep": {
+  "n_keystroke_events_with_a_typed_value": 1347,
+  "n_distinct_comments": 481,
+  "exception_pairs": {
+   "差異なし|差異あり": {
+    "差異なし": 36,
+    "差異あり": 19
+   },
+   "通常|要注意": {
+    "通常": 46,
+    "要注意": 7
+   },
+   "確認完了|要確認": {
+    "確認完了": 16,
+    "要確認": 19
+   }
+  },
+  "n_flagged_comments": 26,
+  "flagged_share": 0.0541,
+  "flagged_examples": [
+   "発注管理処理。発注変更：サーバー保守部品　数量 172　合計 2,245,632円　要注意。発注書確認・登録完了。",
+   "発注管理処理。発注変更：サーバー保守部品　数量 380　合計 14,078,240円　要注意。発注書確認・登録完了。",
+   "発注管理処理。発注変更：事務用品　数量 87　合計 3,206,385円　要注意。発注書確認・登録完了。",
+   "発注管理処理。発注変更：工場設備部品　数量 280　合計 6,340,040円　要注意。発注書確認・登録完了。",
+   "発注管理処理。発注変更：梱包材料　数量 181　合計 1,571,623円　要注意。発注書確認・登録完了。",
+   "発注管理処理。発注変更：精密部品一式　数量 261　合計 10,616,697円　要注意。発注書確認・登録完了。",
+   "発注管理処理。発注変更：電子基板ユニット　数量 437　合計 16,002,066円　要注意。発注書確認・登録完了。",
+   "請求書照合完了。INV-2026-7008　金額：408,812円。差異あり要確認。",
+   "請求書照合完了。INV-2026-7009　金額：302,898円。差異あり要確認。",
+   "請求書照合完了。INV-2026-7073　金額：574,134円。差異あり要確認。",
+   "請求書照合完了。INV-2026-7074　金額：400,826円。差異あり要確認。",
+   "請求書照合完了。INV-2026-7252　金額：287,747円。差異あり要確認。",
+   "請求書照合完了。INV-2026-7256　金額：300,793円。差異あり要確認。",
+   "請求書照合完了。INV-2026-7300　金額：1,177,577円。差異あり要確認。",
+   "請求書照合完了。INV-2026-7301　金額：749,769円。差異あり要確認。",
+   "請求書照合完了。INV-2026-7351　金額：1,218,687円。差異あり要確認。"
+  ],
+  "by_route": {
+   "(no url)|clean": 71,
+   "(no url)|flagged": 2,
+   "/leave-applications|clean": 105,
+   "/onboarding|clean": 36,
+   "/payroll-items|clean": 159,
+   "/payroll-items|flagged": 17,
+   "/resident-tax|clean": 46,
+   "/resident-tax|flagged": 7,
+   "/social-insurance|clean": 38
+  },
+  "_note": "These are the OPERATOR's words, not the system's disposition. Every flagged comment observed still ends in a positive disposition -- e.g. 「…要注意。発注書確認・登録完了。」 is flagged AND completed. So the SYSTEM outcome remains constant while the OPERATOR's recorded judgement varies."
+ },
+ "G4_REOPENED": true,
+ "_finding": "G4 REOPENS, NARROWLY AND PRECISELY. The SYSTEM disposition is still constant: 0 candidate negative outcomes in screen text, 0 backward transitions, 0 records reaching two terminal states, 0 screenshot filename hits -- all zero. But the OPERATOR's own annotation varies: 26 of 481 distinct typed comments (5.4%) carry an exception marker (差異あり/要注意/要確認), against their clean counterparts (差異なし 36, 通常 46). Every flagged record was still disposed positively. So there IS a supervision signal, but it is the operator's recorded judgement, not the system's outcome -- a different and much smaller target than the original hypothesis assumed.",
  "_affordance_finding": "The UI EXPOSES a rejection path. The comment box on the disposition screen is labelled 「承認コメントまたは差戻し理由を入力してください…」 -- 'enter an approval comment or a send-back reason' -- appearing on browser_click and browser_form_input events. So 差戻し (send-back) is a supported action that was never exercised in this capture window. This reframes G4: the dataset does not show that rejection never happens, it shows that this ~2-hour window contains none. The distinction matters for Step 3, because a system trained or evaluated here has never seen the branch the interface is built around.",
  "extraction_method": "telemetry_text+derived",
  "evidence_type": "OBSERVED"

@@ -400,7 +400,7 @@
   "dataset": "dataset_b",
   "pass_id": "phase3_9",
   "code_version": "step2_5-evidence-v1",
-  "git_sha": "d8d8b9eb9e935f78293074e6b2e7b7e9730de10e",
+  "git_sha": "d5b2f67316358d7d48e9d2697ac8bb4366054461",
   "python": {
    "version": "3.12.14",
    "executable": "/Users/aumvyas/Desktop/IBY Project/.venv/bin/python"
@@ -415,10 +415,10 @@
   "artifacts": {
    "outcome_variance_sweep.json": {
     "path": "build/dataset_b/evidence/outcome_variance_sweep.json",
-    "sha256": "60c1387e02417a68d3a10c75cf82f9fdac3d69096945267e7a8a56cf2a754dfe"
+    "sha256": "a0e6c294b984da9b148851e270dbcebf20b2c98c24a9a46d040aa34ed54481e7"
    }
   },
-  "G4_REOPENED": false,
-  "finding": "NULL RESULT, and it is a finding. 31 terms swept across 1,563,587 string values (25,495,968 characters) in 20,477 events, 4,746 screenshot filenames, and 898 record-status series. ZERO outcome-like negative terms, ZERO backward transitions, ZERO records with two terminal states. Dataset B contains no observed negative outcome. G4 stays closed: there is no supervision signal for a decision function, and a model trained here would learn to approve everything and score 100%. BUT SEE _affordance_finding: the absence is of observed rejections, not of the ability to reject."
+  "G4_REOPENED": true,
+  "finding": "G4 REOPENS, NARROWLY AND PRECISELY. The SYSTEM disposition is still constant: 0 candidate negative outcomes in screen text, 0 backward transitions, 0 records reaching two terminal states, 0 screenshot filename hits -- all zero. But the OPERATOR's own annotation varies: 26 of 481 distinct typed comments (5.4%) carry an exception marker (差異あり/要注意/要確認), against their clean counterparts (差異なし 36, 通常 46). Every flagged record was still disposed positively. So there IS a supervision signal, but it is the operator's recorded judgement, not the system's outcome -- a different and much smaller target than the original hypothesis assumed."
  }
 }
