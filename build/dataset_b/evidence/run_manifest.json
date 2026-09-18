@@ -1,0 +1,368 @@
+{
+ "pass0": {
+  "_purpose": "provenance of one evidence pass. Which code, which interpreter, which inputs, and the sha256 of every artifact written.",
+  "dataset": "dataset_b",
+  "pass_id": "pass0",
+  "code_version": "step2_5-evidence-v1",
+  "git_sha": "1cce8411d0bbc45c5e8232c746c76b1949a3de83",
+  "python": {
+   "version": "3.12.14",
+   "executable": "/Users/aumvyas/Desktop/IBY Project/.venv/bin/python"
+  },
+  "dependencies": {
+   "numpy": "2.5.3",
+   "PIL": "12.3.0"
+  },
+  "config": {
+   "source": "context.extracted_text",
+   "ocr": "NOT USED — tesseract absent, and ADR-007 rejects global OCR"
+  },
+  "artifacts": {
+   "screen_text.jsonl": {
+    "path": "build/dataset_b/evidence/screen_text.jsonl",
+    "n_rows": 939,
+    "sha256": "e3e897fcfeb52f0b1fdb709a0ac3f599cb812abd538b2627276675a4b430a2e8"
+   },
+   "documents.jsonl": {
+    "path": "build/dataset_b/evidence/documents.jsonl",
+    "n_rows": 112,
+    "sha256": "187c3e89e4ddd1ce753bb435f35247a806cd7b16112a12dc3dfc6af3c372f191"
+   },
+   "document_ledger.jsonl": {
+    "path": "build/dataset_b/evidence/document_ledger.jsonl",
+    "n_rows": 144,
+    "sha256": "3deec6a174d38e440f27bacba5239b5a18bd77462bd5ef919ae0b26b883a2219"
+   },
+   "records.jsonl": {
+    "path": "build/dataset_b/evidence/records.jsonl",
+    "n_rows": 3011,
+    "sha256": "e0bc971a2d84b84f1f581fe36494bc6e617fb13b134d3b3ea40f3168ef9719c1"
+   },
+   "outcomes.jsonl": {
+    "path": "build/dataset_b/evidence/outcomes.jsonl",
+    "n_rows": 549,
+    "sha256": "cb9660cb9674e93f7bb306b61f79bb38278f983413baa1c68fd150117264214f"
+   },
+   "outcome_polarity.json": {
+    "path": "build/dataset_b/evidence/outcome_polarity.json",
+    "sha256": "f6e181e12c6d0fd2f9da706861becfae8d2d87671bd13edf0e7048d4630e4f38"
+   }
+  },
+  "counts": {
+   "captures": 939,
+   "documents": 112,
+   "ledger_rows": 144,
+   "records": 3011,
+   "distinct_record_ids": 898,
+   "outcomes": 549,
+   "documents_with_multiple_titles": 12,
+   "records_with_module_disagreement": 539
+  },
+  "record_prefix_map": {
+   "P1": {
+    "modal_module_id": "M01",
+    "support": 290,
+    "total": 362,
+    "purity": 0.8011,
+    "distribution": {
+     "M01": 290,
+     "M09": 24,
+     "M11": 12,
+     "M07": 12,
+     "M08": 12,
+     "M10": 12
+    }
+   },
+   "P10": {
+    "modal_module_id": "M08",
+    "support": 5,
+    "total": 16,
+    "purity": 0.3125,
+    "distribution": {
+     "M08": 5,
+     "M09": 3,
+     "M01": 2,
+     "M03": 2,
+     "M10": 1,
+     "M04": 1,
+     "M11": 1,
+     "M02": 1
+    }
+   },
+   "P11": {
+    "modal_module_id": "M09",
+    "support": 276,
+    "total": 312,
+    "purity": 0.8846,
+    "distribution": {
+     "M09": 276,
+     "M01": 12,
+     "M03": 12,
+     "M06": 12
+    }
+   },
+   "P12": {
+    "modal_module_id": "M10",
+    "support": 192,
+    "total": 240,
+    "purity": 0.8,
+    "distribution": {
+     "M10": 192,
+     "M04": 12,
+     "M05": 12,
+     "M02": 12,
+     "M06": 12
+    }
+   },
+   "P13": {
+    "modal_module_id": "M11",
+    "support": 120,
+    "total": 120,
+    "purity": 1.0,
+    "distribution": {
+     "M11": 120
+    }
+   },
+   "P2": {
+    "modal_module_id": "M02",
+    "support": 108,
+    "total": 156,
+    "purity": 0.6923,
+    "distribution": {
+     "M02": 108,
+     "M11": 24,
+     "M05": 12,
+     "M10": 12
+    }
+   },
+   "P3": {
+    "modal_module_id": "M03",
+    "support": 384,
+    "total": 444,
+    "purity": 0.8649,
+    "distribution": {
+     "M03": 384,
+     "M06": 12,
+     "M11": 12,
+     "M05": 12,
+     "M07": 12,
+     "M09": 12
+    }
+   },
+   "P4": {
+    "modal_module_id": "M01",
+    "support": 288,
+    "total": 360,
+    "purity": 0.8,
+    "distribution": {
+     "M01": 288,
+     "M09": 24,
+     "M11": 12,
+     "M07": 12,
+     "M08": 12,
+     "M10": 12
+    }
+   },
+   "P5": {
+    "modal_module_id": "M04",
+    "support": 37,
+    "total": 61,
+    "purity": 0.6066,
+    "distribution": {
+     "M04": 37,
+     "M05": 12,
+     "M10": 12
+    }
+   },
+   "P6": {
+    "modal_module_id": "M05",
+    "support": 324,
+    "total": 420,
+    "purity": 0.7714,
+    "distribution": {
+     "M05": 324,
+     "M01": 36,
+     "M04": 24,
+     "M11": 12,
+     "M09": 12,
+     "M02": 12
+    }
+   },
+   "P7": {
+    "modal_module_id": "M06",
+    "support": 96,
+    "total": 120,
+    "purity": 0.8,
+    "distribution": {
+     "M06": 96,
+     "M01": 12,
+     "M03": 12
+    }
+   },
+   "P8": {
+    "modal_module_id": "M09",
+    "support": 37,
+    "total": 73,
+    "purity": 0.5068,
+    "distribution": {
+     "M09": 37,
+     "M01": 36
+    }
+   },
+   "P9": {
+    "modal_module_id": "M07",
+    "support": 24,
+    "total": 36,
+    "purity": 0.6667,
+    "distribution": {
+     "M07": 24,
+     "M01": 12
+    }
+   }
+  },
+  "outcome_finding": "ZERO VARIANCE IN THE OBSERVED TOAST OUTCOME: 225 toasts, 225 positive, 0 negative, 0 unknown, across 5 distinct messages. Any hypothesis that a rule PREDICTS the disposition is untestable on this evidence: the dependent variable is a constant. Reported as UNTESTABLE, never as an accuracy figure."
+ },
+ "pass1": {
+  "_purpose": "provenance of one evidence pass. Which code, which interpreter, which inputs, and the sha256 of every artifact written.",
+  "dataset": "dataset_b",
+  "pass_id": "pass1",
+  "code_version": "step2_5-evidence-v1",
+  "git_sha": "1cce8411d0bbc45c5e8232c746c76b1949a3de83",
+  "python": {
+   "version": "3.12.14",
+   "executable": "/Users/aumvyas/Desktop/IBY Project/.venv/bin/python"
+  },
+  "dependencies": {
+   "numpy": "2.5.3",
+   "PIL": "12.3.0"
+  },
+  "config": {
+   "hash": "PIL + numpy DCT-II, 32x32 -> 8x8, DC excluded",
+   "hash_bits": 64,
+   "windows": [
+    5,
+    10,
+    25
+   ],
+   "decision_lookback": 5,
+   "ocr": "NOT USED"
+  },
+  "artifacts": {
+   "states.jsonl": {
+    "path": "build/dataset_b/evidence/states.jsonl",
+    "n_rows": 2200,
+    "sha256": "09eaa2f5f6f282309f9b0824fc9bdf7727a0a24239d37413f7e43fb14dedf4ac"
+   },
+   "coverage_gaps.jsonl": {
+    "path": "build/dataset_b/evidence/coverage_gaps.jsonl",
+    "n_rows": 629,
+    "sha256": "0147dfb52f55bf64adbc722aa33ec4ba5f4a17e396ccf6757843a9d3acd708a0"
+   }
+  },
+  "summary": {
+   "pass": "1",
+   "n_screenshots": 4746,
+   "n_distinct_phashes": 1973,
+   "reduction_pct": 58.4,
+   "_baseline_note": "a 708-image sample was reported at 286 distinct hashes / 59.6% reduction; the figure above is measured over ALL images",
+   "n_states": 2200,
+   "n_decision_adjacent_states": 155,
+   "n_dispositions": 629,
+   "coverage": {
+    "symmetric_5": {
+     "n": 198,
+     "of": 629,
+     "pct": 31.5,
+     "median_distance": 2
+    },
+    "before_only_5": {
+     "n": 5,
+     "of": 629,
+     "pct": 0.8,
+     "median_distance": 3
+    },
+    "normalised_5": {
+     "n": 293,
+     "of": 629,
+     "pct": 46.6,
+     "median_distance": 2
+    },
+    "symmetric_10": {
+     "n": 457,
+     "of": 629,
+     "pct": 72.7,
+     "median_distance": 8
+    },
+    "before_only_10": {
+     "n": 258,
+     "of": 629,
+     "pct": 41.0,
+     "median_distance": 9
+    },
+    "normalised_10": {
+     "n": 492,
+     "of": 629,
+     "pct": 78.2,
+     "median_distance": 5
+    },
+    "symmetric_25": {
+     "n": 568,
+     "of": 629,
+     "pct": 90.3,
+     "median_distance": 8
+    },
+    "before_only_25": {
+     "n": 397,
+     "of": 629,
+     "pct": 63.1,
+     "median_distance": 10
+    },
+    "normalised_25": {
+     "n": 607,
+     "of": 629,
+     "pct": 96.5,
+     "median_distance": 6
+    }
+   },
+   "queue_table_captured": 283,
+   "detail_pane_captured": 7
+  }
+ },
+ "pass3": {
+  "_purpose": "provenance of one evidence pass. Which code, which interpreter, which inputs, and the sha256 of every artifact written.",
+  "dataset": "dataset_b",
+  "pass_id": "pass3",
+  "code_version": "step2_5-evidence-v1",
+  "git_sha": "1cce8411d0bbc45c5e8232c746c76b1949a3de83",
+  "python": {
+   "version": "3.12.14",
+   "executable": "/Users/aumvyas/Desktop/IBY Project/.venv/bin/python"
+  },
+  "dependencies": {
+   "numpy": "2.5.3",
+   "PIL": "12.3.0"
+  },
+  "config": {
+   "evidence_floor_n": 8,
+   "permutations": 10000,
+   "seed": 7,
+   "declared": "the floor and the permutation settings were fixed before the numbers were inspected; UNTESTABLE and INSUFFICIENT_EVIDENCE are first-class results and no verdict is forced."
+  },
+  "artifacts": {
+   "hypothesis_tests.json": {
+    "path": "build/dataset_b/evidence/hypothesis_tests.json",
+    "sha256": "df9e12341526c69060d1a69ad3d61b6e8182d3b481184178f8f79ee66ad0e1d8"
+   }
+  },
+  "summary": {
+   "H1:INSUFFICIENT_EVIDENCE": 3,
+   "H1:UNTESTABLE": 8,
+   "H2:INSUFFICIENT_EVIDENCE": 8,
+   "H2:REFUTED": 3,
+   "H3:REFUTED": 1,
+   "H3:SUPPORTED": 10,
+   "H4:INSUFFICIENT_EVIDENCE": 7,
+   "H4:REFUTED": 4
+  }
+ }
+}

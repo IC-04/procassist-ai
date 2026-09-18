@@ -27,3 +27,27 @@ venv/
 
 # Local tool settings (machine-specific)
 .claude/settings.local.json
+docs/_archive_*
+
+# LaTeX build artifacts (the .tex and .pdf are committed; intermediates are not)
+*.aux
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.toc
+*.out
+*.xdv
+docs/*.log
+
+# Evidence artifacts are a NARROW exception to the build/ rule above. They are
+# small (largest 2.8 MB), they are the evidence every Step 2.5 claim cites, and a
+# reviewer must be able to inspect them in history rather than regenerate them.
+# Each level is re-ignored after being re-included, so Step 1's frozen build
+# artifacts (blocks/segments_rich/candidates) and all of build/dataset_a/ stay
+# ignored -- a blanket "!build/dataset_b/" would have exposed them.
+!build/
+build/*
+!build/dataset_b/
+build/dataset_b/*
+!build/dataset_b/evidence/
+build/dataset_b/evidence/.cache/

@@ -1,0 +1,1268 @@
+{
+ "_purpose": "hypothesis verdicts from Pass 0 + Pass 1 only. No VLM was called.",
+ "_rules": {
+  "evidence_floor_n": 8,
+  "permutations": 10000,
+  "seed": 7,
+  "declared": "the floor and the permutation settings were fixed before the numbers were inspected; UNTESTABLE and INSUFFICIENT_EVIDENCE are first-class results and no verdict is forced."
+ },
+ "summary": {
+  "H1:INSUFFICIENT_EVIDENCE": 3,
+  "H1:UNTESTABLE": 8,
+  "H2:INSUFFICIENT_EVIDENCE": 8,
+  "H2:REFUTED": 3,
+  "H3:REFUTED": 1,
+  "H3:SUPPORTED": 10,
+  "H4:INSUFFICIENT_EVIDENCE": 7,
+  "H4:REFUTED": 4
+ },
+ "tests": [
+  {
+   "hypothesis": "H1",
+   "module_id": "M01",
+   "n": 33,
+   "statistic": {
+    "polarity": {
+     "positive": 33
+    },
+    "distinct_outcomes": 1
+   },
+   "null_model": "none — the dependent variable is constant",
+   "result": "UNTESTABLE",
+   "reason": "all 33 observed dispositions have polarity 'positive'. A rule cannot be shown to predict a constant: any predictor scores 100% and the figure would be meaningless. Reporting an accuracy here would be the error, not the finding.",
+   "evidence_refs": [
+    "d1492349c632c4a0",
+    "9e744f23a5dc196a",
+    "f9b4fdf36530754a",
+    "76873b5bed8e1ce6",
+    "e4c564ca661d917e",
+    "6ad628bfdd05db9d",
+    "28e18f2e753e9f87",
+    "750c387c1262083e",
+    "c85ce79c9059b41e",
+    "e6a4b207df0d0242",
+    "d6c48a5617c68fde",
+    "ff5e17b9427f2725"
+   ]
+  },
+  {
+   "hypothesis": "H1",
+   "module_id": "M02",
+   "n": 11,
+   "statistic": {
+    "polarity": {
+     "positive": 11
+    },
+    "distinct_outcomes": 1
+   },
+   "null_model": "none — the dependent variable is constant",
+   "result": "UNTESTABLE",
+   "reason": "all 11 observed dispositions have polarity 'positive'. A rule cannot be shown to predict a constant: any predictor scores 100% and the figure would be meaningless. Reporting an accuracy here would be the error, not the finding.",
+   "evidence_refs": [
+    "3fe7671353203c98",
+    "ae9e33ace7e495ea",
+    "4504e52ef608e8ed",
+    "99629ca9d5ff7a51",
+    "dbd65ca44e8b7aa8",
+    "68f438a4368ccd02",
+    "af5a7599f34d3dfc",
+    "8c5f7e8528742d99",
+    "34709ae48fdf98f4",
+    "f15adbaac8244f16",
+    "052412e701f12486"
+   ]
+  },
+  {
+   "hypothesis": "H1",
+   "module_id": "M03",
+   "n": 36,
+   "statistic": {
+    "polarity": {
+     "positive": 36
+    },
+    "distinct_outcomes": 1
+   },
+   "null_model": "none — the dependent variable is constant",
+   "result": "UNTESTABLE",
+   "reason": "all 36 observed dispositions have polarity 'positive'. A rule cannot be shown to predict a constant: any predictor scores 100% and the figure would be meaningless. Reporting an accuracy here would be the error, not the finding.",
+   "evidence_refs": [
+    "d64f3e0abfc4d523",
+    "ece2034401a68264",
+    "f8f9fcceff1babf9",
+    "951531a2fe024e46",
+    "92317db43d47f67d",
+    "43a0e610e01b7e70",
+    "d5486708c96b93fd",
+    "405aa6345c8e3d21",
+    "f00a7b6cbc37aa97",
+    "59724435eb73ca63",
+    "fb352717ff99b297",
+    "31c87af90b210020"
+   ]
+  },
+  {
+   "hypothesis": "H1",
+   "module_id": "M04",
+   "n": 5,
+   "statistic": {
+    "polarity": {
+     "positive": 5
+    }
+   },
+   "null_model": "none — not reached",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "only 5 toast outcomes for this module; the declared floor is 8. No verdict is forced.",
+   "evidence_refs": [
+    "25ae95153338a0e9",
+    "84f853632de7c3b4",
+    "f5b1dd417ea58528",
+    "5a6f9b566d055365",
+    "d05422e3e615828c"
+   ]
+  },
+  {
+   "hypothesis": "H1",
+   "module_id": "M05",
+   "n": 31,
+   "statistic": {
+    "polarity": {
+     "positive": 31
+    },
+    "distinct_outcomes": 1
+   },
+   "null_model": "none — the dependent variable is constant",
+   "result": "UNTESTABLE",
+   "reason": "all 31 observed dispositions have polarity 'positive'. A rule cannot be shown to predict a constant: any predictor scores 100% and the figure would be meaningless. Reporting an accuracy here would be the error, not the finding.",
+   "evidence_refs": [
+    "7d6451715e2ad433",
+    "e41b485230272a6b",
+    "927849656e0d6cc8",
+    "cd3d0809ccae0602",
+    "a9d634d77b5079a4",
+    "8a4ce1106aa21272",
+    "1f035f209e8f1705",
+    "45eb6b98b3448bcb",
+    "fb49f0ede445305e",
+    "f9d6a72bf6be4697",
+    "cdf1712326b6f78a",
+    "c41ba32ad6a2de1f"
+   ]
+  },
+  {
+   "hypothesis": "H1",
+   "module_id": "M06",
+   "n": 11,
+   "statistic": {
+    "polarity": {
+     "positive": 11
+    },
+    "distinct_outcomes": 1
+   },
+   "null_model": "none — the dependent variable is constant",
+   "result": "UNTESTABLE",
+   "reason": "all 11 observed dispositions have polarity 'positive'. A rule cannot be shown to predict a constant: any predictor scores 100% and the figure would be meaningless. Reporting an accuracy here would be the error, not the finding.",
+   "evidence_refs": [
+    "90ea92336aff13e5",
+    "91d5c545c9934077",
+    "982b2a35eb436b28",
+    "5bc2b7ee93df5928",
+    "2f5860e671f044e3",
+    "24de9a3f32f8c799",
+    "f91871a3bc0274e1",
+    "8dd073492c0c3c00",
+    "5fb485da1b2e1fa2",
+    "20e6ca2a34deb418",
+    "2747c9d21fd01cac"
+   ]
+  },
+  {
+   "hypothesis": "H1",
+   "module_id": "M07",
+   "n": 5,
+   "statistic": {
+    "polarity": {
+     "positive": 5
+    }
+   },
+   "null_model": "none — not reached",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "only 5 toast outcomes for this module; the declared floor is 8. No verdict is forced.",
+   "evidence_refs": [
+    "11bfc86a4d1fb8dd",
+    "bfe8f7eaae4020c7",
+    "6f4579fce64d71b7",
+    "56474779b3f182f0",
+    "48d6d21adb006347"
+   ]
+  },
+  {
+   "hypothesis": "H1",
+   "module_id": "M08",
+   "n": 3,
+   "statistic": {
+    "polarity": {
+     "positive": 3
+    }
+   },
+   "null_model": "none — not reached",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "only 3 toast outcomes for this module; the declared floor is 8. No verdict is forced.",
+   "evidence_refs": [
+    "23c3e2d61c2b2da0",
+    "294d5f4bcb0c0125",
+    "1338dcbfac66ef1b"
+   ]
+  },
+  {
+   "hypothesis": "H1",
+   "module_id": "M09",
+   "n": 32,
+   "statistic": {
+    "polarity": {
+     "positive": 32
+    },
+    "distinct_outcomes": 1
+   },
+   "null_model": "none — the dependent variable is constant",
+   "result": "UNTESTABLE",
+   "reason": "all 32 observed dispositions have polarity 'positive'. A rule cannot be shown to predict a constant: any predictor scores 100% and the figure would be meaningless. Reporting an accuracy here would be the error, not the finding.",
+   "evidence_refs": [
+    "1de6caefa963a86c",
+    "8a38ed0f0c512c39",
+    "919be3cadaf72297",
+    "a1f05309452c0ee8",
+    "ad0a64681b4dc31f",
+    "7c2d1e1754c7a4fd",
+    "b58f62921862c948",
+    "bbc1bfb1d5719195",
+    "452fed10938293bd",
+    "441df4f20a389de6",
+    "6319df93adb850fc",
+    "4b1797f36e7a9193"
+   ]
+  },
+  {
+   "hypothesis": "H1",
+   "module_id": "M10",
+   "n": 18,
+   "statistic": {
+    "polarity": {
+     "positive": 18
+    },
+    "distinct_outcomes": 1
+   },
+   "null_model": "none — the dependent variable is constant",
+   "result": "UNTESTABLE",
+   "reason": "all 18 observed dispositions have polarity 'positive'. A rule cannot be shown to predict a constant: any predictor scores 100% and the figure would be meaningless. Reporting an accuracy here would be the error, not the finding.",
+   "evidence_refs": [
+    "266f1275d3567274",
+    "a5996f9eff5373b3",
+    "d0f08b85f2bd4751",
+    "bad2c62070a704a6",
+    "0603e840d4862e99",
+    "3cad131259f234f2",
+    "c73b6605df9263f9",
+    "328452dee0b69825",
+    "6d189b1b356adfa0",
+    "30c5e80cd8f9e1b6",
+    "7668de573a7dc35f",
+    "821d7b32d59c09c8"
+   ]
+  },
+  {
+   "hypothesis": "H1",
+   "module_id": "M11",
+   "n": 16,
+   "statistic": {
+    "polarity": {
+     "positive": 16
+    },
+    "distinct_outcomes": 1
+   },
+   "null_model": "none — the dependent variable is constant",
+   "result": "UNTESTABLE",
+   "reason": "all 16 observed dispositions have polarity 'positive'. A rule cannot be shown to predict a constant: any predictor scores 100% and the figure would be meaningless. Reporting an accuracy here would be the error, not the finding.",
+   "evidence_refs": [
+    "f89c3cdc9234373d",
+    "6d5983a7af0d47db",
+    "70459bdd1257ae23",
+    "f748a9edaa018d47",
+    "2e63bcc4a1e33eb4",
+    "9298cbd3ce0a2618",
+    "915c0a57599c1610",
+    "29968366bcc5a7bc",
+    "c1ac837d4a974f58",
+    "d01c3bb6c7321572",
+    "0d8d72d4941ce1e2",
+    "a972632e94e98002"
+   ]
+  },
+  {
+   "hypothesis": "H2",
+   "module_id": "M01",
+   "n": 20,
+   "statistic": {
+    "spearman_rho": -0.2737,
+    "p_value": 0.2317,
+    "feature": "record amount (JPY)",
+    "effort": "seconds to disposition toast"
+   },
+   "null_model": "permutation, 10000 shuffles, seed 7; null |rho| p50=0.1564 p95=0.4481",
+   "result": "REFUTED",
+   "reason": "no association beyond the permutation null; the rule variable does not explain handling effort in this module",
+   "evidence_refs": [
+    "d6c48a5617c68fde",
+    "2ef9d2d4e9908298",
+    "6d606e049a235605",
+    "ff5e17b9427f2725",
+    "e25116ef0ef9a94e",
+    "40464117cd97b973",
+    "66ed5bfd0badd189",
+    "6ad628bfdd05db9d",
+    "9a7c82791244abe5",
+    "e815c6345e100583",
+    "6fffe4c5d1477d2e",
+    "8903766601770759"
+   ]
+  },
+  {
+   "hypothesis": "H2",
+   "module_id": "M02",
+   "n": 1,
+   "statistic": null,
+   "null_model": "permutation (not reached)",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "1 record-disposition pairs carrying both an amount and a positive elapsed time; floor is 8.",
+   "evidence_refs": [
+    "8c5f7e8528742d99"
+   ]
+  },
+  {
+   "hypothesis": "H2",
+   "module_id": "M03",
+   "n": 3,
+   "statistic": null,
+   "null_model": "permutation (not reached)",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "3 record-disposition pairs carrying both an amount and a positive elapsed time; floor is 8.",
+   "evidence_refs": [
+    "3f73a47957057d19",
+    "d64f3e0abfc4d523",
+    "f00a7b6cbc37aa97"
+   ]
+  },
+  {
+   "hypothesis": "H2",
+   "module_id": "M04",
+   "n": 2,
+   "statistic": null,
+   "null_model": "permutation (not reached)",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "2 record-disposition pairs carrying both an amount and a positive elapsed time; floor is 8.",
+   "evidence_refs": [
+    "5a6f9b566d055365",
+    "d05422e3e615828c"
+   ]
+  },
+  {
+   "hypothesis": "H2",
+   "module_id": "M05",
+   "n": 19,
+   "statistic": {
+    "spearman_rho": -0.0668,
+    "p_value": 0.7816,
+    "feature": "record amount (JPY)",
+    "effort": "seconds to disposition toast"
+   },
+   "null_model": "permutation, 10000 shuffles, seed 7; null |rho| p50=0.1599 p95=0.4569",
+   "result": "REFUTED",
+   "reason": "no association beyond the permutation null; the rule variable does not explain handling effort in this module",
+   "evidence_refs": [
+    "d21844bca046238c",
+    "3a9fcbef81069ce6",
+    "3faf5e46f3f2cdd2",
+    "e41b485230272a6b",
+    "45eb6b98b3448bcb",
+    "4454a75b52ba1211",
+    "3e0169ca9fe1ab93",
+    "1f035f209e8f1705",
+    "d42284c7a6e8b8fd",
+    "cd3d0809ccae0602",
+    "f9d6a72bf6be4697",
+    "43ab34bb42063fee"
+   ]
+  },
+  {
+   "hypothesis": "H2",
+   "module_id": "M06",
+   "n": 1,
+   "statistic": null,
+   "null_model": "permutation (not reached)",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "1 record-disposition pairs carrying both an amount and a positive elapsed time; floor is 8.",
+   "evidence_refs": [
+    "2747c9d21fd01cac"
+   ]
+  },
+  {
+   "hypothesis": "H2",
+   "module_id": "M07",
+   "n": 1,
+   "statistic": null,
+   "null_model": "permutation (not reached)",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "1 record-disposition pairs carrying both an amount and a positive elapsed time; floor is 8.",
+   "evidence_refs": [
+    "11bfc86a4d1fb8dd"
+   ]
+  },
+  {
+   "hypothesis": "H2",
+   "module_id": "M08",
+   "n": 1,
+   "statistic": null,
+   "null_model": "permutation (not reached)",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "1 record-disposition pairs carrying both an amount and a positive elapsed time; floor is 8.",
+   "evidence_refs": [
+    "294d5f4bcb0c0125"
+   ]
+  },
+  {
+   "hypothesis": "H2",
+   "module_id": "M09",
+   "n": 8,
+   "statistic": {
+    "spearman_rho": -0.6905,
+    "p_value": 0.0718,
+    "feature": "record amount (JPY)",
+    "effort": "seconds to disposition toast"
+   },
+   "null_model": "permutation, 10000 shuffles, seed 7; null |rho| p50=0.2619 p95=0.7143",
+   "result": "REFUTED",
+   "reason": "no association beyond the permutation null; the rule variable does not explain handling effort in this module",
+   "evidence_refs": [
+    "264bca2d29ac2953",
+    "919be3cadaf72297",
+    "6319df93adb850fc",
+    "441df4f20a389de6",
+    "09b1150c8e658054",
+    "34845f08a91862d3",
+    "4b1797f36e7a9193",
+    "ff6de57c1386eaa8"
+   ]
+  },
+  {
+   "hypothesis": "H2",
+   "module_id": "M10",
+   "n": 1,
+   "statistic": null,
+   "null_model": "permutation (not reached)",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "1 record-disposition pairs carrying both an amount and a positive elapsed time; floor is 8.",
+   "evidence_refs": [
+    "515c8f4df7b55cd1"
+   ]
+  },
+  {
+   "hypothesis": "H2",
+   "module_id": "M11",
+   "n": 2,
+   "statistic": null,
+   "null_model": "permutation (not reached)",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "2 record-disposition pairs carrying both an amount and a positive elapsed time; floor is 8.",
+   "evidence_refs": [
+    "f89c3cdc9234373d",
+    "d01c3bb6c7321572"
+   ]
+  },
+  {
+   "hypothesis": "H3",
+   "module_id": "M01",
+   "n": 65,
+   "statistic": {
+    "observed_rate_document_before": 0.7846,
+    "p_value": 0.0
+   },
+   "null_model": "permutation, 10000 draws, seed 7; a document event is placed uniformly inside the same execution span. null p50=0.4923 p95=0.5846",
+   "result": "SUPPORTED",
+   "reason": "documents are opened before the disposition more often than chance placement",
+   "evidence_refs": [
+    "ses_20260701-164424-CHAITANYA0BCF#d000423",
+    "ses_20260701-164424-CHAITANYA0BCF#d000442",
+    "ses_20260701-164424-CHAITANYA0BCF#d000461",
+    "ses_20260701-171614-CHAITANYA0BCF#d001403",
+    "ses_20260701-171614-CHAITANYA0BCF#d001421",
+    "ses_20260701-171614-CHAITANYA0BCF#d001438",
+    "ses_20260701-171614-CHAITANYA0BCF#d001455",
+    "ses_20260701-171614-CHAITANYA0BCF#d001941",
+    "ses_20260701-171614-CHAITANYA0BCF#d001959",
+    "ses_20260701-171614-CHAITANYA0BCF#d001976",
+    "ses_20260701-171614-CHAITANYA0BCF#d001993",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d000076"
+   ]
+  },
+  {
+   "hypothesis": "H3",
+   "module_id": "M02",
+   "n": 14,
+   "statistic": {
+    "observed_rate_document_before": 1.0,
+    "p_value": 0.0002
+   },
+   "null_model": "permutation, 10000 draws, seed 7; a document event is placed uniformly inside the same execution span. null p50=0.5714 p95=0.7857",
+   "result": "SUPPORTED",
+   "reason": "documents are opened before the disposition more often than chance placement",
+   "evidence_refs": [
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000353",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000371",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000388",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000406",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000891",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000908",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000925",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000942",
+    "ses_20260701-180923-NEELA9BAF#d001129",
+    "ses_20260701-180923-NEELA9BAF#d001146",
+    "ses_20260701-181413-LAPTOP-76QMG9DE#d001080",
+    "ses_20260701-181413-LAPTOP-76QMG9DE#d001097"
+   ]
+  },
+  {
+   "hypothesis": "H3",
+   "module_id": "M03",
+   "n": 46,
+   "statistic": {
+    "observed_rate_document_before": 0.9348,
+    "p_value": 0.0
+   },
+   "null_model": "permutation, 10000 draws, seed 7; a document event is placed uniformly inside the same execution span. null p50=0.6087 p95=0.7174",
+   "result": "SUPPORTED",
+   "reason": "documents are opened before the disposition more often than chance placement",
+   "evidence_refs": [
+    "ses_20260701-171614-CHAITANYA0BCF#d000377",
+    "ses_20260701-171614-CHAITANYA0BCF#d000427",
+    "ses_20260701-171614-CHAITANYA0BCF#d000449",
+    "ses_20260701-171614-CHAITANYA0BCF#d001646",
+    "ses_20260701-171614-CHAITANYA0BCF#d001665",
+    "ses_20260701-171614-CHAITANYA0BCF#d001687",
+    "ses_20260701-171614-CHAITANYA0BCF#d001708",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d000513",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d000538",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d000560",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d001205",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d001225"
+   ]
+  },
+  {
+   "hypothesis": "H3",
+   "module_id": "M04",
+   "n": 25,
+   "statistic": {
+    "observed_rate_document_before": 0.84,
+    "p_value": 0.0
+   },
+   "null_model": "permutation, 10000 draws, seed 7; a document event is placed uniformly inside the same execution span. null p50=0.52 p95=0.64",
+   "result": "SUPPORTED",
+   "reason": "documents are opened before the disposition more often than chance placement",
+   "evidence_refs": [
+    "ses_20260701-171614-CHAITANYA0BCF#d001484",
+    "ses_20260701-171614-CHAITANYA0BCF#d001506",
+    "ses_20260701-171614-CHAITANYA0BCF#d001528",
+    "ses_20260701-171614-CHAITANYA0BCF#d001545",
+    "ses_20260701-173642-NEELA9BAF#d000243",
+    "ses_20260701-173642-NEELA9BAF#d000260",
+    "ses_20260701-173642-NEELA9BAF#d000277",
+    "ses_20260701-173642-NEELA9BAF#d000400",
+    "ses_20260701-173642-NEELA9BAF#d000422",
+    "ses_20260701-173642-NEELA9BAF#d000441",
+    "ses_20260701-173642-NEELA9BAF#d000465",
+    "ses_20260701-173642-NEELA9BAF#d001073"
+   ]
+  },
+  {
+   "hypothesis": "H3",
+   "module_id": "M05",
+   "n": 46,
+   "statistic": {
+    "observed_rate_document_before": 0.8043,
+    "p_value": 0.0002
+   },
+   "null_model": "permutation, 10000 draws, seed 7; a document event is placed uniformly inside the same execution span. null p50=0.6087 p95=0.6957",
+   "result": "SUPPORTED",
+   "reason": "documents are opened before the disposition more often than chance placement",
+   "evidence_refs": [
+    "ses_20260701-164424-CHAITANYA0BCF#d000058",
+    "ses_20260701-164424-CHAITANYA0BCF#d000078",
+    "ses_20260701-164424-CHAITANYA0BCF#d000313",
+    "ses_20260701-164424-CHAITANYA0BCF#d000586",
+    "ses_20260701-164424-CHAITANYA0BCF#d000649",
+    "ses_20260701-164424-CHAITANYA0BCF#d001144",
+    "ses_20260701-164424-CHAITANYA0BCF#d001164",
+    "ses_20260701-164424-CHAITANYA0BCF#d001181",
+    "ses_20260701-173642-NEELA9BAF#d000597",
+    "ses_20260701-173642-NEELA9BAF#d000620",
+    "ses_20260701-173642-NEELA9BAF#d000680",
+    "ses_20260701-173642-NEELA9BAF#d000748"
+   ]
+  },
+  {
+   "hypothesis": "H3",
+   "module_id": "M06",
+   "n": 26,
+   "statistic": {
+    "observed_rate_document_before": 0.8462,
+    "p_value": 0.0163
+   },
+   "null_model": "permutation, 10000 draws, seed 7; a document event is placed uniformly inside the same execution span. null p50=0.6923 p95=0.8077",
+   "result": "SUPPORTED",
+   "reason": "documents are opened before the disposition more often than chance placement",
+   "evidence_refs": [
+    "ses_20260701-171614-CHAITANYA0BCF#d001753",
+    "ses_20260701-171614-CHAITANYA0BCF#d001798",
+    "ses_20260701-171614-CHAITANYA0BCF#d001846",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000044",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000088",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000106",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000424",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000441",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000458",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000508",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000654",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000703"
+   ]
+  },
+  {
+   "hypothesis": "H3",
+   "module_id": "M07",
+   "n": 24,
+   "statistic": {
+    "observed_rate_document_before": 0.875,
+    "p_value": 0.0263
+   },
+   "null_model": "permutation, 10000 draws, seed 7; a document event is placed uniformly inside the same execution span. null p50=0.7083 p95=0.8333",
+   "result": "SUPPORTED",
+   "reason": "documents are opened before the disposition more often than chance placement",
+   "evidence_refs": [
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000835",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000884",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000901",
+    "ses_20260701-175258-LAPTOP-76QMG9DE#d000919",
+    "ses_20260701-180923-NEELA9BAF#d000323",
+    "ses_20260701-180923-NEELA9BAF#d000370",
+    "ses_20260701-180923-NEELA9BAF#d000428",
+    "ses_20260701-180923-NEELA9BAF#d000758",
+    "ses_20260701-180923-NEELA9BAF#d000775",
+    "ses_20260701-180923-NEELA9BAF#d000929",
+    "ses_20260701-184201-LAPTOP-76QMG9DE#d000724",
+    "ses_20260701-184201-LAPTOP-76QMG9DE#d000772"
+   ]
+  },
+  {
+   "hypothesis": "H3",
+   "module_id": "M08",
+   "n": 28,
+   "statistic": {
+    "observed_rate_document_before": 0.8571,
+    "p_value": 0.0
+   },
+   "null_model": "permutation, 10000 draws, seed 7; a document event is placed uniformly inside the same execution span. null p50=0.5 p95=0.6071",
+   "result": "SUPPORTED",
+   "reason": "documents are opened before the disposition more often than chance placement",
+   "evidence_refs": [
+    "ses_20260701-164424-CHAITANYA0BCF#d001219",
+    "ses_20260701-164424-CHAITANYA0BCF#d001238",
+    "ses_20260701-164424-CHAITANYA0BCF#d001259",
+    "ses_20260701-164424-CHAITANYA0BCF#d001276",
+    "ses_20260701-171614-CHAITANYA0BCF#d000073",
+    "ses_20260701-171614-CHAITANYA0BCF#d000095",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000313",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000332",
+    "ses_20260701-180923-NEELA9BAF#d000482",
+    "ses_20260701-180923-NEELA9BAF#d000541",
+    "ses_20260701-183232-LAPTOP-76QMG9DE#d000497",
+    "ses_20260701-183232-LAPTOP-76QMG9DE#d000514"
+   ]
+  },
+  {
+   "hypothesis": "H3",
+   "module_id": "M09",
+   "n": 34,
+   "statistic": {
+    "observed_rate_document_before": 0.6765,
+    "p_value": 0.0521
+   },
+   "null_model": "permutation, 10000 draws, seed 7; a document event is placed uniformly inside the same execution span. null p50=0.5588 p95=0.6765",
+   "result": "REFUTED",
+   "reason": "document-before-disposition is not more frequent than chance placement within the same execution",
+   "evidence_refs": [
+    "ses_20260701-173642-NEELA9BAF#d000296",
+    "ses_20260701-173642-NEELA9BAF#d000314",
+    "ses_20260701-173642-NEELA9BAF#d000341",
+    "ses_20260701-173642-NEELA9BAF#d000367",
+    "ses_20260701-173642-NEELA9BAF#d000527",
+    "ses_20260701-173642-NEELA9BAF#d000544",
+    "ses_20260701-173642-NEELA9BAF#d000562",
+    "ses_20260701-173642-NEELA9BAF#d000579",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000425",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000452",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000482",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000509"
+   ]
+  },
+  {
+   "hypothesis": "H3",
+   "module_id": "M10",
+   "n": 44,
+   "statistic": {
+    "observed_rate_document_before": 0.8636,
+    "p_value": 0.0
+   },
+   "null_model": "permutation, 10000 draws, seed 7; a document event is placed uniformly inside the same execution span. null p50=0.6364 p95=0.7273",
+   "result": "SUPPORTED",
+   "reason": "documents are opened before the disposition more often than chance placement",
+   "evidence_refs": [
+    "ses_20260701-164424-CHAITANYA0BCF#d000820",
+    "ses_20260701-164424-CHAITANYA0BCF#d000844",
+    "ses_20260701-164424-CHAITANYA0BCF#d000967",
+    "ses_20260701-164424-CHAITANYA0BCF#d000988",
+    "ses_20260701-164424-CHAITANYA0BCF#d001045",
+    "ses_20260701-164424-CHAITANYA0BCF#d001093",
+    "ses_20260701-164424-CHAITANYA0BCF#d001296",
+    "ses_20260701-164424-CHAITANYA0BCF#d001347",
+    "ses_20260701-164424-CHAITANYA0BCF#d001368",
+    "ses_20260701-164424-CHAITANYA0BCF#d001385",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d000255",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d000272"
+   ]
+  },
+  {
+   "hypothesis": "H3",
+   "module_id": "M11",
+   "n": 29,
+   "statistic": {
+    "observed_rate_document_before": 0.6552,
+    "p_value": 0.0102
+   },
+   "null_model": "permutation, 10000 draws, seed 7; a document event is placed uniformly inside the same execution span. null p50=0.4483 p95=0.5862",
+   "result": "SUPPORTED",
+   "reason": "documents are opened before the disposition more often than chance placement",
+   "evidence_refs": [
+    "ses_20260701-164424-CHAITANYA0BCF#d000918",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d001340",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d001357",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d001377",
+    "ses_20260701-173246-SIDDHIGUPTAB00B#d001407",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000709",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000739",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000760",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000790",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000809",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000826",
+    "ses_20260701-175747-SIDDHIGUPTAB00B#d000845"
+   ]
+  },
+  {
+   "hypothesis": "H4",
+   "module_id": "M01",
+   "n": 688,
+   "statistic": {
+    "records_with_amount": 565,
+    "share_with_amount": 0.8212,
+    "records_with_approval_authority": 2,
+    "distinct_column_headers": [
+     "ID",
+     "ステータス",
+     "入社日",
+     "区分",
+     "対象年月",
+     "承認権限",
+     "期間・詳細",
+     "氏名",
+     "照合項目数",
+     "申請種別",
+     "申請者区分",
+     "社員ID",
+     "種別",
+     "管理ID",
+     "詳細",
+     "部署",
+     "金額",
+     "項目"
+    ],
+    "n_parsed_rules_dataset_wide": 46,
+    "rule_units_required": [
+     "万円",
+     "円",
+     "名",
+     "営業日"
+    ]
+   },
+   "null_model": "n/a — set comparison between rule variables and record fields",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "565/688 records (82%) carry 金額 — neither present nor absent enough to rule on.",
+   "evidence_refs": [
+    "04a44a3d6975:c002",
+    "3ece1f98df11:c002",
+    "3ece1f98df11:c003",
+    "3ece1f98df11:c004",
+    "01125534087c:c002",
+    "01125534087c:c003",
+    "01125534087c:c004",
+    "025d151a866d:c002"
+   ]
+  },
+  {
+   "hypothesis": "H4",
+   "module_id": "M02",
+   "n": 133,
+   "statistic": {
+    "records_with_amount": 12,
+    "share_with_amount": 0.0902,
+    "records_with_approval_authority": 0,
+    "distinct_column_headers": [
+     "ID",
+     "ステータス",
+     "区分",
+     "期間・詳細",
+     "氏名",
+     "申請種別",
+     "社員ID",
+     "種別",
+     "部署",
+     "金額",
+     "項目"
+    ],
+    "n_parsed_rules_dataset_wide": 46,
+    "rule_units_required": [
+     "万円",
+     "円",
+     "名",
+     "営業日"
+    ]
+   },
+   "null_model": "n/a — set comparison between rule variables and record fields",
+   "result": "REFUTED",
+   "reason": "only 12/133 records (9%) carry any 金額 value, so a monetary threshold rule is INAPPLICABLE to this module as recorded.",
+   "evidence_refs": [
+    "04a44a3d6975:c002",
+    "3ece1f98df11:c002",
+    "3ece1f98df11:c003",
+    "3ece1f98df11:c004",
+    "01125534087c:c002",
+    "01125534087c:c003",
+    "01125534087c:c004",
+    "025d151a866d:c002"
+   ]
+  },
+  {
+   "hypothesis": "H4",
+   "module_id": "M03",
+   "n": 410,
+   "statistic": {
+    "records_with_amount": 4,
+    "share_with_amount": 0.0098,
+    "records_with_approval_authority": 0,
+    "distinct_column_headers": [
+     "ID",
+     "ステータス",
+     "入社日",
+     "区分",
+     "氏名",
+     "照合項目数",
+     "社員ID",
+     "種別",
+     "部署",
+     "金額",
+     "項目"
+    ],
+    "n_parsed_rules_dataset_wide": 46,
+    "rule_units_required": [
+     "万円",
+     "円",
+     "名",
+     "営業日"
+    ]
+   },
+   "null_model": "n/a — set comparison between rule variables and record fields",
+   "result": "REFUTED",
+   "reason": "only 4/410 records (1%) carry any 金額 value, so a monetary threshold rule is INAPPLICABLE to this module as recorded.",
+   "evidence_refs": [
+    "04a44a3d6975:c002",
+    "3ece1f98df11:c002",
+    "3ece1f98df11:c003",
+    "3ece1f98df11:c004",
+    "01125534087c:c002",
+    "01125534087c:c003",
+    "01125534087c:c004",
+    "025d151a866d:c002"
+   ]
+  },
+  {
+   "hypothesis": "H4",
+   "module_id": "M04",
+   "n": 74,
+   "statistic": {
+    "records_with_amount": 24,
+    "share_with_amount": 0.3243,
+    "records_with_approval_authority": 0,
+    "distinct_column_headers": [
+     "ID",
+     "ステータス",
+     "区分",
+     "対象年月",
+     "期間・詳細",
+     "氏名",
+     "申請種別",
+     "社員ID",
+     "種別",
+     "管理ID",
+     "詳細",
+     "部署",
+     "金額",
+     "項目"
+    ],
+    "n_parsed_rules_dataset_wide": 46,
+    "rule_units_required": [
+     "万円",
+     "円",
+     "名",
+     "営業日"
+    ]
+   },
+   "null_model": "n/a — set comparison between rule variables and record fields",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "24/74 records (32%) carry 金額 — neither present nor absent enough to rule on.",
+   "evidence_refs": [
+    "04a44a3d6975:c002",
+    "3ece1f98df11:c002",
+    "3ece1f98df11:c003",
+    "3ece1f98df11:c004",
+    "01125534087c:c002",
+    "01125534087c:c003",
+    "01125534087c:c004",
+    "025d151a866d:c002"
+   ]
+  },
+  {
+   "hypothesis": "H4",
+   "module_id": "M05",
+   "n": 372,
+   "statistic": {
+    "records_with_amount": 324,
+    "share_with_amount": 0.871,
+    "records_with_approval_authority": 0,
+    "distinct_column_headers": [
+     "ID",
+     "ステータス",
+     "入社日",
+     "区分",
+     "対象年月",
+     "期間・詳細",
+     "氏名",
+     "照合項目数",
+     "申請種別",
+     "社員ID",
+     "種別",
+     "詳細",
+     "部署",
+     "金額"
+    ],
+    "n_parsed_rules_dataset_wide": 46,
+    "rule_units_required": [
+     "万円",
+     "円",
+     "名",
+     "営業日"
+    ]
+   },
+   "null_model": "n/a — set comparison between rule variables and record fields",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "324/372 records (87%) carry 金額 — neither present nor absent enough to rule on.",
+   "evidence_refs": [
+    "04a44a3d6975:c002",
+    "3ece1f98df11:c002",
+    "3ece1f98df11:c003",
+    "3ece1f98df11:c004",
+    "01125534087c:c002",
+    "01125534087c:c003",
+    "01125534087c:c004",
+    "025d151a866d:c002"
+   ]
+  },
+  {
+   "hypothesis": "H4",
+   "module_id": "M06",
+   "n": 132,
+   "statistic": {
+    "records_with_amount": 3,
+    "share_with_amount": 0.0227,
+    "records_with_approval_authority": 0,
+    "distinct_column_headers": [
+     "ID",
+     "ステータス",
+     "入社日",
+     "区分",
+     "期間・詳細",
+     "氏名",
+     "照合項目数",
+     "申請種別",
+     "社員ID",
+     "種別",
+     "部署",
+     "金額"
+    ],
+    "n_parsed_rules_dataset_wide": 46,
+    "rule_units_required": [
+     "万円",
+     "円",
+     "名",
+     "営業日"
+    ]
+   },
+   "null_model": "n/a — set comparison between rule variables and record fields",
+   "result": "REFUTED",
+   "reason": "only 3/132 records (2%) carry any 金額 value, so a monetary threshold rule is INAPPLICABLE to this module as recorded.",
+   "evidence_refs": [
+    "04a44a3d6975:c002",
+    "3ece1f98df11:c002",
+    "3ece1f98df11:c003",
+    "3ece1f98df11:c004",
+    "01125534087c:c002",
+    "01125534087c:c003",
+    "01125534087c:c004",
+    "025d151a866d:c002"
+   ]
+  },
+  {
+   "hypothesis": "H4",
+   "module_id": "M07",
+   "n": 60,
+   "statistic": {
+    "records_with_amount": 23,
+    "share_with_amount": 0.3833,
+    "records_with_approval_authority": 0,
+    "distinct_column_headers": [
+     "ID",
+     "ステータス",
+     "入社日",
+     "区分",
+     "期間・詳細",
+     "氏名",
+     "照合項目数",
+     "申請種別",
+     "社員ID",
+     "種別",
+     "部署",
+     "金額"
+    ],
+    "n_parsed_rules_dataset_wide": 46,
+    "rule_units_required": [
+     "万円",
+     "円",
+     "名",
+     "営業日"
+    ]
+   },
+   "null_model": "n/a — set comparison between rule variables and record fields",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "23/60 records (38%) carry 金額 — neither present nor absent enough to rule on.",
+   "evidence_refs": [
+    "04a44a3d6975:c002",
+    "3ece1f98df11:c002",
+    "3ece1f98df11:c003",
+    "3ece1f98df11:c004",
+    "01125534087c:c002",
+    "01125534087c:c003",
+    "01125534087c:c004",
+    "025d151a866d:c002"
+   ]
+  },
+  {
+   "hypothesis": "H4",
+   "module_id": "M08",
+   "n": 29,
+   "statistic": {
+    "records_with_amount": 23,
+    "share_with_amount": 0.7931,
+    "records_with_approval_authority": 0,
+    "distinct_column_headers": [
+     "ID",
+     "emp_id",
+     "name",
+     "procedure",
+     "reason",
+     "target_month",
+     "variant",
+     "ステータス",
+     "区分",
+     "氏名",
+     "社員ID",
+     "種別",
+     "金額",
+     "項目"
+    ],
+    "n_parsed_rules_dataset_wide": 46,
+    "rule_units_required": [
+     "万円",
+     "円",
+     "名",
+     "営業日"
+    ]
+   },
+   "null_model": "n/a — set comparison between rule variables and record fields",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "23/29 records (79%) carry 金額 — neither present nor absent enough to rule on.",
+   "evidence_refs": [
+    "04a44a3d6975:c002",
+    "3ece1f98df11:c002",
+    "3ece1f98df11:c003",
+    "3ece1f98df11:c004",
+    "01125534087c:c002",
+    "01125534087c:c003",
+    "01125534087c:c004",
+    "025d151a866d:c002"
+   ]
+  },
+  {
+   "hypothesis": "H4",
+   "module_id": "M09",
+   "n": 388,
+   "statistic": {
+    "records_with_amount": 203,
+    "share_with_amount": 0.5232,
+    "records_with_approval_authority": 0,
+    "distinct_column_headers": [
+     "ID",
+     "ステータス",
+     "入社日",
+     "区分",
+     "対象年月",
+     "氏名",
+     "照合項目数",
+     "申請種別",
+     "社員ID",
+     "種別",
+     "管理ID",
+     "詳細",
+     "部署",
+     "金額",
+     "項目"
+    ],
+    "n_parsed_rules_dataset_wide": 46,
+    "rule_units_required": [
+     "万円",
+     "円",
+     "名",
+     "営業日"
+    ]
+   },
+   "null_model": "n/a — set comparison between rule variables and record fields",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "203/388 records (52%) carry 金額 — neither present nor absent enough to rule on.",
+   "evidence_refs": [
+    "04a44a3d6975:c002",
+    "3ece1f98df11:c002",
+    "3ece1f98df11:c003",
+    "3ece1f98df11:c004",
+    "01125534087c:c002",
+    "01125534087c:c003",
+    "01125534087c:c004",
+    "025d151a866d:c002"
+   ]
+  },
+  {
+   "hypothesis": "H4",
+   "module_id": "M10",
+   "n": 241,
+   "statistic": {
+    "records_with_amount": 22,
+    "share_with_amount": 0.0913,
+    "records_with_approval_authority": 0,
+    "distinct_column_headers": [
+     "ID",
+     "ステータス",
+     "区分",
+     "対象年月",
+     "期間・詳細",
+     "氏名",
+     "申請種別",
+     "社員ID",
+     "種別",
+     "詳細",
+     "部署",
+     "金額",
+     "項目"
+    ],
+    "n_parsed_rules_dataset_wide": 46,
+    "rule_units_required": [
+     "万円",
+     "円",
+     "名",
+     "営業日"
+    ]
+   },
+   "null_model": "n/a — set comparison between rule variables and record fields",
+   "result": "REFUTED",
+   "reason": "only 22/241 records (9%) carry any 金額 value, so a monetary threshold rule is INAPPLICABLE to this module as recorded.",
+   "evidence_refs": [
+    "04a44a3d6975:c002",
+    "3ece1f98df11:c002",
+    "3ece1f98df11:c003",
+    "3ece1f98df11:c004",
+    "01125534087c:c002",
+    "01125534087c:c003",
+    "01125534087c:c004",
+    "025d151a866d:c002"
+   ]
+  },
+  {
+   "hypothesis": "H4",
+   "module_id": "M11",
+   "n": 193,
+   "statistic": {
+    "records_with_amount": 33,
+    "share_with_amount": 0.171,
+    "records_with_approval_authority": 0,
+    "distinct_column_headers": [
+     "ID",
+     "ステータス",
+     "入社日",
+     "区分",
+     "対象年月",
+     "期間・詳細",
+     "氏名",
+     "照合項目数",
+     "申請種別",
+     "社員ID",
+     "種別",
+     "詳細",
+     "部署",
+     "金額",
+     "項目"
+    ],
+    "n_parsed_rules_dataset_wide": 46,
+    "rule_units_required": [
+     "万円",
+     "円",
+     "名",
+     "営業日"
+    ]
+   },
+   "null_model": "n/a — set comparison between rule variables and record fields",
+   "result": "INSUFFICIENT_EVIDENCE",
+   "reason": "33/193 records (17%) carry 金額 — neither present nor absent enough to rule on.",
+   "evidence_refs": [
+    "04a44a3d6975:c002",
+    "3ece1f98df11:c002",
+    "3ece1f98df11:c003",
+    "3ece1f98df11:c004",
+    "01125534087c:c002",
+    "01125534087c:c003",
+    "01125534087c:c004",
+    "025d151a866d:c002"
+   ]
+  }
+ ]
+}

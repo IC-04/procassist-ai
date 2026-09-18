@@ -1,0 +1,91 @@
+{
+ "_finding": "ZERO VARIANCE IN THE OBSERVED TOAST OUTCOME: 225 toasts, 225 positive, 0 negative, 0 unknown, across 5 distinct messages. Any hypothesis that a rule PREDICTS the disposition is untestable on this evidence: the dependent variable is a constant. Reported as UNTESTABLE, never as an accuracy figure.",
+ "_lexicon": {
+  "negative_checked_first": [
+   "却下",
+   "差戻",
+   "差し戻",
+   "エラー",
+   "失敗",
+   "拒否",
+   "取消",
+   "取り消",
+   "無効",
+   "警告",
+   "不備",
+   "返戻",
+   "否認",
+   "中止",
+   "できません",
+   "ません"
+  ],
+  "positive": [
+   "登録確定",
+   "照合完了",
+   "申請を承認",
+   "処理完了",
+   "完了",
+   "承認",
+   "確定",
+   "登録しました",
+   "保存",
+   "成功"
+  ]
+ },
+ "n_outcomes": 549,
+ "by_source": {
+  "status_transition": {
+   "unknown": 178,
+   "positive": 146
+  },
+  "toast": {
+   "positive": 225
+  }
+ },
+ "distinct_messages": {
+  "status_transition": [
+   [
+    "未処理→登録済み",
+    178
+   ],
+   [
+    "照合中→完了",
+    54
+   ],
+   [
+    "処理待ち→処理完了",
+    40
+   ],
+   [
+    "処理待ち→承認",
+    28
+   ],
+   [
+    "申請中→承認",
+    24
+   ]
+  ],
+  "toast": [
+   [
+    "登録確定しました",
+    99
+   ],
+   [
+    "照合完了しました",
+    50
+   ],
+   [
+    "申請を承認しました",
+    34
+   ],
+   [
+    "処理完了しました",
+    26
+   ],
+   [
+    "完了しました",
+    16
+   ]
+  ]
+ }
+}
