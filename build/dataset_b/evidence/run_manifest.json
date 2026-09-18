@@ -394,5 +394,31 @@
   },
   "three_way_agreement_rate": 0.7859,
   "mixed_prefix_verdict": "NO capture mixes prefixes from different modules — the cross-module-view explanation is REFUTED"
+ },
+ "phase3_9": {
+  "_purpose": "provenance of one evidence pass. Which code, which interpreter, which inputs, and the sha256 of every artifact written.",
+  "dataset": "dataset_b",
+  "pass_id": "phase3_9",
+  "code_version": "step2_5-evidence-v1",
+  "git_sha": "d8d8b9eb9e935f78293074e6b2e7b7e9730de10e",
+  "python": {
+   "version": "3.12.14",
+   "executable": "/Users/aumvyas/Desktop/IBY Project/.venv/bin/python"
+  },
+  "dependencies": {
+   "numpy": "2.5.3",
+   "PIL": "12.3.0"
+  },
+  "config": {
+   "n_terms": 31
+  },
+  "artifacts": {
+   "outcome_variance_sweep.json": {
+    "path": "build/dataset_b/evidence/outcome_variance_sweep.json",
+    "sha256": "60c1387e02417a68d3a10c75cf82f9fdac3d69096945267e7a8a56cf2a754dfe"
+   }
+  },
+  "G4_REOPENED": false,
+  "finding": "NULL RESULT, and it is a finding. 31 terms swept across 1,563,587 string values (25,495,968 characters) in 20,477 events, 4,746 screenshot filenames, and 898 record-status series. ZERO outcome-like negative terms, ZERO backward transitions, ZERO records with two terminal states. Dataset B contains no observed negative outcome. G4 stays closed: there is no supervision signal for a decision function, and a model trained here would learn to approve everything and score 100%. BUT SEE _affordance_finding: the absence is of observed rejections, not of the ability to reject."
  }
 }
