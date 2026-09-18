@@ -614,3 +614,61 @@ in, and is now declared explicitly.
 rapidfuzz 3.14.6: `segments.jsonl` deleted, `dataset_a/` moved out of the tree, `make run-b`
 exit 0 → **183 segments, 13 labels, sha256 `48796e9c…`, identical to the committed file**, and
 `run_manifest.json` reporting `method_used: "graph"`.
+
+### ADR-022 · 2026-09-18 · accepted · Module key authority: the screen header, not the URL
+
+**Context** Phase 3 of the evidence programme reported 539 of 3,011 extracted records (17.9%)
+where the capture URL and the record-id prefix disagreed about which business module a record
+belongs to. The `(origin, route)` key derived from the URL is what
+`analysis/step2_reanalysis.py` and `docs/STEP2_PROCESS_INVENTORY.csv` are built on, so the
+disagreement had to be settled before anything further rested on that inventory.
+
+**The decisive test.** The leading explanation was cross-module queue views — a shared inbox
+whose URL names one module while its rows belong to several — under which both keys would be
+correct about different questions. Measured: **33 captures contain more than one record-id
+prefix, and 0 of them cross a module boundary.** Every mixed capture is `P1` + `P4`, both
+HR|経費精算・給与変更. **There are no cross-module queue views in Dataset B, and the hypothesis is
+refuted.**
+
+**Measured** over 3,011 records (`build/dataset_b/evidence/module_key_reconciliation.json`):
+
+| Comparison | Comparable | Agree | Rate |
+|---|---|---|---|
+| K2 screen header ↔ K3 record prefix | 2,904 | 2,904 | **1.000** |
+| K1 URL ↔ K3 prefix | 2,704 | 2,139 | 0.791 |
+| K1 URL ↔ K2 screen | 2,630 | 2,067 | 0.786 |
+
+Only two agreement patterns occur: all three agree (2,064), or **K1 alone dissents (552)**. K2
+and K3 never disagree with each other. That is the signature of one wrong key rather than three
+partial views.
+
+**Decision**
+1. **A record's home module is named by K2, the screen header**, with K3 (the record-id prefix)
+   as an exact proxy. The P1–5/P6–10/P11–13 → HR/FI/LO mapping is **derived** from 211 queue
+   captures, not assumed; all 13 prefixes resolve at **purity 1.00**, and the derivation is
+   finer than the supplied grouping — it names the module, not just the system.
+2. **An operator action (execution) is keyed by K3 where records were extracted inside it, by
+   K1 elsewhere, and the disagreement is flagged rather than resolved.** K1 is not demoted to
+   "the view key": it is simply wrong about the displayed screen in 21% of captures. It remains
+   the only key with full coverage.
+
+**Consequences**
+- **K3 is more accurate and less complete; K1 is more complete and less accurate.** K1 assigns
+  165 of 183 executions, K3 only 107, because `extracted_text` reaches 4.59% of events. Where
+  both apply they agree on 64 of 97 (66.0%). **No single-key inventory is defensible**, and
+  per-module execution counts must be quoted as a range with the reason (coverage, not noise).
+- **The inventory is missing a module.** `FI|予算差異分析` is declared on screen in 11 captures and
+  carries 132 record rows under prefix `P8` at purity 1.00, and has no entry in the
+  `(origin, route)` map — 12 modules on screen against 11 in the map. The error is omission; no
+  map entry is declared-but-unseen. `docs/STEP2_AUTOMATION_OPPORTUNITY.md` is superseded in the
+  affected sections rather than rewritten.
+- All 12 inventory rows change count between the keys.
+
+**Not established** Why the URL lags. Every record-bearing capture is an `app_switch` event —
+563 disagreeing, 2,067 agreeing — so event type does not discriminate them. The most likely
+account, offered as INFERENCE and not as a finding, is that the SPA hash route and the
+recorder's stored `active_browser_tab.url` are written by different code paths.
+
+**Evidence** `docs/STEP2_MODULE_KEY_RECONCILIATION.md`;
+`build/dataset_b/evidence/module_key_reconciliation.json`;
+`analysis/evidence/module_key_reconcile.py`. Step 1 is untouched.
