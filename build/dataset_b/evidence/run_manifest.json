@@ -420,5 +420,107 @@
   },
   "G4_REOPENED": true,
   "finding": "G4 REOPENS, NARROWLY AND PRECISELY. The SYSTEM disposition is still constant: 0 candidate negative outcomes in screen text, 0 backward transitions, 0 records reaching two terminal states, 0 screenshot filename hits -- all zero. But the OPERATOR's own annotation varies: 26 of 481 distinct typed comments (5.4%) carry an exception marker (差異あり/要注意/要確認), against their clean counterparts (差異なし 36, 通常 46). Every flagged record was still disposed positively. So there IS a supervision signal, but it is the operator's recorded judgement, not the system's outcome -- a different and much smaller target than the original hypothesis assumed."
+ },
+ "phase4_micro": {
+  "_purpose": "provenance of one evidence pass. Which code, which interpreter, which inputs, and the sha256 of every artifact written.",
+  "dataset": "dataset_b",
+  "pass_id": "phase4_micro",
+  "code_version": "step2_5-evidence-v1",
+  "git_sha": "a83111b83a9ea48c1c5b111d2bb3585689a7ccdf",
+  "python": {
+   "version": "3.12.14",
+   "executable": "/Users/aumvyas/Desktop/IBY Project/.venv/bin/python"
+  },
+  "dependencies": {
+   "numpy": "2.5.3",
+   "PIL": "12.3.0"
+  },
+  "config": {
+   "backend": "null",
+   "cap": 60,
+   "dry_run": true
+  },
+  "artifacts": {
+   "vlm_ledger.jsonl": {
+    "path": "build/dataset_b/evidence/vlm_ledger.jsonl",
+    "n_rows": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   }
+  },
+  "plan": {
+   "backend": "null",
+   "cap": 60,
+   "n_images_selected": 60,
+   "estimated_cost_usd": 0.0,
+   "questions": {
+    "Q1": "ANSWERED FROM TEXT — no VLM required",
+    "Q2": "ANSWERED FROM TEXT — no VLM required",
+    "Q3": "SKIPPED — Phase 3.9 found no negative SYSTEM state to confirm. The variance it did find is operator-typed text, which needs no visual confirmation."
+   },
+   "images": [
+    "dataset_b/ses_20260701-164424-CHAITANYA0BCF/chunk_20260701-1630-CHAITANYA0BCF/screenshots/scr_smart_1782924401232_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-164424-CHAITANYA0BCF/chunk_20260701-1630-CHAITANYA0BCF/screenshots/scr_smart_1782924478629_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-164424-CHAITANYA0BCF/chunk_20260701-1630-CHAITANYA0BCF/screenshots/scr_smart_1782924554412_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-164424-CHAITANYA0BCF/chunk_20260701-1630-CHAITANYA0BCF/screenshots/scr_smart_1782924578609_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-164424-CHAITANYA0BCF/chunk_20260701-1630-CHAITANYA0BCF/screenshots/scr_smart_1782924586986_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173246-SIDDHIGUPTAB00B/chunk_20260701-1730-SIDDHIGUPTAB00B/screenshots/scr_smart_1782927239747_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173246-SIDDHIGUPTAB00B/chunk_20260701-1730-SIDDHIGUPTAB00B/screenshots/scr_smart_1782927374607_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173246-SIDDHIGUPTAB00B/chunk_20260701-1730-SIDDHIGUPTAB00B/screenshots/scr_smart_1782927409551_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173246-SIDDHIGUPTAB00B/chunk_20260701-1730-SIDDHIGUPTAB00B/screenshots/scr_smart_1782927444492_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173246-SIDDHIGUPTAB00B/chunk_20260701-1730-SIDDHIGUPTAB00B/screenshots/scr_smart_1782927553827_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173246-SIDDHIGUPTAB00B/chunk_20260701-1730-SIDDHIGUPTAB00B/screenshots/scr_smart_1782927590328_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173246-SIDDHIGUPTAB00B/chunk_20260701-1730-SIDDHIGUPTAB00B/screenshots/scr_smart_1782927703453_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173246-SIDDHIGUPTAB00B/chunk_20260701-1730-SIDDHIGUPTAB00B/screenshots/scr_smart_1782927809032_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173246-SIDDHIGUPTAB00B/chunk_20260701-1730-SIDDHIGUPTAB00B/screenshots/scr_smart_1782927903125_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927421619_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927522122_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927657400_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927681174_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927718058_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927820755_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927858890_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927907180_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927919702_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927952834_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927971710_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927979904_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-173642-NEELA9BAF/chunk_20260701-1730-NEELA9BAF/screenshots/scr_smart_1782927992395_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-175258-LAPTOP-76QMG9DE/chunk_20260701-1730-LAPTOP-76QMG9DE/screenshots/scr_smart_1782928423879_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-175258-LAPTOP-76QMG9DE/chunk_20260701-1730-LAPTOP-76QMG9DE/screenshots/scr_smart_1782928602128_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-175258-LAPTOP-76QMG9DE/chunk_20260701-1730-LAPTOP-76QMG9DE/screenshots/scr_smart_1782928718882_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-175258-LAPTOP-76QMG9DE/chunk_20260701-1800-LAPTOP-76QMG9DE/screenshots/scr_smart_1782928857445_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-175747-SIDDHIGUPTAB00B/chunk_20260701-1730-SIDDHIGUPTAB00B/screenshots/scr_smart_1782928761869_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-175747-SIDDHIGUPTAB00B/chunk_20260701-1800-SIDDHIGUPTAB00B/screenshots/scr_smart_1782928805474_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-175747-SIDDHIGUPTAB00B/chunk_20260701-1800-SIDDHIGUPTAB00B/screenshots/scr_smart_1782929217373_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-175747-SIDDHIGUPTAB00B/chunk_20260701-1800-SIDDHIGUPTAB00B/screenshots/scr_smart_1782929303349_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782929617471_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782929626383_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782929748995_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782929763770_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782929794023_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782929830249_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782929875493_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782929884197_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782929985767_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782930002386_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782930011093_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782930041480_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-180923-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782930052177_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-181413-LAPTOP-76QMG9DE/chunk_20260701-1800-LAPTOP-76QMG9DE/screenshots/scr_smart_1782929674730_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-181413-LAPTOP-76QMG9DE/chunk_20260701-1800-LAPTOP-76QMG9DE/screenshots/scr_smart_1782930064114_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-181413-LAPTOP-76QMG9DE/chunk_20260701-1800-LAPTOP-76QMG9DE/screenshots/scr_smart_1782930180251_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-181413-LAPTOP-76QMG9DE/chunk_20260701-1800-LAPTOP-76QMG9DE/screenshots/scr_smart_1782930261168_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-181413-LAPTOP-76QMG9DE/chunk_20260701-1800-LAPTOP-76QMG9DE/screenshots/scr_smart_1782930326088_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-181413-LAPTOP-76QMG9DE/chunk_20260701-1800-LAPTOP-76QMG9DE/screenshots/scr_smart_1782930364154_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-181413-LAPTOP-76QMG9DE/chunk_20260701-1800-LAPTOP-76QMG9DE/screenshots/scr_smart_1782930384451_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-181413-LAPTOP-76QMG9DE/chunk_20260701-1800-LAPTOP-76QMG9DE/screenshots/scr_smart_1782930397779_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-182634-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782930429946_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-182634-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782930453605_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-182634-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782930541064_monitor_1_post.jpg",
+    "dataset_b/ses_20260701-182634-NEELA9BAF/chunk_20260701-1800-NEELA9BAF/screenshots/scr_smart_1782930551264_monitor_1_post.jpg"
+   ],
+   "decision": "NO CALLS MADE. All sanctioned questions are answered from free text or skipped. Spending here would re-derive what the telemetry already contains."
+  },
+  "n_vlm_calls": 0
  }
 }
