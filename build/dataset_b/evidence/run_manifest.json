@@ -364,5 +364,35 @@
    "H4:INSUFFICIENT_EVIDENCE": 7,
    "H4:REFUTED": 4
   }
+ },
+ "phase3_5": {
+  "_purpose": "provenance of one evidence pass. Which code, which interpreter, which inputs, and the sha256 of every artifact written.",
+  "dataset": "dataset_b",
+  "pass_id": "phase3_5",
+  "code_version": "step2_5-evidence-v1",
+  "git_sha": "566c150b9468593ba35911639f41b050afabc9f3",
+  "python": {
+   "version": "3.12.14",
+   "executable": "/Users/aumvyas/Desktop/IBY Project/.venv/bin/python"
+  },
+  "dependencies": {
+   "numpy": "2.5.3",
+   "PIL": "12.3.0"
+  },
+  "config": {
+   "keys": [
+    "K1_url",
+    "K2_screen",
+    "K3_prefix"
+   ]
+  },
+  "artifacts": {
+   "module_key_reconciliation.json": {
+    "path": "build/dataset_b/evidence/module_key_reconciliation.json",
+    "sha256": "e428d66b213a4e36cfa0c75c6d79f2b727ee1b53a4202672f4a671a14986108e"
+   }
+  },
+  "three_way_agreement_rate": 0.7859,
+  "mixed_prefix_verdict": "NO capture mixes prefixes from different modules — the cross-module-view explanation is REFUTED"
  }
 }

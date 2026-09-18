@@ -1,0 +1,524 @@
+{
+ "_purpose": "three-way module-key reconciliation. Settles which key is authoritative for which unit of analysis before anything is built on the inventory.",
+ "_keys": {
+  "K1_url": "(origin, route) from context.active_browser_tab.url — what Step 2 uses",
+  "K2_screen": "system name + ダッシュボード/<module> breadcrumb rendered in the capture text — what the operator was looking at",
+  "K3_prefix": "record-id P<n>, mapped to a module by DERIVATION from queue headers"
+ },
+ "k3_derivation": {
+  "map": {
+   "P1": {
+    "screen_module": "HR|経費精算・給与変更",
+    "system": "HR",
+    "module_name_ja": "経費精算・給与変更",
+    "support": 372,
+    "total": 372,
+    "purity": 1.0,
+    "distribution": {
+     "HR|経費精算・給与変更": 372
+    }
+   },
+   "P2": {
+    "screen_module": "HR|勤怠・休暇申請",
+    "system": "HR",
+    "module_name_ja": "勤怠・休暇申請",
+    "support": 180,
+    "total": 180,
+    "purity": 1.0,
+    "distribution": {
+     "HR|勤怠・休暇申請": 180
+    }
+   },
+   "P3": {
+    "screen_module": "HR|入社手続き",
+    "system": "HR",
+    "module_name_ja": "入社手続き",
+    "support": 480,
+    "total": 480,
+    "purity": 1.0,
+    "distribution": {
+     "HR|入社手続き": 480
+    }
+   },
+   "P4": {
+    "screen_module": "HR|経費精算・給与変更",
+    "system": "HR",
+    "module_name_ja": "経費精算・給与変更",
+    "support": 372,
+    "total": 372,
+    "purity": 1.0,
+    "distribution": {
+     "HR|経費精算・給与変更": 372
+    }
+   },
+   "P5": {
+    "screen_module": "HR|福利厚生申請",
+    "system": "HR",
+    "module_name_ja": "福利厚生申請",
+    "support": 48,
+    "total": 48,
+    "purity": 1.0,
+    "distribution": {
+     "HR|福利厚生申請": 48
+    }
+   },
+   "P6": {
+    "screen_module": "FI|請求書承認・経費精算",
+    "system": "FI",
+    "module_name_ja": "請求書承認・経費精算",
+    "support": 468,
+    "total": 468,
+    "purity": 1.0,
+    "distribution": {
+     "FI|請求書承認・経費精算": 468
+    }
+   },
+   "P7": {
+    "screen_module": "FI|支払処理",
+    "system": "FI",
+    "module_name_ja": "支払処理",
+    "support": 120,
+    "total": 120,
+    "purity": 1.0,
+    "distribution": {
+     "FI|支払処理": 120
+    }
+   },
+   "P8": {
+    "screen_module": "FI|予算差異分析",
+    "system": "FI",
+    "module_name_ja": "予算差異分析",
+    "support": 132,
+    "total": 132,
+    "purity": 1.0,
+    "distribution": {
+     "FI|予算差異分析": 132
+    }
+   },
+   "P9": {
+    "screen_module": "FI|経費承認（管理職）",
+    "system": "FI",
+    "module_name_ja": "経費承認（管理職）",
+    "support": 36,
+    "total": 36,
+    "purity": 1.0,
+    "distribution": {
+     "FI|経費承認（管理職）": 36
+    }
+   },
+   "P10": {
+    "screen_module": "FI|発注管理",
+    "system": "FI",
+    "module_name_ja": "発注管理",
+    "support": 204,
+    "total": 204,
+    "purity": 1.0,
+    "distribution": {
+     "FI|発注管理": 204
+    }
+   },
+   "P11": {
+    "screen_module": "LO|在庫管理",
+    "system": "LO",
+    "module_name_ja": "在庫管理",
+    "support": 336,
+    "total": 336,
+    "purity": 1.0,
+    "distribution": {
+     "LO|在庫管理": 336
+    }
+   },
+   "P12": {
+    "screen_module": "LO|契約管理",
+    "system": "LO",
+    "module_name_ja": "契約管理",
+    "support": 241,
+    "total": 241,
+    "purity": 1.0,
+    "distribution": {
+     "LO|契約管理": 241
+    }
+   },
+   "P13": {
+    "screen_module": "LO|IT申請",
+    "system": "LO",
+    "module_name_ja": "IT申請",
+    "support": 120,
+    "total": 120,
+    "purity": 1.0,
+    "distribution": {
+     "LO|IT申請": 120
+    }
+   }
+  },
+  "queue_captures_used": 228
+ },
+ "decisive_test_mixed_prefixes": {
+  "n_mixed_prefix_captures": 33,
+  "n_that_cross_modules": 0,
+  "verdict": "NO capture mixes prefixes from different modules — the cross-module-view explanation is REFUTED",
+  "examples": [
+   {
+    "capture_id": "40c30e464d2f4fe0",
+    "session_id": "ses_20260701-164424-CHAITANYA0BCF",
+    "url_module_id": "M01",
+    "screen_module": "HR|経費精算・給与変更",
+    "prefixes": {
+     "P1": 12,
+     "P4": 12
+    },
+    "prefix_modules": [
+     "HR|経費精算・給与変更"
+    ],
+    "crosses_modules": false
+   },
+   {
+    "capture_id": "3523c75f400a4283",
+    "session_id": "ses_20260701-171614-CHAITANYA0BCF",
+    "url_module_id": "M09",
+    "screen_module": "HR|経費精算・給与変更",
+    "prefixes": {
+     "P1": 12,
+     "P4": 12
+    },
+    "prefix_modules": [
+     "HR|経費精算・給与変更"
+    ],
+    "crosses_modules": false
+   },
+   {
+    "capture_id": "837df080b3bc63ef",
+    "session_id": "ses_20260701-173246-SIDDHIGUPTAB00B",
+    "url_module_id": "M01",
+    "screen_module": "HR|経費精算・給与変更",
+    "prefixes": {
+     "P1": 12,
+     "P4": 12
+    },
+    "prefix_modules": [
+     "HR|経費精算・給与変更"
+    ],
+    "crosses_modules": false
+   },
+   {
+    "capture_id": "45e4609b83ac3196",
+    "session_id": "ses_20260701-173246-SIDDHIGUPTAB00B",
+    "url_module_id": "M11",
+    "screen_module": "HR|経費精算・給与変更",
+    "prefixes": {
+     "P1": 12,
+     "P4": 12
+    },
+    "prefix_modules": [
+     "HR|経費精算・給与変更"
+    ],
+    "crosses_modules": false
+   },
+   {
+    "capture_id": "5fcc734c9d42cb0c",
+    "session_id": "ses_20260701-173246-SIDDHIGUPTAB00B",
+    "url_module_id": "M01",
+    "screen_module": "HR|経費精算・給与変更",
+    "prefixes": {
+     "P1": 12,
+     "P4": 12
+    },
+    "prefix_modules": [
+     "HR|経費精算・給与変更"
+    ],
+    "crosses_modules": false
+   },
+   {
+    "capture_id": "8d8ab446d687c5cb",
+    "session_id": "ses_20260701-173246-SIDDHIGUPTAB00B",
+    "url_module_id": "M01",
+    "screen_module": "HR|経費精算・給与変更",
+    "prefixes": {
+     "P1": 12,
+     "P4": 12
+    },
+    "prefix_modules": [
+     "HR|経費精算・給与変更"
+    ],
+    "crosses_modules": false
+   },
+   {
+    "capture_id": "7eb91001f78f25c8",
+    "session_id": "ses_20260701-175258-LAPTOP-76QMG9DE",
+    "url_module_id": "M01",
+    "screen_module": "HR|経費精算・給与変更",
+    "prefixes": {
+     "P1": 12,
+     "P4": 12
+    },
+    "prefix_modules": [
+     "HR|経費精算・給与変更"
+    ],
+    "crosses_modules": false
+   },
+   {
+    "capture_id": "3d448cd5e4eb4810",
+    "session_id": "ses_20260701-175258-LAPTOP-76QMG9DE",
+    "url_module_id": "M01",
+    "screen_module": "HR|経費精算・給与変更",
+    "prefixes": {
+     "P1": 12,
+     "P4": 12
+    },
+    "prefix_modules": [
+     "HR|経費精算・給与変更"
+    ],
+    "crosses_modules": false
+   }
+  ],
+  "cross_examples": []
+ },
+ "contingency": {
+  "n_records": 3011,
+  "n_three_way_comparable": 2630,
+  "three_way_agreement": 2067,
+  "three_way_agreement_rate": 0.7859,
+  "pairwise": {
+   "K1_url_vs_K2_screen": {
+    "comparable": 2630,
+    "agree": 2067,
+    "rate": 0.7859
+   },
+   "K1_url_vs_K3_prefix": {
+    "comparable": 2720,
+    "agree": 2144,
+    "rate": 0.7882
+   },
+   "K2_screen_vs_K3_prefix": {
+    "comparable": 2921,
+    "agree": 2921,
+    "rate": 1.0
+   }
+  },
+  "agreement_patterns": {
+   "K1=K2:True K1=K3:True K2=K3:True": 2067,
+   "K1=K2:False K1=K3:False K2=K3:True": 563
+  }
+ },
+ "concentration": {
+  "n_records_where_url_disagrees_with_screen": 563,
+  "n_captures_involved": 51,
+  "n_captures_total": 234,
+  "share_of_captures_involved": 0.2179,
+  "records_per_involved_capture_median": 12,
+  "top_captures": [
+   [
+    "3523c75f400a4283",
+    24
+   ],
+   [
+    "45e4609b83ac3196",
+    24
+   ],
+   [
+    "3685d7f123b73f22",
+    24
+   ],
+   [
+    "ffc6390944c30187",
+    24
+   ],
+   [
+    "70a5bc3fe68a19d7",
+    24
+   ],
+   [
+    "dfd754619004bfe5",
+    24
+   ],
+   [
+    "074364f419fdcf6c",
+    12
+   ],
+   [
+    "0644f5481e2d9fa3",
+    12
+   ]
+  ]
+ },
+ "module_census": {
+  "screen_declared_modules": {
+   "HR|入社手続き": 40,
+   "FI|請求書承認・経費精算": 39,
+   "HR|経費精算・給与変更": 31,
+   "LO|在庫管理": 28,
+   "LO|契約管理": 20,
+   "FI|発注管理": 17,
+   "HR|勤怠・休暇申請": 15,
+   "FI|予算差異分析": 11,
+   "LO|IT申請": 10,
+   "FI|支払処理": 10,
+   "HR|福利厚生申請": 4,
+   "FI|経費承認（管理職）": 3
+  },
+  "n_screen_declared": 12,
+  "n_in_origin_route_map": 11,
+  "declared_but_not_in_map": [
+   "FI|予算差異分析"
+  ],
+  "in_map_but_never_declared_on_screen": []
+ },
+ "inventory_impact": {
+  "n_executions": 183,
+  "n_assignable_under_both": 97,
+  "execution_level_agreement": 64,
+  "execution_level_agreement_rate": 0.6598,
+  "n_unassignable_K1": 18,
+  "n_unassignable_K3": 76,
+  "inventory_diff": [
+   {
+    "module": "LO|契約管理",
+    "n_executions_K1": 26,
+    "n_executions_K3": 8,
+    "delta": -18
+   },
+   {
+    "module": "FI|発注管理",
+    "n_executions_K1": 13,
+    "n_executions_K3": 4,
+    "delta": -9
+   },
+   {
+    "module": "FI|経費承認（管理職）",
+    "n_executions_K1": 10,
+    "n_executions_K3": 2,
+    "delta": -8
+   },
+   {
+    "module": "HR|福利厚生申請",
+    "n_executions_K1": 10,
+    "n_executions_K3": 3,
+    "delta": -7
+   },
+   {
+    "module": "FI|予算差異分析",
+    "n_executions_K1": 0,
+    "n_executions_K3": 6,
+    "delta": 6
+   },
+   {
+    "module": "FI|支払処理",
+    "n_executions_K1": 9,
+    "n_executions_K3": 5,
+    "delta": -4
+   },
+   {
+    "module": "FI|請求書承認・経費精算",
+    "n_executions_K1": 25,
+    "n_executions_K3": 21,
+    "delta": -4
+   },
+   {
+    "module": "HR|入社手続き",
+    "n_executions_K1": 23,
+    "n_executions_K3": 19,
+    "delta": -4
+   },
+   {
+    "module": "LO|IT申請",
+    "n_executions_K1": 9,
+    "n_executions_K3": 5,
+    "delta": -4
+   },
+   {
+    "module": "LO|在庫管理",
+    "n_executions_K1": 13,
+    "n_executions_K3": 10,
+    "delta": -3
+   },
+   {
+    "module": "HR|経費精算・給与変更",
+    "n_executions_K1": 20,
+    "n_executions_K3": 18,
+    "delta": -2
+   },
+   {
+    "module": "HR|勤怠・休暇申請",
+    "n_executions_K1": 7,
+    "n_executions_K3": 6,
+    "delta": -1
+   }
+  ],
+  "changed_rows": [
+   {
+    "module": "FI|予算差異分析",
+    "n_executions_K1": 0,
+    "n_executions_K3": 6,
+    "delta": 6
+   },
+   {
+    "module": "FI|支払処理",
+    "n_executions_K1": 9,
+    "n_executions_K3": 5,
+    "delta": -4
+   },
+   {
+    "module": "FI|発注管理",
+    "n_executions_K1": 13,
+    "n_executions_K3": 4,
+    "delta": -9
+   },
+   {
+    "module": "FI|経費承認（管理職）",
+    "n_executions_K1": 10,
+    "n_executions_K3": 2,
+    "delta": -8
+   },
+   {
+    "module": "FI|請求書承認・経費精算",
+    "n_executions_K1": 25,
+    "n_executions_K3": 21,
+    "delta": -4
+   },
+   {
+    "module": "HR|入社手続き",
+    "n_executions_K1": 23,
+    "n_executions_K3": 19,
+    "delta": -4
+   },
+   {
+    "module": "HR|勤怠・休暇申請",
+    "n_executions_K1": 7,
+    "n_executions_K3": 6,
+    "delta": -1
+   },
+   {
+    "module": "HR|福利厚生申請",
+    "n_executions_K1": 10,
+    "n_executions_K3": 3,
+    "delta": -7
+   },
+   {
+    "module": "HR|経費精算・給与変更",
+    "n_executions_K1": 20,
+    "n_executions_K3": 18,
+    "delta": -2
+   },
+   {
+    "module": "LO|IT申請",
+    "n_executions_K1": 9,
+    "n_executions_K3": 5,
+    "delta": -4
+   },
+   {
+    "module": "LO|在庫管理",
+    "n_executions_K1": 13,
+    "n_executions_K3": 10,
+    "delta": -3
+   },
+   {
+    "module": "LO|契約管理",
+    "n_executions_K1": 26,
+    "n_executions_K3": 8,
+    "delta": -18
+   }
+  ]
+ },
+ "extraction_method": "derived",
+ "evidence_type": "OBSERVED"
+}
