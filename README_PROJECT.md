@@ -40,4 +40,19 @@ in an artifact rather than only by hashing the output.
 
 ## Where to start reading
 
-`docs/STEP1_REPORT.md` — the closing document: results, limitations, and why there is no LLM.
+Read in this order. Each document states what the next one had to revise.
+
+| # | Document | What it settles |
+|---|---|---|
+| 1 | `docs/STEP1_REPORT.md` | Step 1 — segmentation. Boundary F1 0.690, identity ARI 0.681, no LLM. **Frozen.** |
+| 2 | `docs/STEP2_AUTOMATION_OPPORTUNITY.md` | Step 2 — the module inventory and candidate analysis. **Carries two supersession notices; read them.** |
+| 3 | `docs/STEP2_MODULE_KEY_RECONCILIATION.md` | Which module key is authoritative, and why the inventory in (2) is key-dependent (ADR-022) |
+| 4 | `docs/STEP2_HYPOTHESIS_VERIFICATION.md` | **The strong hypothesis is refuted.** The four-gate table, 44 verdicts, and what survives |
+| 5 | `docs/PHASE4_SCOPE_DECISION.md` | Why the vision-model pass was cancelled: 0 images, $0.00 |
+| 6 | `docs/STEP3_TARGET_REFRAME.md` | The revised target, and why **a lookup table beats AI** on current evidence |
+| 7 | `docs/GIT_HISTORY_NARRATIVE.md` | The commit history as an engineering narrative, including every refuting commit |
+
+`docs/DECISIONS.md` holds the ADRs (001–024), append-only. Evidence artifacts every claim cites
+are under `build/dataset_b/evidence/` and are committed.
+
+**Step 3 is not started.** The programme ends at a decision gate.
