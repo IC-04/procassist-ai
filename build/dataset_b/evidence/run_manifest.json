@@ -522,5 +522,32 @@
    "decision": "NO CALLS MADE. All sanctioned questions are answered from free text or skipped. Spending here would re-derive what the telemetry already contains."
   },
   "n_vlm_calls": 0
+ },
+ "phase6": {
+  "_purpose": "provenance of one evidence pass. Which code, which interpreter, which inputs, and the sha256 of every artifact written.",
+  "dataset": "dataset_b",
+  "pass_id": "phase6",
+  "code_version": "step2_5-evidence-v1",
+  "git_sha": "99fc43ece68ad9ea7a49bc03f8a6cc6980a128f1",
+  "python": {
+   "version": "3.12.14",
+   "executable": "/Users/aumvyas/Desktop/IBY Project/.venv/bin/python"
+  },
+  "dependencies": {
+   "numpy": "2.5.3",
+   "PIL": "12.3.0"
+  },
+  "config": {
+   "seed": 7,
+   "evaluation": "leave-one-out"
+  },
+  "artifacts": {
+   "retrieval_feasibility.json": {
+    "path": "build/dataset_b/evidence/retrieval_feasibility.json",
+    "sha256": "e5111055fe65216712253823b0915dd56a2ddec15106abbddf7595616efe9fa2"
+   }
+  },
+  "verdict": "NOT SETTLED AT THIS n, AND THE HONEST ANSWER IS A LOOKUP TABLE FIRST. The best deterministic baseline -- (module, record type) -> document -- reaches 64.2% (95% Wilson CI 56.2%-71.5%) against 5.4% random, on n=148 pairs over 17 document labels. A learned retriever would have to exceed 71.5% before this evidence could tell it apart from the lookup table at all. Build the lookup table, instrument it, and let the residual decide whether a model is warranted.",
+  "n_pairs": 148
  }
 }

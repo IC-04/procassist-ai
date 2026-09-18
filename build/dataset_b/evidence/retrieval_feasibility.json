@@ -1,0 +1,211 @@
+{
+ "_purpose": "is governing-document retrieval a well-posed task, and does a learned component beat a lookup table?",
+ "labelled_pairs": {
+  "n_dispositions_total": 629,
+  "n_with_a_document_before_them": 148,
+  "n_without": 481,
+  "coverage": 0.2353,
+  "by_module": {
+   "HR|入社手続き": 33,
+   "HR|経費精算・給与変更": 24,
+   "LO|契約管理": 19,
+   "FI|請求書承認・経費精算": 17,
+   "FI|発注管理": 16,
+   "HR|福利厚生申請": 11,
+   "FI|経費承認（管理職）": 9,
+   "FI|支払処理": 8,
+   "LO|在庫管理": 8,
+   "HR|勤怠・休暇申請": 3
+  },
+  "modules_at_or_above_floor_n8": {
+   "FI|請求書承認・経費精算": 17,
+   "LO|契約管理": 19,
+   "FI|発注管理": 16,
+   "HR|入社手続き": 33,
+   "HR|福利厚生申請": 11,
+   "HR|経費精算・給与変更": 24,
+   "FI|経費承認（管理職）": 9,
+   "FI|支払処理": 8,
+   "LO|在庫管理": 8
+  },
+  "per_module_label_counts": {
+   "FI|支払処理": {
+    "9be9a59c82c8c75e7a8688d3b325458473ed2c4b751fc97feca0eb3a64587f52": 2,
+    "a0a366c3ff20c0629ee9c972941f08b9c57b6b9bff49bd88159083ff37ad07e1": 2,
+    "44df7000cd0b83e64f819fd9cda17bfd549aee3caae81a16570ce7a957ce84a3": 2,
+    "2462e7e1158a06b866be7ae42b4824eff1fc6f4c29aeeabfb155e6cea3b9f1a8": 1,
+    "c06251ca2f5e840ef2b99367a380d2e8cce3052d79982f06cf4f107570cad501": 1
+   },
+   "FI|発注管理": {
+    "12a77f7566c4b5a57bef57884c6a719e4bc7cd39c651eb0b3f2395177c02cb9b": 14,
+    "589b85f753f46c52d7da16b6a70581d6befce9ecac4e7fa36fa55c76378a45d9": 2
+   },
+   "FI|経費承認（管理職）": {
+    "13ebfcca27c36ab8e5176ab5d61a7501c70202001945d1c05fba27c412f69bca": 3,
+    "e49ac1fcff6e4d2fe7fe32f34c45b42a50718691bfaf657ff1741b2f4eabda97": 3,
+    "24a82d64edb6cc61120fb8abadbb9323dc1b6b17bc0a68bad50f258521084de0": 1,
+    "9918541ea924fdf0c0b4c508d29250c2acedb0bd9524b3847cd8adbd5221554f": 1,
+    "29215c8e1abc8addf9d2f5ecfc3aa26a4d62db4b8146b5b807045d3a0d21fafb": 1
+   },
+   "FI|請求書承認・経費精算": {
+    "a0a366c3ff20c0629ee9c972941f08b9c57b6b9bff49bd88159083ff37ad07e1": 6,
+    "04a44a3d697535543bc6c1eb270b561df3fbb044237131e096647f7358ca99fd": 3,
+    "6cdfdbde0077bbc53503af9c1f66a66a1869d34605363b13780fef07c7620950": 3,
+    "13ebfcca27c36ab8e5176ab5d61a7501c70202001945d1c05fba27c412f69bca": 3,
+    "a42f692f8535b6a3beebe282454d41890e764979f32f9becbb18ffd602a42fef": 1
+   },
+   "HR|入社手続き": {
+    "a0a366c3ff20c0629ee9c972941f08b9c57b6b9bff49bd88159083ff37ad07e1": 4,
+    "a858357df042c00a714f487e99999e4a25399cc6e71492330b48734a777c417a": 3,
+    "d995840c4066c142276fa242e5e2503440d3b6d64f70bc173d54dbf050d25e32": 2,
+    "387f342185e191a1819f6cfd23d850c57fdd59d1060cdf6ad4fd8672bf393f49": 2,
+    "cb5475203f79ade625c2e4c392715e4863b8ea83eb4211da8d1e7c75fda914fb": 2
+   },
+   "HR|勤怠・休暇申請": {
+    "b628e7a5ff84157e3eb6f136f6df43493aaafbd1ccbe5e83d1f2ecfdda47bae1": 2,
+    "480f8e4b3246e98ff03bfca9e14265413116332bdd3cbf36aa6619d42e4e4109": 1
+   },
+   "HR|福利厚生申請": {
+    "04a44a3d697535543bc6c1eb270b561df3fbb044237131e096647f7358ca99fd": 5,
+    "81e77bdb901b432c5998dc68b06ef9a380aa41c8576447eea353e9f85874b112": 3,
+    "3477f5f7dff0e3270e31e0649dcd2c09f2818f33c0e1fc6f1c215d92218ad12e": 2,
+    "06e334c2644d852294c4312ec5164cbc80e3f05fe38e3c89f3583f730db3c168": 1
+   },
+   "HR|経費精算・給与変更": {
+    "13ebfcca27c36ab8e5176ab5d61a7501c70202001945d1c05fba27c412f69bca": 8,
+    "c6cfdd5842c0ff0742bddf3b52329dc3892875bcfb0baa5a2ff9183240431432": 8,
+    "589b85f753f46c52d7da16b6a70581d6befce9ecac4e7fa36fa55c76378a45d9": 4,
+    "3ece1f98df11868f955b86b6dc8623adae78dc3ca6eb2dd1fe6547655e496bc5": 3,
+    "d4287abc8fe787e2e5bdc1f6bf79ae5a17dca5f083e6feede14df0d90e7eeb5f": 1
+   },
+   "LO|在庫管理": {
+    "12a77f7566c4b5a57bef57884c6a719e4bc7cd39c651eb0b3f2395177c02cb9b": 8
+   },
+   "LO|契約管理": {
+    "12a77f7566c4b5a57bef57884c6a719e4bc7cd39c651eb0b3f2395177c02cb9b": 6,
+    "b34391a0ab13b03c4b2309c70c9054cf5b54916260e6e6b1d70c6a7554fb0120": 3,
+    "4058396ca60882f5cb06cad30d4d9920313f87f567d6be76b4f9f222a9b917f5": 2,
+    "ed312df01043852d26566deb5918d162425395e6eaa96d6549fbd1bdcfb2161b": 1,
+    "4b57b0956e498608599dda6a1fa728ecf005f3bb76bf0a15a4c6b0099e8247d5": 1
+   }
+  }
+ },
+ "baselines_by_content_hash": {
+  "n": 148,
+  "n_distinct_documents": 50,
+  "majority_label_share": 0.1892,
+  "majority_label": "12a77f7566c4",
+  "label_distribution_top10": [
+   [
+    "12a77f7566c4",
+    28
+   ],
+   [
+    "13ebfcca27c3",
+    14
+   ],
+   [
+    "a0a366c3ff20",
+    12
+   ],
+   [
+    "04a44a3d6975",
+    8
+   ],
+   [
+    "589b85f753f4",
+    8
+   ],
+   [
+    "c6cfdd5842c0",
+    8
+   ],
+   [
+    "6cdfdbde0077",
+    3
+   ],
+   [
+    "b34391a0ab13",
+    3
+   ],
+   [
+    "81e77bdb901b",
+    3
+   ],
+   [
+    "3ece1f98df11",
+    3
+   ]
+  ],
+  "B0_random": 0.0135,
+  "B1_most_frequent_overall": 0.1892,
+  "B2_most_frequent_per_module": 0.277,
+  "B3_module_and_record_type_lookup": 0.4257,
+  "B3_wilson_95ci": [
+   0.3489,
+   0.5062
+  ],
+  "_method": "leave-one-out over all pairs, seed 7. LOO rather than a held-out split because n is small and a split would spend evidence the task cannot spare."
+ },
+ "baselines_by_document_heading": {
+  "n": 148,
+  "n_distinct_documents": 17,
+  "majority_label_share": 0.1892,
+  "majority_label": "新規取引先登録手続き",
+  "label_distribution_top10": [
+   [
+    "新規取引先登録手続き",
+    28
+   ],
+   [
+    "入社チェックリスト（新卒",
+    21
+   ],
+   [
+    "契約解除手続き",
+    18
+   ],
+   [
+    "業務委託報酬支払規程",
+    15
+   ],
+   [
+    "業務委託経費規程",
+    14
+   ],
+   [
+    "月次定額取引先一覧",
+    12
+   ],
+   [
+    "経費承認（管理職）。費目",
+    9
+   ],
+   [
+    "家族手当規程",
+    8
+   ],
+   [
+    "業務委託者受入手続き",
+    8
+   ],
+   [
+    "Text editor",
+    5
+   ]
+  ],
+  "B0_random": 0.0541,
+  "B1_most_frequent_overall": 0.1892,
+  "B2_most_frequent_per_module": 0.527,
+  "B3_module_and_record_type_lookup": 0.6419,
+  "B3_wilson_95ci": [
+   0.562,
+   0.7147
+  ],
+  "_method": "leave-one-out over all pairs, seed 7. LOO rather than a held-out split because n is small and a split would spend evidence the task cannot spare."
+ },
+ "_label_space_note": "content sha256 fragments one document into several when it is captured at different scroll positions; the heading is the document's own identity claim. The heading space is the operative one and the hash space is reported as the pessimistic bound.",
+ "verdict": "NOT SETTLED AT THIS n, AND THE HONEST ANSWER IS A LOOKUP TABLE FIRST. The best deterministic baseline -- (module, record type) -> document -- reaches 64.2% (95% Wilson CI 56.2%-71.5%) against 5.4% random, on n=148 pairs over 17 document labels. A learned retriever would have to exceed 71.5% before this evidence could tell it apart from the lookup table at all. Build the lookup table, instrument it, and let the residual decide whether a model is warranted.",
+ "extraction_method": "derived",
+ "evidence_type": "OBSERVED"
+}
