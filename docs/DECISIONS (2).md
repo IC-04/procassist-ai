@@ -1,4 +1,4 @@
-# Architecture Decision Records — Submission-Ready Edition
+# Architecture Decision Records
 
 **Document:** `DECISIONS.md`  
 **Document type:** Architecture Decision Records (ADR)  
