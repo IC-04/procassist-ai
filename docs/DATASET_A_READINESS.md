@@ -1,39 +1,5 @@
 # Dataset A — Ingestion and Readiness
 
-**Document:** `DATASET_A_READINESS.md`  
-**Document type:** Dataset readiness / ingestion record  
-**Status:** Phase 0 complete; **Phase 1 ready but not started**  
-**Date:** 2026-09-13  
-**Scope:** Ingestion, integrity, and schema verification only
-
-> **Submission purpose:** This document records the measured readiness of Dataset A for Phase 1. It is an evidence record, not a Phase 1 analysis. Ground-truth canonicalisation, evaluation, baselines, segmentation experiments, and parameter selection from Dataset A remain explicitly outside this document.
-
----
-
-## Reviewer Navigation
-
-- **Source and reconstruction:** archive provenance, independent ZIP handling, extraction verification, and local layout.
-- **Integrity and schema compatibility:** measured file, event, ground-truth, screenshot, and schema coverage.
-- **Dataset A vs Dataset B:** factual measurements only; no readiness conclusion is inferred from these differences.
-- **Pipeline smoke test:** generic ingestion path, artifact validation, and Dataset-A-specific-code check.
-- **Problems / blockers:** explicit environment limitation and its separation from Dataset A readiness.
-- **Dataset-specific observations:** four recorded observations and their downstream implications.
-- **Git safety:** protection against accidental staging of the large source archives.
-- **Phase 1 readiness:** final evidence-based readiness statement and explicit stopping point.
-
-## Submission Integrity
-
-- Dataset A remains an **input dataset**, not a derived or modified submission artifact.
-- Source archives were verified and extracted independently; the original source archives were not modified.
-- Dataset-specific observations are retained as observations and are not converted into generic pipeline rules.
-- Dataset A/B comparisons remain descriptive measurements rather than validation claims.
-- The Python ≥3.10 environment issue remains explicitly separated from Dataset A data readiness.
-- The document preserves the stated boundary that **Phase 1 has not started**.
-- The final readiness claim is supported by the measurements reported in this document.
-- No credentials or authenticated download URLs are introduced; the source link remains documented as a credential-free public share.
-
----
-
 ## Source
 
 Dataset A was downloaded manually by the project owner from the Google Drive folder
