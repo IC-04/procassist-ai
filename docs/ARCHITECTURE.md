@@ -1,4 +1,4 @@
-# Architecture — Submission-Ready Edition
+# Architecture
 
 **Document:** `ARCHITECTURE.md`  
 **Document type:** System architecture / governing design record  
