@@ -38,6 +38,11 @@ BADGES = ("SYNTHETIC", "REPLICA", "PRODUCTION-UNVERIFIED")
 
 PORTS = (5132, 5133, 5134)
 
+#: The challenger is OFF unless explicitly switched on. It is an argument about method, not a
+#: feature, and a reviewer should meet it deliberately:
+#:     PROCASSIST_CHALLENGER=1 .venv/bin/python -m procassist.api
+CHALLENGER_ENABLED = os.environ.get("PROCASSIST_CHALLENGER", "") not in ("", "0", "false")
+
 
 class PrepareRequest(BaseModel):
     record_id: str
@@ -102,6 +107,7 @@ def create_app(service: Optional[Service] = None) -> FastAPI:
             "badges": BADGES,
             "definition": definition,
             "origin": _origin_of(request),
+            "challenger_enabled": CHALLENGER_ENABLED,
             "all_definitions": svc.definitions(),
             "ports": PORTS,
         }
@@ -167,6 +173,15 @@ def create_app(service: Optional[Service] = None) -> FastAPI:
     def audit_tail(n: int = 3) -> JSONResponse:
         return JSONResponse({"rows": svc.audit.tail(n), "count": svc.audit.count(),
                              "chain_ok": svc.audit.verify_chain()})
+
+    @app.post("/v1/challenge")
+    def challenge(body: PrepareRequest) -> JSONResponse:
+        if not CHALLENGER_ENABLED:
+            raise HTTPException(404, "the challenger is off; set PROCASSIST_CHALLENGER=1")
+        try:
+            return JSONResponse(svc.challenge(body.record_id))
+        except KeyError as exc:
+            raise HTTPException(404, str(exc)) from exc
 
     @app.get("/v1/gloss")
     def gloss_table() -> JSONResponse:

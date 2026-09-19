@@ -11,6 +11,8 @@ from .adapters.audit import AuditLog, new_trace_id
 from .adapters.defs import DefinitionRegistry, registry
 from .adapters.documents import DocumentIndex, index
 from .adapters.records import RecordStore, store
+from .adapters.evidence import retrieval_baselines
+from .challenger import Challenger, hybrid_scores
 from .core.definitions import ModuleDefinition
 from .core.impact import action_budget, total_budget
 from .core.engine import prepare
@@ -39,6 +41,7 @@ class Service:
         self.audit = audit if audit is not None else AuditLog()
         self._population_cache: Dict[Any, Dict[str, Any]] = {}
         self._measured = measured_action_budget()
+        self._challenger: Optional[Challenger] = None
 
     # -- queues ------------------------------------------------------------------------------
 
@@ -198,6 +201,37 @@ class Service:
         else:
             tr.step("render draft", "下書きの生成", "template",
                     "下書きなし（項目不足）", "no draft: a template slot is unfillable")
+
+    # -- the challenger: the alternative, run where it can be seen to lose -------------------
+
+    def challenge(self, record_id: str) -> Dict[str, Any]:
+        """Run the local retriever beside the lookup, for the same record.
+
+        Built lazily: 365 clauses index in a few milliseconds, but a demo that never opens the
+        challenger should not pay for it.
+        """
+        if self._challenger is None:
+            self._challenger = Challenger.from_documents(self.documents.rows)
+        result = self.prepare_record(record_id, log=False, with_population=False)
+        definition = self.defs.for_record(record_id)
+        lookup = None
+        if definition is not None and definition.document is not None and result.document:
+            lookup = {
+                "document_id": definition.document.document_id,
+                "clause_id": definition.document.clause_id,
+                "regulation_name_ja": definition.document.regulation_name_ja,
+                "heading_ja": (result.clause or {}).get("heading_ja"),
+                "text_ja": (result.clause or {}).get("text_ja"),
+                "mechanism": "(module, record type) -> document",
+            }
+        # The query is what the screen actually shows, nothing engineered for the retriever.
+        query = "　".join(str(v) for v in result.record_fields.values() if v)
+        baselines = retrieval_baselines() or {}
+        out = hybrid_scores(self._challenger, query, lookup, baselines.get("bar"))
+        payload = out.as_dict()
+        payload["record_id"] = record_id
+        payload["status"] = result.status.value
+        return payload
 
     # -- the whole queue at once -------------------------------------------------------------
 

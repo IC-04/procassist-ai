@@ -45,7 +45,8 @@
   </section>
 
   {# ── the ProcAssist panel, mounted beside the record, in the same page ── #}
-  <aside id="procassist-panel" class="panel" aria-label="ProcAssist"></aside>
+  <aside id="procassist-panel" class="panel" aria-label="ProcAssist"
+         data-challenger="{{ 1 if challenger_enabled else 0 }}"></aside>
 </div>
 {% endblock %}
 {% block scripts %}<script src="/_panel/panel.js" defer></script>{% endblock %}

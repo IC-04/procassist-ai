@@ -118,7 +118,13 @@
       '<p class="pa-note">' + esc(d.clause_heading_ja) + " ・ 観測 " + esc(d.n_captures) +
       " キャプチャ</p>" +
       '<button type="button" class="pa-link" id="pa-viewsource">出典を表示（View source）</button>' +
-      '<div class="pa-source" id="pa-source" hidden></div>';
+      (panel.dataset.challenger === "1"
+        ? ' <button type="button" class="pa-link pa-challenge" id="pa-challenge">' +
+          '<span class="ja">モデルで再検索</span><span class="en">try the retriever</span>' +
+          "</button>"
+        : "") +
+      '<div class="pa-source" id="pa-source" hidden></div>' +
+      '<div class="pa-challenger" id="pa-challenger" hidden></div>';
     return section("規程（governing document）", "document", body);
   }
 
@@ -430,6 +436,44 @@
         audit("check_dismissed", c.check_id, { status: c.status, expected_ja: c.expected_ja });
       });
     });
+
+    var challenge = document.getElementById("pa-challenge");
+    if (challenge) {
+      challenge.addEventListener("click", function () {
+        var box = document.getElementById("pa-challenger");
+        if (!box.hidden) { box.hidden = true; return; }
+        box.innerHTML = '<p class="pa-note">…</p>';
+        box.hidden = false;
+        post("/v1/challenge", { record_id: ctx.recordId }).then(function (c) {
+          var rows = c.retrieved.map(function (r) {
+            return '<li class="pa-cand"><span class="pa-candrank">' + esc(r.rank) + "</span>" +
+              '<span class="pa-candtext">' + esc(r.heading_ja || "（見出しなし）") + " — " +
+              esc(r.text_ja.slice(0, 54)) + "…</span>" +
+              '<span class="pa-candscore mono">' + esc(r.score) + "</span></li>";
+          }).join("");
+          box.innerHTML =
+            '<div class="pa-vs">' +
+              '<div class="pa-vs-side pa-vs-win"><h4><span class="ja">参照表</span>' +
+              '<span class="en">lookup table</span><span class="pa-vs-tag">AUTHORITATIVE</span></h4>' +
+              "<p>" + esc(c.lookup ? c.lookup.heading_ja : "MISS") + "</p>" +
+              '<p class="pa-note mono">' + esc(c.lookup ? c.lookup.mechanism : "—") + "</p></div>" +
+              '<div class="pa-vs-verdict">' +
+                (c.agrees === true
+                  ? '<span class="pa-agree">一致 / agrees</span>'
+                  : '<span class="pa-disagree">不一致 / disagrees</span>') +
+              "</div>" +
+              '<div class="pa-vs-side"><h4><span class="ja">検索器 (BM25 + 文字3-gram)</span>' +
+              '<span class="en">retriever (BM25 + char 3-gram)</span>' +
+              '<span class="pa-vs-tag pa-vs-uneval">UNEVALUATED</span></h4>' +
+              '<ol class="pa-cands">' + rows + "</ol></div>" +
+            "</div>" +
+            '<p class="pa-infnote"><span class="ja">' + esc(c.authority_ja) + "</span>" +
+            '<span class="en">' + esc(c.authority_en) + "</span></p>";
+          audit("source_viewed", "ran the challenger",
+                { agrees: c.agrees, evaluated: c.evaluated });
+        });
+      });
+    }
 
     var view = document.getElementById("pa-viewsource");
     if (view) {
