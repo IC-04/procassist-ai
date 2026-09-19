@@ -75,6 +75,20 @@ def create_app(service: Optional[Service] = None) -> FastAPI:
     app.mount("/_static", StaticFiles(directory=STATIC), name="static")
     app.mount("/_panel", StaticFiles(directory=PANEL), name="panel")
 
+    @app.middleware("http")
+    async def no_store_for_demo_assets(request: Request, call_next):  # type: ignore[no-untyped-def]
+        """Never let a browser cache the panel or the stylesheet.
+
+        This is a demo that is edited while it is being shown. A reviewer who reloads and gets
+        yesterday's panel.js sees a bug that does not exist — which happened during development
+        and cost an hour. The replica's own pages are cheap to re-render, so nothing here is
+        worth caching.
+        """
+        response = await call_next(request)
+        if request.url.path.startswith(("/_panel", "/_static")):
+            response.headers["Cache-Control"] = "no-store, must-revalidate"
+        return response
+
     def definition_here(request: Request, route: str) -> ModuleDefinition:
         origin = _origin_of(request)
         d = svc.defs.for_host(origin, route)

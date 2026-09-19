@@ -62,9 +62,11 @@ table.queue tr.headers-differ td:first-child::after{content:" ⚑"; color:var(--
 .modulelist.small a{padding:6px 12px; font-size:13.5px}
 .empty{color:var(--muted)}
 
-.split{display:grid; grid-template-columns:minmax(0,1fr) 420px; gap:16px;
-  align-items:start; padding:16px}
-@media (max-width:1100px){.split{grid-template-columns:1fr}}
+/* Side by side is the whole point: the record and what the tool says about it have to be
+   readable together. Stack only when the panel would be genuinely too narrow to read. */
+.split{display:grid; grid-template-columns:minmax(0,1fr) minmax(380px,420px); gap:14px;
+  align-items:start; padding:14px}
+@media (max-width:900px){.split{grid-template-columns:1fr}}
 
 .host{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:16px}
 .host h2{margin-top:0}
@@ -103,8 +105,10 @@ footer{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
 .queue-framing{margin:0 0 10px; padding:8px 12px; background:#f0f3f7;
   border-left:3px solid var(--accent); font-size:13px; line-height:1.7; color:#3b4553}
 
-th.col-agent, td.col-agent{white-space:nowrap}
-td.col-agent{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+/* `display:flex` on a <td> takes it out of the table's column model and the cell detaches
+   from its row. Keep the cell a table-cell and lay the badges out inside it. */
+th.col-agent, td.col-agent{white-space:nowrap; min-width:150px}
+td.col-agent > *{display:inline-flex; margin:1px 5px 1px 0; vertical-align:middle}
 .q-pill{display:inline-flex; align-items:center; gap:4px; border-radius:11px;
   padding:1px 9px; font-size:11.5px; font-weight:700; letter-spacing:.02em}
 .q-pill.pa-OK{background:#eaf6f0; color:#0f7b4f}
@@ -113,6 +117,7 @@ td.col-agent{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
 .q-pill.pa-MISS{background:#eef1f4; color:#5b6672}
 .q-expected{font-size:11.5px; font-weight:700; color:#a8520b}
 .q-doc{font-size:11.5px; color:#3b4553}
+.q-pill, .q-expected, .q-doc, .q-draft{line-height:1.5}
 .q-draft{font-size:11px; color:#0f7b4f; border:1px solid #9ccdb4; border-radius:3px;
   padding:0 5px}
 tr.resolved{background:#fcfdff}
@@ -121,12 +126,14 @@ td.col-agent.settle > *{animation:pa-settle 120ms cubic-bezier(.16,1,.3,1) both}
 
 .beforeafter{margin:0 0 14px; padding:12px 14px; background:var(--card);
   border:1px solid var(--line); border-radius:6px}
-.ba-head{display:flex; gap:24px; font-size:11px; font-weight:700; letter-spacing:.08em;
-  color:var(--muted); border-bottom:1px solid var(--line); padding-bottom:6px; margin-bottom:8px}
-.ba-col-b{width:190px} .ba-sub{font-weight:400; letter-spacing:0; text-transform:none}
-.ba-row{display:flex; align-items:baseline; gap:10px; padding:3px 0; flex-wrap:wrap}
-.ba-label{width:190px; color:var(--muted); font-size:12.5px; flex:none}
-.ba-b{width:34px; text-align:right; color:#8a93a0; font-variant-numeric:tabular-nums}
+.ba-head{display:grid; grid-template-columns:190px 1fr; font-size:11px; font-weight:700;
+  letter-spacing:.08em; color:var(--muted); border-bottom:1px solid var(--line);
+  padding-bottom:6px; margin-bottom:8px}
+.ba-sub{font-weight:400; letter-spacing:0; text-transform:none}
+.ba-row{display:grid; grid-template-columns:190px 34px 14px 1fr; align-items:baseline;
+  gap:10px; padding:3px 0}
+.ba-label{color:var(--muted); font-size:12.5px}
+.ba-b{text-align:right; color:#8a93a0; font-variant-numeric:tabular-nums}
 .ba-arrow{color:#b8c2cc}
 .ba-a{font-weight:700; font-variant-numeric:tabular-nums}
 .ba-unit{font-weight:400; font-size:11.5px; color:var(--muted)}
@@ -135,7 +142,8 @@ td.col-agent.settle > *{animation:pa-settle 120ms cubic-bezier(.16,1,.3,1) both}
 .ba-chip.pa-FLAG{background:#fdf1e5; color:#a8520b}
 .ba-chip.pa-REQUIRES_REVIEW{background:#f1edfa; color:#6b4fa8}
 .ba-chip.pa-MISS{background:#eef1f4; color:#5b6672}
-.ba-zero{margin-top:6px; padding-top:8px; border-top:1px dashed var(--line)}
+.ba-zero{margin-top:6px; padding-top:8px; border-top:1px dashed var(--line);
+  grid-template-columns:190px 34px 14px auto 1fr}
 .ba-zero .ba-a{color:var(--ok); font-size:16px}
 .ba-keep{color:var(--ok); font-size:12px; font-weight:700}
 .ba-human{margin:8px 0 0; padding:7px 11px; background:#eaf6f0; border-left:3px solid var(--ok);
@@ -218,3 +226,14 @@ table.ev-h3 td{padding:2px 6px 2px 0; border-bottom:1px solid #f4f6f8;
 .ev-why{display:block; color:#8a93a0; font-size:11px; line-height:1.6}
 .ev-verdictline{margin:14px 0 0; padding:11px 14px; background:#1b2430; color:#e6edf5;
   border-radius:6px; font-size:12.5px; line-height:1.8}
+
+/* The English gloss makes some columns much wider than the Japanese. Let the table scroll
+   rather than squeezing 氏名 into three lines. */
+section.pad > table.queue{display:block; overflow-x:auto}
+table.queue td.col-1, table.queue td.col-2, table.queue td.col-3,
+table.queue td.col-4{white-space:nowrap}
+table.queue td.col-5{white-space:nowrap; text-align:right; font-variant-numeric:tabular-nums}
+table.queue th{white-space:nowrap}
+:root[data-lang="en"] table.queue th, :root[data-lang="both"] table.queue th{
+  white-space:normal; min-width:84px}
+dl.fields dd{font-variant-numeric:tabular-nums}

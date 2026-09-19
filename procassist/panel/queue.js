@@ -94,11 +94,11 @@
       row("操作 avoided", "actions avoided", "0",
           '<span data-cu="' + a.actions_avoided_range[0] + '">0</span>–' +
           '<span data-cu="' + a.actions_avoided_range[1] + '">0</span>' +
-          ' <span class="ba-unit">アプリ切替 / app switches</span>' +
+          unit("アプリ切替", "app switches") +
           ' · <span data-cu="' + a.keystrokes_total + '">0</span>' +
-          ' <span class="ba-unit">打鍵 / keystrokes</span>' +
+          unit("打鍵", "keystrokes") +
           ' · <span data-cu="' + a.lookups_total + '">0</span>' +
-          ' <span class="ba-unit">参照 / look-ups</span>', "") +
+          unit("参照", "look-ups"), "") +
       '<div class="ba-row ba-zero">' +
         '<span class="ba-label"><span class="ja">処分 taken</span>' +
         '<span class="en">dispositions taken</span></span>' +
@@ -109,12 +109,17 @@
       "</div>" +
       '<p class="ba-human"><span class="ja">処分は 0 件。判断は人間が行います。</span>' +
       '<span class="en">0 dispositions taken — the human decides.</span></p>' +
-      '<p class="ba-caveat pa-en">' + esc(summary.caveat_en) + "</p>";
+      '<p class="ba-caveat pa-en en">' + esc(summary.caveat_en) + "</p>";
 
     strip.hidden = false;
     Array.prototype.forEach.call(strip.querySelectorAll("[data-cu]"), function (el) {
       countUp(el, parseInt(el.getAttribute("data-cu"), 10), "");
     });
+  }
+
+  function unit(ja, en) {
+    return ' <span class="ba-unit"><span class="ja">' + esc(ja) + "</span>" +
+      '<span class="en">' + esc(en) + "</span></span>";
   }
 
   function row(labelJa, labelEn, before, after, extra) {
