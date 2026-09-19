@@ -8,10 +8,19 @@
 </p>
 
 <p align="center">
-  <a href="#key-results">Results</a> · <a href="#procassist--the-delivered-product">ProcAssist</a> · <a href="#run-it">Run it</a> · <a href="FINAL_REPORT.md">Final Report</a> · <a href="docs/WORK_LOG.md">Work Log</a>
+  <a href="#key-results">Results</a> · <a href="#procassist--the-delivered-product">ProcAssist</a> · <a href="#run-it">Run it</a> · <a href="demo_video.mp4">Demo Video</a> · <a href="IBY_Final_Technical_Report.pdf">Final Report (PDF)</a>
 </p>
 
 ---
+
+## Author
+
+| | |
+|:---|:---|
+| **Name** | Indrani Chattopadhyay |
+| **University** | Indian Institute of Technology (IIT) Bhubaneswar |
+| **Department** | Mechanical Engineering |
+| **Email** | indranichattopadhyay635@gmail.com |
 
 **Assignment:** 7-day AI Engineer / Forward-Deployed Engineer recruitment task · ~55 hours of recorded effort · 449 tests passing
 
@@ -351,12 +360,28 @@ Three different business functions serve `/payroll-items`. The segmentation laye
 
 ---
 
-## Reports and evidence
+## Reports, evidence and demo
 
-| Artifact | Purpose |
+### 📄 PDF reports
+
+| Report | Purpose |
 |:---|:---|
-| [**FINAL_REPORT.md**](FINAL_REPORT.md) | Complete methodology, architecture, evaluation, product design, impact model — **start here** |
-| [**STEP2_RESEARCH_REVIEW.pdf**](docs/STEP2_RESEARCH_REVIEW.pdf) | Literature survey: task mining, process selection, Japanese public-sector evidence |
+| [**IBY_Final_Technical_Report.pdf**](IBY_Final_Technical_Report.pdf) | Complete methodology, architecture, evaluation, product design, impact model — **start here** |
+| [**IBY-literature-survey.pdf**](IBY-literature-survey.pdf) | Prior work: task mining, process segmentation, RPA selection, research gap analysis |
+| [**STEP2_RESEARCH_REVIEW.pdf**](STEP2_RESEARCH_REVIEW.pdf) | Literature survey applied to this engagement: task mining, process selection, Japanese public-sector evidence |
+| [**STEP2_AUTOMATION_OPPORTUNITY.pdf**](STEP2_AUTOMATION_OPPORTUNITY.pdf) | Step 2 automation opportunity evaluation across 12 production modules |
+
+### 🎬 Working demo
+
+| | |
+|:---|:---|
+| [**demo_video.mp4**](demo_video.mp4) | End-to-end ProcAssist demo: queue → batch preparation → document resolution → clause evidence → draft → human judgement → submit |
+
+### 📁 In-repository documentation
+
+| Document | Purpose |
+|:---|:---|
+| [**FINAL_REPORT.md**](FINAL_REPORT.md) | Full technical report (markdown, same content as the PDF) |
 | [**STEP2_AUTOMATION_OPPORTUNITY.md**](docs/STEP2_AUTOMATION_OPPORTUNITY.md) | Production dataset analysis: 12 modules, effort, operators, variants, automation candidates |
 | [**STEP2_HYPOTHESIS_VERIFICATION.md**](docs/STEP2_HYPOTHESIS_VERIFICATION.md) | Four-gate hypothesis test: 44 verdicts, the refutation, and what survived |
 | [**STEP1_REPORT.md**](docs/STEP1_REPORT.md) | Segmentation methodology, evaluation protocol, baseline comparisons |
