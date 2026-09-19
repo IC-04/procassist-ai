@@ -1,0 +1,234 @@
+{
+ "measured_from": "dataset_b/*/*/events.jsonl",
+ "n_events": 20477,
+ "keyed_on": "(origin, route) — the module key (ADR-022), never the Step 1 label",
+ "interval": "Wilson 95%",
+ "caveat_en": "counts of actions only. No seconds, no yen, no FTE: waiting times were compressed in the capture environment, so no absolute time claim can be made from this corpus.",
+ "by_route": {
+  "http://127.0.0.1:5132/#/leave-applications": {
+   "word_switches": 0,
+   "dispositions": 56,
+   "switches_per_disposition": 0.0,
+   "switches_ci95": [
+    0.0,
+    0.0642
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 5,
+    "min": 37,
+    "max": 78,
+    "median": 41
+   }
+  },
+  "http://127.0.0.1:5132/#/onboarding": {
+   "word_switches": 61,
+   "dispositions": 55,
+   "switches_per_disposition": 1.1091,
+   "switches_ci95": [
+    0.9347,
+    1.0
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 3,
+    "min": 27,
+    "max": 30,
+    "median": 29
+   }
+  },
+  "http://127.0.0.1:5132/#/payroll-items": {
+   "word_switches": 10,
+   "dispositions": 113,
+   "switches_per_disposition": 0.0885,
+   "switches_ci95": [
+    0.0488,
+    0.1553
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 6,
+    "min": 35,
+    "max": 44,
+    "median": 42
+   }
+  },
+  "http://127.0.0.1:5132/#/social-insurance": {
+   "word_switches": 18,
+   "dispositions": 34,
+   "switches_per_disposition": 0.5294,
+   "switches_ci95": [
+    0.3674,
+    0.6855
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 3,
+    "min": 33,
+    "max": 38,
+    "median": 36
+   }
+  },
+  "http://127.0.0.1:5133/#/dashboard": {
+   "word_switches": 1,
+   "dispositions": 0,
+   "switches_per_disposition": null,
+   "switches_ci95": [
+    0.0,
+    0.0
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 0,
+    "min": null,
+    "max": null,
+    "median": null
+   }
+  },
+  "http://127.0.0.1:5133/#/leave-applications": {
+   "word_switches": 27,
+   "dispositions": 32,
+   "switches_per_disposition": 0.8438,
+   "switches_ci95": [
+    0.6825,
+    0.9314
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 4,
+    "min": 38,
+    "max": 45,
+    "median": 40
+   }
+  },
+  "http://127.0.0.1:5133/#/onboarding": {
+   "word_switches": 23,
+   "dispositions": 37,
+   "switches_per_disposition": 0.6216,
+   "switches_ci95": [
+    0.461,
+    0.7594
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 8,
+    "min": 37,
+    "max": 52,
+    "median": 44
+   }
+  },
+  "http://127.0.0.1:5133/#/payroll-items": {
+   "word_switches": 45,
+   "dispositions": 76,
+   "switches_per_disposition": 0.5921,
+   "switches_ci95": [
+    0.4798,
+    0.6956
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 4,
+    "min": 41,
+    "max": 44,
+    "median": 43
+   }
+  },
+  "http://127.0.0.1:5133/#/resident-tax": {
+   "word_switches": 15,
+   "dispositions": 69,
+   "switches_per_disposition": 0.2174,
+   "switches_ci95": [
+    0.1364,
+    0.3282
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 9,
+    "min": 49,
+    "max": 58,
+    "median": 54
+   }
+  },
+  "http://127.0.0.1:5133/#/social-insurance": {
+   "word_switches": 0,
+   "dispositions": 8,
+   "switches_per_disposition": 0.0,
+   "switches_ci95": [
+    0.0,
+    0.3244
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 1,
+    "min": 62,
+    "max": 62,
+    "median": 62
+   }
+  },
+  "http://127.0.0.1:5134/": {
+   "word_switches": 2,
+   "dispositions": 0,
+   "switches_per_disposition": null,
+   "switches_ci95": [
+    0.0,
+    0.0
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 0,
+    "min": null,
+    "max": null,
+    "median": null
+   }
+  },
+  "http://127.0.0.1:5134/#/dashboard": {
+   "word_switches": 18,
+   "dispositions": 0,
+   "switches_per_disposition": null,
+   "switches_ci95": [
+    0.0,
+    0.0
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 10,
+    "min": 27,
+    "max": 44,
+    "median": 39
+   }
+  },
+  "http://127.0.0.1:5134/#/leave-applications": {
+   "word_switches": 67,
+   "dispositions": 58,
+   "switches_per_disposition": 1.1552,
+   "switches_ci95": [
+    0.9379,
+    1.0
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 3,
+    "min": 43,
+    "max": 47,
+    "median": 45
+   }
+  },
+  "http://127.0.0.1:5134/#/payroll-items": {
+   "word_switches": 0,
+   "dispositions": 58,
+   "switches_per_disposition": 0.0,
+   "switches_ci95": [
+    0.0,
+    0.0621
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 7,
+    "min": 38,
+    "max": 65,
+    "median": 41
+   }
+  },
+  "http://127.0.0.1:5134/#/social-insurance": {
+   "word_switches": 6,
+   "dispositions": 40,
+   "switches_per_disposition": 0.15,
+   "switches_ci95": [
+    0.0706,
+    0.2907
+   ],
+   "comment_chars_observed": {
+    "n_distinct": 4,
+    "min": 45,
+    "max": 51,
+    "median": 48
+   }
+  }
+ }
+}

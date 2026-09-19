@@ -44,6 +44,11 @@ class PrepareRequest(BaseModel):
     trace_id: Optional[str] = None
 
 
+class PrepareQueueRequest(BaseModel):
+    definition_id: str
+    limit: Optional[int] = None
+
+
 class EventRequest(BaseModel):
     trace_id: str
     event_type: str
@@ -120,6 +125,12 @@ def create_app(service: Optional[Service] = None) -> FastAPI:
         except KeyError as exc:
             raise HTTPException(404, str(exc)) from exc
         return JSONResponse(result.model_dump(mode="json"))
+
+    @app.post("/v1/prepare_queue")
+    def prepare_queue(body: PrepareQueueRequest) -> JSONResponse:
+        if body.definition_id not in svc.defs.by_id:
+            raise HTTPException(404, f"no such queue: {body.definition_id}")
+        return JSONResponse(svc.prepare_queue(body.definition_id, body.limit))
 
     @app.post("/v1/event")
     def event(body: EventRequest) -> JSONResponse:

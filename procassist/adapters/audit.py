@@ -28,6 +28,7 @@ from .paths import AUDIT_DB, AUDIT_JSONL, OUT
 #: new category to be invented at the call site.
 EVENT_TYPES = (
     "prepare",              # the engine produced a PrepareResult
+    "prepare_queue",        # the engine was run over a whole queue at once
     "draft_used",           # the human pasted the draft into the host field
     "draft_edited",         # the human changed the draft text before/after pasting
     "judgement_chosen",     # the human picked a disposition chip

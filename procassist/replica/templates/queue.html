@@ -1,11 +1,25 @@
 {% extends "base.html" %}
 {% block title %}{{ definition.name_ja }}（レプリカ）{% endblock %}
+{% block head %}<link rel="stylesheet" href="/_panel/panel.css">{% endblock %}
 {% block main %}
-<section class="pad">
-  <p class="count">{{ rows|length }} 件 ・ record prefix <code>{{ definition.record_prefix }}</code></p>
+<section class="pad" id="queue-root"
+         data-definition-id="{{ definition.definition_id }}"
+         data-route="{{ definition.host.route }}">
+  <div class="queuebar">
+    <p class="count">{{ rows|length }} 件 ・ record prefix <code>{{ definition.record_prefix }}</code></p>
+    <button type="button" id="prepare-all" class="agent-btn">
+      <span class="ja">▶ エージェントで一括準備</span><span class="en">▶ Prepare all with the agent</span>
+    </button>
+    <span id="prepare-progress" class="progress" hidden></span>
+  </div>
+  {% if definition.portal_note_ja %}
+    <p class="queue-framing"><span class="ja">{{ definition.portal_note_ja }}</span><span class="en">{{ definition.portal_note_en }}</span></p>
+  {% endif %}
+  <div id="beforeafter" class="beforeafter" hidden></div>
   <table id="{{ definition.record_prefix|lower }}-table" class="queue">
     <thead><tr>
       {% for h in definition.column_headers_ja %}<th>{{ h }}</th>{% endfor %}
+      <th class="col-agent">ProcAssist</th>
     </tr></thead>
     <tbody>
     {% for r in rows %}
@@ -15,9 +29,11 @@
         {% for h in definition.column_headers_ja %}
           <td class="col-{{ loop.index }}">{{ r.fields.get(h) if r.fields.get(h) is not none else '—' }}</td>
         {% endfor %}
+        <td class="col-agent" data-agent-cell="{{ r.record_id }}"></td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
 </section>
 {% endblock %}
+{% block scripts %}<script src="/_panel/queue.js" defer></script>{% endblock %}

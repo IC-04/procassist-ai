@@ -12,8 +12,10 @@ from .adapters.defs import DefinitionRegistry, registry
 from .adapters.documents import DocumentIndex, index
 from .adapters.records import RecordStore, store
 from .core.definitions import ModuleDefinition
+from .core.impact import action_budget, total_budget
 from .core.engine import prepare
 from .core.result import PrepareResult, Provenance
+from .measured import measured_action_budget
 
 #: Widened context shown under `View source`, in characters either side of the clause.
 SOURCE_CONTEXT_CHARS = 160
@@ -34,6 +36,7 @@ class Service:
         self.documents = documents or index()
         self.audit = audit if audit is not None else AuditLog()
         self._population_cache: Dict[Any, Dict[str, Any]] = {}
+        self._measured = measured_action_budget()
 
     # -- queues ------------------------------------------------------------------------------
 
@@ -133,6 +136,94 @@ class Service:
                         "draft_offered": result.draft is not None},
             )
         return result
+
+    # -- the whole queue at once -------------------------------------------------------------
+
+    def prepare_queue(self, definition_id: str, limit: Optional[int] = None) -> Dict[str, Any]:
+        """Run the engine over every record on one queue.
+
+        This is the operator's actual unit of pain — 120 records, each needing a Word round
+        trip — and nothing in the single-record view shows it. The engine already did this
+        internally to compute the population denominator; this only gives it a surface.
+
+        Returns per-row what the queue table needs to resolve in place, plus the before/after
+        totals. `dispositions_taken` is in the totals and is always 0: the agent does every
+        part of the work except the part it is not allowed to do.
+        """
+        definition = self.defs.by_id[definition_id]
+        rows = self.records.queue(definition.record_prefix, definition.column_headers_ja,
+                                  limit=limit)
+        batch_trace = new_trace_id()
+        out_rows: List[Dict[str, Any]] = []
+        budgets: List[Dict[str, Any]] = []
+        counts: Dict[str, int] = {"OK": 0, "FLAG": 0, "REQUIRES_REVIEW": 0, "MISS": 0}
+        n_documents = 0
+        n_drafts = 0
+
+        for row in rows:
+            result = self.prepare_record(row["record_id"], log=True, with_population=False)
+            counts[result.status.value] = counts.get(result.status.value, 0) + 1
+            if result.document:
+                n_documents += 1
+            if result.draft is not None:
+                n_drafts += 1
+            budget = action_budget(definition, result.draft, self._lookup_count(result),
+                                   self._measured)
+            budgets.append(budget)
+            out_rows.append({
+                "record_id": result.record_id,
+                "status": result.status.value,
+                "document_heading": ((result.document or {}).get("regulation_name_ja")
+                                     if result.document else None),
+                "clause_heading": ((result.clause or {}).get("heading_ja")
+                                   if result.clause else None),
+                "checks_summary": self._checks_summary(result),
+                "expected_ja": next((c.expected_ja for c in result.checks
+                                     if c.kind == "threshold"), None),
+                "draft_ready": result.draft is not None,
+                "draft_preview": result.draft.text_ja if result.draft else None,
+                "trace_id": result.trace_id,
+                "actions_avoided": budget,
+            })
+
+        totals = total_budget(budgets)
+        summary = {
+            "definition_id": definition_id,
+            "module_id": definition.module_id,
+            "module_name_ja": definition.name_ja,
+            "module_name_en": definition.name_en,
+            "batch_trace_id": batch_trace,
+            "n_records": len(rows),
+            "before": {"documents_resolved": 0, "drafts_staged": 0,
+                       "actions_avoided": 0, "dispositions_taken": 0},
+            "after": {"documents_resolved": n_documents, "drafts_staged": n_drafts,
+                      "actions_avoided_range": totals["app_switches_range"],
+                      "keystrokes_total": totals["keystrokes_total"],
+                      "lookups_total": totals["lookups_total"],
+                      "dispositions_taken": 0},
+            "counts": counts,
+            "caveat_en": self._measured.get("caveat_en", ""),
+        }
+        self.audit.append(
+            batch_trace, "prepare_queue",
+            definition_id=definition_id, module_id=definition.module_id,
+            suggested=" · ".join(f"{k}:{v}" for k, v in counts.items() if v),
+            detail={"n_records": len(rows), "drafts_staged": n_drafts,
+                    "dispositions_taken": 0})
+        return {"summary": summary, "rows": out_rows}
+
+    @staticmethod
+    def _checks_summary(result: PrepareResult) -> Dict[str, int]:
+        out: Dict[str, int] = {}
+        for check in result.checks:
+            out[check.status.value] = out.get(check.status.value, 0) + 1
+        return out
+
+    @staticmethod
+    def _lookup_count(result: PrepareResult) -> int:
+        """Fields + document + clause: what the panel put on one screen."""
+        return len(result.record_fields) + (1 if result.document else 0) + \
+            (1 if result.clause else 0)
 
     # -- how common is this verdict on this queue? -------------------------------------------
 
