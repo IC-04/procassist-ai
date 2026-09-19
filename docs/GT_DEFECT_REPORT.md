@@ -1,47 +1,5 @@
 # Dataset A Ground-Truth Defect Report
 
-## Submission-Ready Report
-
-> **Status:** Frozen measurement report  
-> **Scope:** Dataset A — all 63 sessions  
-> **Phase:** Phase 1 (Task 1.3)  
-> **Purpose:** Quantify the consistency, limitations, and observable defects of the Dataset A ground truth before using it for segmentation evaluation.  
-> **Source artifact:** `GT_DEFECT_REPORT.md`  
-> **Submission note:** This report presents measured properties of the ground-truth artifact. It does not claim that the ground truth is independently validated truth; it explicitly treats the GT as evidence whose measurement quality must be understood before accuracy figures are interpreted.
-
-## Reviewer Navigation
-
-1. [Corpus](#1-corpus)
-2. [Documented defects — measured](#2-the-documented-defects--measured)
-3. [Fragmentation](#3-fragmentation--the-number-that-decides-how-central-m2b-is)
-4. [Duration and task structure](#4-duration-and-task-structure)
-5. [Chunk continuation](#5-chunk-continuation)
-6. [Confidence tiers](#6-confidence-tiers-evaluation_protocol-4)
-7. [`expected_boundaries` semantics](#7-expected_boundaries--semantics-task-14-evidence)
-8. [Telemetry truncation](#8-a-defect-the-gt-does-not-document-telemetry-truncation)
-9. [Summary for interpreting accuracy](#9-summary-for-the-reader-of-any-accuracy-number)
-
-## Submission Integrity
-
-- All quantitative claims remain grounded in the measured Dataset A corpus described below.
-- Documented defects are distinguished from omissions and from GT-versus-telemetry coverage problems.
-- The report does not silently repair inconvenient observations; the truncated session is explicitly retained and reported.
-- Ground-truth consistency is distinguished from independent validation: the manifest and stream agree, but are not independent sources.
-- Findings that affect later evaluation design, such as interruption handling and the absence of step-level GT structure, are stated explicitly rather than inferred away.
-
-**Date** 2026-09-13 · **Phase** 1 (Task 1.3) · **Scope** all 63 sessions of `dataset_a`
-**Produced by** `procmine/gt.py` under the repair rules frozen in ADR-011, before any
-segmenter existed.
-
-`DATA_SCHEMA.md` §3 warns qualitatively that `gt.jsonl` "sometimes emits the same
-`process_started` twice in a row", that "`process_switched_out` does not always pair up", and
-instructs us to "verify consistency yourself before relying on it." This document is that
-verification, quantified. It is a deliverable in its own right: the ground truth is
-**evidence, not truth** (`CLAUDE.md` §6), and the reader is entitled to know how good the
-measuring instrument is before reading any accuracy number produced with it.
-
----
-
 ## 1. Corpus
 
 | | |
