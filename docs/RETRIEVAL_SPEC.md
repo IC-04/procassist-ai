@@ -1,5 +1,3 @@
-# RETRIEVAL_SPEC — Execution Memory
-
 # RETRIEVAL_SPEC — Execution memory
 
 Lightweight case-based memory. **No vector database** (ADR-007): the corpus is hundreds of
