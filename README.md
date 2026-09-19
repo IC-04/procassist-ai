@@ -1,3 +1,8 @@
+NAME:INDRANI CHATTOPADHYAY
+UNIVERSITY: IIT BHUBANESWAR
+DEPARTMENT:MECHANICAL ENGINEERING
+EMAIL ADDRESS: indranichattopadhyay635@gmail.com
+
 # Intern Selection Task: From Operation Logs to an Automation Proposal
 
 **Duration:** 7 days
