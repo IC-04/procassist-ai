@@ -795,3 +795,29 @@ The tool never operates a host control; `tests/test_procassist_panel_invariants.
 that by reading `panel/panel.js`. Every suggestion and every human response is written to
 `build/procassist/audit.sqlite3`, hash-chained — that residual is what decides later whether a
 model is warranted, and nothing here presumes the answer.
+
+#### ADR-025 · addendum · 2026-09-19 · Band semantics, and the one declared knob
+
+**Superseding ADR-025's FLAG rule.** ADR-025 reported ¥135,181 as `FLAG` on the grounds that
+第２条's tiers overlap and the clause therefore selects no authority. That is true of the
+string and wrong about the domain: tiered Japanese approval-authority clauses of this form are
+read as **bands**, `5万円以上` meaning 5万〜10万, most specific tier winning. The engine now
+applies `MOST_SPECIFIC_TIER` and the applicable authority for ¥135,181 is 社長承認, full stop.
+The literal overlap survives as an `INF` note on the check, not as the verdict.
+
+**What a FLAG now means** is that the authority the clause requires exceeds the **declared
+ceiling** of the queue the record sits in. Each definition file carries an `[authority]` block
+with `ladder_ja` (quoted from the clause — OBSERVED) and `ceiling_ja` with its own `basis`.
+
+**The ceiling is the one policy knob in the system, and on the HR queue it is `INF`.** We
+measured before declaring it: of 8 distinct 接待交際費 settlements observed on
+`:5132/#/payroll-items`, 5 fall in the 役員承認 band (60,936–98,018円) and 3 in the 社長承認
+band (118,189 / 123,224 / 135,181円), and **no observed field separates them** — all 23
+接待交際費 records are 種別 調整, `exception_marker` false, `badge_ja` null. Where a settlement
+clerk's authority stops is therefore the client's question, not the corpus's. It is one line of
+TOML, the panel renders its `[INF]` tag, and 11 OK / 12 FLAG out of 120 follows from it.
+M07's ceiling is weakly OBSERVED instead (n=2, both in the 部門長承認 band) and never fires,
+because that screen has no 金額 column.
+
+**Consequences** A reviewer must not read the OK/FLAG split as a measurement. Everything else
+on the panel is; this is not, and it says so on screen.
