@@ -33,6 +33,7 @@ class Service:
         self.records = records or store()
         self.documents = documents or index()
         self.audit = audit if audit is not None else AuditLog()
+        self._population_cache: Dict[Any, Dict[str, Any]] = {}
 
     # -- queues ------------------------------------------------------------------------------
 
@@ -51,8 +52,8 @@ class Service:
 
     # -- the engine --------------------------------------------------------------------------
 
-    def prepare_record(self, record_id: str, trace_id: str = "",
-                       log: bool = True) -> PrepareResult:
+    def prepare_record(self, record_id: str, trace_id: str = "", log: bool = True,
+                       with_population: bool = True) -> PrepareResult:
         """Look the record up, load its clause, run the engine, record the suggestion."""
         row = self.records.get(record_id)
         if row is None:
@@ -103,7 +104,7 @@ class Service:
                     evidence_type=(rule or {}).get("evidence_type", "OBSERVED"),
                 )
 
-        result = prepare(
+        base = prepare(
             definition=definition,
             record_id=record_id,
             fields=fields,
@@ -113,6 +114,8 @@ class Service:
             document_meta=document_meta,
             trace_id=trace_id or new_trace_id(),
         )
+        result = (base.model_copy(update={"population": self._population(definition, base)})
+                  if with_population else base)
         if log:
             suggested = result.status.value
             authority = next((c.expected_ja for c in result.checks
@@ -130,3 +133,40 @@ class Service:
                         "draft_offered": result.draft is not None},
             )
         return result
+
+    # -- how common is this verdict on this queue? -------------------------------------------
+
+    def _population(self, definition: ModuleDefinition,
+                    result: PrepareResult) -> Optional[Dict[str, Any]]:
+        """Re-run the engine over the whole queue and count how many share this verdict.
+
+        A single FLAG reads as an anecdote until you know the denominator. This is the
+        denominator, measured rather than asserted: the same deterministic engine, every
+        record on the queue, no sampling. 120 records is small enough to do on each request
+        and the result is cached per (definition, status).
+        """
+        key = (definition.definition_id, result.status.value)
+        cached = self._population_cache.get(key)
+        if cached is not None:
+            return cached
+        rows = self.records.queue(definition.record_prefix, definition.column_headers_ja)
+        same = 0
+        governed = 0
+        for row in rows:
+            try:
+                other = self.prepare_record(row["record_id"], log=False, with_population=False)
+            except KeyError:                      # pragma: no cover - defensive
+                continue
+            if definition.governs(row["fields"]):
+                governed += 1
+            if other.status == result.status:
+                same += 1
+        out: Dict[str, Any] = {
+            "status": result.status.value,
+            "n_same_status": same,
+            "n_queue": len(rows),
+            "n_governed": governed,
+            "label_en": f"{same} of {len(rows)} records on this queue reach {result.status.value}",
+        }
+        self._population_cache[key] = out
+        return out

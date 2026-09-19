@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ row.record_id }}（レプリカ）{% endblock %}
+{% block head %}<link rel="stylesheet" href="/_panel/panel.css">{% endblock %}
+{% block main %}
+<div class="split">
+
+  {# ── the host system. ProcAssist never writes to anything in here except #<note>. ── #}
+  <section class="host" id="main"
+           data-record-id="{{ row.record_id }}"
+           data-origin="{{ origin }}"
+           data-route="{{ definition.host.route }}"
+           data-definition-id="{{ definition.definition_id }}"
+           data-module-id="{{ definition.module_id }}"
+           data-note-element-id="{{ definition.note_element_id }}"
+           data-submit-element-id="{{ definition.submit_element_id }}">
+    <h2>{{ row.record_id }}</h2>
+    <dl class="fields">
+      {% for h in definition.column_headers_ja %}
+        <dt>{{ h }}</dt>
+        <dd class="f-{{ loop.index }}">{{ row.fields.get(h) if row.fields.get(h) is not none else '—' }}</dd>
+      {% endfor %}
+    </dl>
+    {% if row.statuses_observed_ja|length > 1 %}
+      {# The same record was captured in more than one ステータス — the queue was recorded
+         before and after the work. Shown rather than silently resolved. #}
+      <p class="multistatus">このレコードは {{ row.n_captures }} キャプチャで観測され、ステータスは
+        {{ row.statuses_observed_ja|join(' → ') }} の {{ row.statuses_observed_ja|length }} 種類でした。
+        上表は最初の観測です。</p>
+    {% endif %}
+
+    <label class="notelabel" for="{{ definition.note_element_id }}">コメント</label>
+    <textarea id="{{ definition.note_element_id }}" class="input" rows="3"
+              placeholder="{{ definition.comment.placeholder_ja }}"></textarea>
+
+    <div class="hostactions">
+      <button id="{{ definition.submit_element_id }}" class="primary" type="button">登録確定</button>
+      {% if definition.note_element_id == 'la-note' %}
+        {# 差戻し is offered by this screen's own placeholder and was typed 0 times in 282
+           uses of la-note across Dataset B. Rendered because its absence is a finding. #}
+        <button id="btn-la-reject" class="secondary" type="button">差戻し</button>
+        <span class="never-observed">差戻し：観測 0 回 / la-note 282 回</span>
+      {% endif %}
+    </div>
+    <div id="toast" class="toast" hidden>{{ definition.success_toast_ja }}</div>
+  </section>
+
+  {# ── the ProcAssist panel, mounted beside the record, in the same page ── #}
+  <aside id="procassist-panel" class="panel" aria-label="ProcAssist"></aside>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/_panel/panel.js" defer></script>{% endblock %}

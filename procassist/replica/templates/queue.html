@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ definition.name_ja }}（レプリカ）{% endblock %}
+{% block main %}
+<section class="pad">
+  <p class="count">{{ rows|length }} 件 ・ record prefix <code>{{ definition.record_prefix }}</code></p>
+  <table id="{{ definition.record_prefix|lower }}-table" class="queue">
+    <thead><tr>
+      {% for h in definition.column_headers_ja %}<th>{{ h }}</th>{% endfor %}
+    </tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr class="{% if not r.headers_agree %}headers-differ{% endif %}"
+          data-record-id="{{ r.record_id }}"
+          onclick="location.href='{{ definition.host.route }}/{{ r.record_id }}'">
+        {% for h in definition.column_headers_ja %}
+          <td class="col-{{ loop.index }}">{{ r.fields.get(h) if r.fields.get(h) is not none else '—' }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

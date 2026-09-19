@@ -50,9 +50,17 @@ def find_document(definition: ModuleDefinition,
 def miss_check(definition: ModuleDefinition, lookup: LookupResult,
                fields: Dict[str, Optional[str]]) -> Check:
     """The single check that stands in for a whole evaluation that could not be attempted."""
+    # A definition with no [governed_by] still has a record type on screen; show it, so the
+    # reader can see *what* was not matched rather than only that nothing was.
     observed = None
     if definition.governed_by:
-        observed = fields.get(definition.governed_by.field_ja) or "（区分なし）"
+        observed = fields.get(definition.governed_by.field_ja)
+    if not observed:
+        for candidate in ("区分", "申請種別", "種別"):
+            if fields.get(candidate):
+                observed = f"{candidate}：{fields[candidate]}"
+                break
+    observed = observed or "（区分なし）"
     return Check(
         check_id="lookup.governing_document",
         kind="lookup",

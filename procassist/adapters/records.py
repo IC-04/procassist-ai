@@ -33,6 +33,7 @@ class RecordStore:
         self._seen: Dict[str, int] = {}
         self._captures: Dict[str, List[str]] = {}
         self._sessions: Dict[str, List[str]] = {}
+        self._statuses: Dict[str, List[str]] = {}
         for row in order:
             rid = row["record_id"]
             self._first.setdefault(rid, row)
@@ -42,6 +43,9 @@ class RecordStore:
                 self._captures[rid].append(cap)
             if ses and ses not in self._sessions.setdefault(rid, []):
                 self._sessions[rid].append(ses)
+            st = row.get("status_ja")
+            if st and st not in self._statuses.setdefault(rid, []):
+                self._statuses[rid].append(st)
 
     @classmethod
     def load(cls, path: str = RECORDS) -> "RecordStore":
@@ -84,6 +88,10 @@ class RecordStore:
             "fields": fields,
             "amount_jpy": parse_amount_jpy(fields.get("金額")),
             "status_ja": row.get("status_ja"),
+            # 324 of the 898 records were captured in more than one ステータス — the queue was
+            # recorded before and after the work was done. We show the first and disclose the
+            # rest rather than picking one and calling it the record's state.
+            "statuses_observed_ja": self._statuses.get(rid, []),
             "source_view": row.get("source_view"),
             "evidence_type": row.get("evidence_type", "OBSERVED"),
             "capture_ids": self._captures.get(rid, []),

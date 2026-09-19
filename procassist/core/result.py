@@ -88,6 +88,10 @@ class PrepareResult(Frozen):
     clause: Optional[Dict[str, object]] = None
     checks: List[Check] = Field(default_factory=list)
     draft: Optional[DraftComment] = None
+    #: How many records on this same queue land in the same verdict, and out of how many. A
+    #: single flagged record invites the reader to treat it as an anecdote; the denominator is
+    #: what says whether it is one.
+    population: Optional[Dict[str, object]] = None
     notes_en: List[str] = Field(default_factory=list)
 
     def model_post_init(self, _context: object) -> None:

@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "procassist",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": ["-m", "procassist.api"],
+      "port": 5133,
+      "url": "http://127.0.0.1:5133"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}業務ポータル（レプリカ）{% endblock %}</title>
+<link rel="stylesheet" href="/_static/app.css">
+{% block head %}{% endblock %}
+</head>
+<body>
+<div class="badges" role="note" aria-label="honesty badges">
+  {% for b in badges %}<span class="badge badge-{{ loop.index }}">{{ b }}</span>{% endfor %}
+  <span class="badge-note">このページは Dataset B の観測から再構成したレプリカです。実システムではありません。</span>
+</div>
+
+<header class="chrome">
+  <div class="addressbar" title="the (origin, route) key the module map turns on">
+    <span class="origin">{{ origin }}</span><span
+      class="route">{% if definition %}/#{{ definition.host.route }}{% else %}/#/{% endif %}</span>
+  </div>
+  <nav class="portals">
+    {% for p in ports %}
+      <a class="portal-link {% if origin.endswith(p|string) %}here{% endif %}"
+         href="http://127.0.0.1:{{ p }}/">:{{ p }}</a>
+    {% endfor %}
+  </nav>
+</header>
+
+{% if definition %}
+<div class="modulebar">
+  <span class="modid">{{ definition.module_id }}</span>
+  <span class="sys">{{ definition.system }}</span>
+  <h1>{{ definition.name_ja }}</h1>
+  <span class="en">{{ definition.name_en }}</span>
+</div>
+{% endif %}
+
+<main>{% block main %}{% endblock %}</main>
+
+<footer>
+  <span>ProcAssist vertical slice · Step 3</span>
+  <span>records: build/dataset_b/evidence/records.jsonl（読み取り専用）</span>
+</footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>
