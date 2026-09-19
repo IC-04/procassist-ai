@@ -1,36 +1,5 @@
 # RETRIEVAL_SPEC — Execution Memory
 
-## Submission-Ready Specification
-
-**Status:** Deferred — Step 2 / Step 3 scope; not in effect  
-**Current project scope:** Step 1 only  
-**Activation condition:** Do not implement until Step 1 exits at S-DONE  
-**Purpose:** Retained design for possible revival after Step 1
-
-### Submission Note
-
-This document specifies a lightweight execution-memory and retrieval design. It is **not an active implementation specification for the current Step 1 work**. Its scope is explicitly deferred to Step 2 / Step 3 and it must not be used to introduce retrieval, vector databases, process memory, or few-shot retrieval before the Step 1 completion gate is reached.
-
-### Reviewer Navigation
-
-1. What Is Stored
-2. Similarity Model
-3. Retrieval API
-4. Intended Uses
-5. Leakage Prevention — Hard Rule
-6. Choosing the Number of Families
-
-### Scope and Integrity
-
-- The current objective remains **Step 1 only**, as governed by `docs/STEP1_SPEC.md` and ADR-016.
-- This document is retained as a deferred design and may be revived only after Step 1 reaches **S-DONE**.
-- The design explicitly rejects a vector database under ADR-007 for the stated corpus size.
-- Dataset A must never be used as retrieval memory for a Dataset B run.
-- Oracle-k evaluation on A and unknown-k selection on B are kept separate.
-- The contents below are preserved from the source specification; the submission framing above is presentation metadata only.
-
----
-
 # RETRIEVAL_SPEC — Execution memory
 
 Lightweight case-based memory. **No vector database** (ADR-007): the corpus is hundreds of
