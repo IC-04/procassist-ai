@@ -1,5 +1,4 @@
 # AI_REASONING_SPEC — Execution Reasoner
-## Submission-Ready Edition
 
 **Document:** `AI_REASONING_SPEC.md`  
 **Artifact type:** Technical specification  
