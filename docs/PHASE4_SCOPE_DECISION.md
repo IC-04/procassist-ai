@@ -1,38 +1,5 @@
 # Phase 4 — Scope Decision: Blanket VLM Pass Cancelled
 
-## Submission-Ready Decision Record
-
-| Field | Value |
-|---|---|
-| **Artifact type** | Phase decision / evidence record |
-| **Decision** | Blanket VLM pass cancelled; zero VLM calls |
-| **Dataset** | Dataset B |
-| **Scope** | Phase 4-Micro / evidence review |
-| **Status** | **Final decision record** |
-| **Spend** | **$0.00** |
-| **Implementation consequence** | Bounded visual-extraction capability retained; no blanket execution |
-
-> **Submission note:** This document records a completed scope decision supported by observed telemetry and bounded verification. It does **not** claim that visual extraction is universally unnecessary; it records why the blanket Phase 4 pass was not justified for the questions examined, what residual uncertainty remains, and what capability was retained for controlled future use.
-
-## Reviewer Navigation
-
-1. Original Phase 4 premise and why it no longer applies
-2. Three sanctioned Phase 4-Micro questions and answers
-3. Bounded visual-extraction capability retained
-4. Actual spend
-5. Known cost of the cancellation
-
-## Submission Integrity
-
-- Evidence-derived observations are explicitly marked `[DATASET]`; inferences are explicitly marked `[INF]`.
-- The decision is based on the available text telemetry and bounded verification described below.
-- Zero VLM calls means no visual-model result is presented as evidence.
-- Residual uncertainty is stated explicitly rather than treated as resolved.
-- The retained extractor is fail-safe and auditable; it does not silently substitute a different provenance path.
-- This record does not expand the Phase 4 scope beyond the questions and residual defined here.
-
----
-
 ## 1. Original Scope and Why It No Longer Applies
 
 Phase 4 was designed before Pass 0 ran. Its premise was that the screens were only available as
