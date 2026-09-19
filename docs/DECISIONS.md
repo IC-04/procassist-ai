@@ -753,3 +753,45 @@ with the document suppressed.
 
 **Evidence** `docs/STEP2_HYPOTHESIS_VERIFICATION.md`; `docs/STEP3_TARGET_REFRAME.md`;
 `build/dataset_b/evidence/{hypothesis_tests,outcome_variance_sweep,retrieval_feasibility}.json`.
+
+---
+
+### ADR-025 · 2026-09-19 · accepted · ProcAssist: three queues, four statuses, no scores
+
+**Context** ADR-024 settled the target as prepare-and-present with a deterministic lookup. This
+ADR records the decisions taken while building it that a reader could otherwise mistake for
+arbitrary choices.
+
+**Three queues, not one.** Dataset B contains exactly **one** parsed `threshold` rule
+(接待交際費規程 第２条) and it is keyed on 費目. Three screens are therefore needed to show the
+engine's full behaviour honestly: `M05 :5133/payroll-items` (P6 invoices — **MISS**, no
+regulation governs an invoice amount), `M01 :5132/payroll-items` (P1 接待交際費 with 金額 —
+**OK/FLAG**) and `M07 :5133/leave-applications` (P9 — **REQUIRES_REVIEW**, because that screen
+has no 金額 column at all). M07 is not padding: it is where the regulation is demonstrably
+read — operators type 「規程確認のうえ承認」 there, and the captured Word document carrying 第２条
+has that sentence in its body. No P1 or P6 record lacks 金額, so REQUIRES_REVIEW is unreachable
+without it, and fabricating a gap was not an option.
+
+**`document_id` is a capture-window content hash, not a document identity.** 15 distinct
+`document_id`s carry the same 第２条 text under 5 different Word window titles. The regulation
+name is the identity that means something; the id says which capture the excerpt came from.
+`doc_type_ja` on those rows is screen text, not a document type, and is not surfaced.
+
+**FLAG means the clause is ambiguous, not that we disagree with the operator.** 第２条's tiers
+overlap: ¥135,181 satisfies both `5万円以上：役員承認` and `10万円以上：社長承認`. We report two
+matching tiers as FLAG rather than applying a most-specific-wins convention the document never
+states. Exactly one matching tier is OK. 12 of 120 records on the HR queue reach FLAG.
+
+**Four statuses, no confidence score.** A score invites trading the statuses apart ("0.7 OK")
+when three of them mean *stop and look* and only one means *the rule held*.
+
+**Dependencies** `fastapi`, `uvicorn`, `pydantic`, `jinja2` — four, as sanctioned. Definition
+files are **TOML via stdlib `tomllib`**, not YAML: YAML would have meant PyYAML, a fifth. The
+HTTP tests call the ASGI app through a 50-line stdlib caller rather than
+`fastapi.testclient`, which requires httpx, also a fifth.
+
+**Consequences** `build/dataset_b/evidence/*` is read-only to `procassist/`, asserted by test.
+The tool never operates a host control; `tests/test_procassist_panel_invariants.py` enforces
+that by reading `panel/panel.js`. Every suggestion and every human response is written to
+`build/procassist/audit.sqlite3`, hash-chained — that residual is what decides later whether a
+model is warranted, and nothing here presumes the answer.
