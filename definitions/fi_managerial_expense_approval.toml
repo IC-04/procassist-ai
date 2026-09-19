@@ -19,6 +19,9 @@ module_id     = "M07"
 system        = "FI"
 name_ja       = "経費承認（管理職）"
 name_en       = "managerial expense approval"
+display_order = 3
+portal_note_ja = "規程は適用されるが、この画面に 金額 の列がありません（4/24 REQUIRES_REVIEW）。"
+portal_note_en = "the rule applies but this screen has no 金額 column (4/24 REQUIRES_REVIEW)"
 record_prefix = "P9"
 
 # records.jsonl `column_headers` on 24 distinct P9 records, verbatim. Note: no 金額.
@@ -54,6 +57,24 @@ identity_note_en   = "document_id is a capture-window content hash; 15 captures 
 rule_id         = "3ece1f98df11:c002"
 variable_ja     = "金額"
 source_field_ja = "金額"
+
+# ── Approval ladder and this queue's ceiling ────────────────────────────────────────────────
+#
+# Unlike the HR queue, this one has a weakly observed ceiling: every 接待交際費 approval recorded
+# here (la-note on :5133/leave-applications) is 25,995円 and 35,227円 — both inside the
+# 部門長承認 band — and the captured ledger names its approvers at 管理職 level
+# (「承認者（管理職）: 伊藤大輔」). n = 2, which is far too few to call a ceiling measured, so the
+# basis is recorded as OBSERVED with its n stated rather than asserted as fact.
+#
+# In practice it never fires: this screen has no 金額 column, so every governed record here
+# stops at REQUIRES_REVIEW before the ceiling is consulted. It is declared anyway, so that the
+# day 金額 appears on this screen the rule is already stated.
+[authority]
+ladder_ja     = ["部門長承認", "役員承認", "社長承認"]
+ceiling_ja    = "部門長承認"
+basis         = "OBSERVED"
+basis_note_ja = "観測された接待交際費の承認額は 25,995円・35,227円 の 2 件のみで、いずれも部門長承認帯です（n=2）。台帳の承認者は管理職です。"
+basis_note_en = "only 2 接待交際費 approvals observed here (25,995円, 35,227円), both inside the 部門長承認 band; the captured ledger records approvers at 管理職 level (n=2)"
 
 # Reconstructed from payload.target_element.value on la-note clicks at
 # http://127.0.0.1:5133/#/leave-applications — 72 typed values, all of this shape.

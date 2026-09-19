@@ -2,26 +2,35 @@
 {% block title %}業務ポータル :{{ origin.split(':')[-1] }}（レプリカ）{% endblock %}
 {% block main %}
 <section class="pad">
-  <h2>このポータルの画面</h2>
+  <h2><span class="ja">このポータルの画面</span><span class="en">Screens on this portal</span></h2>
   <ul class="modulelist">
-    {% for d in here %}
+    {% for d in here|sort(attribute='display_order') %}
       <li><a href="{{ d.host.route }}">
         <span class="modid">{{ d.module_id }}</span>
-        <strong>{{ d.name_ja }}</strong>
+        <strong class="ja">{{ d.name_ja }}</strong>
         <span class="en">{{ d.name_en }}</span>
         <span class="mono">{{ d.host.production_url_ja }}</span>
+        {% if d.portal_note_ja %}
+          <span class="portal-note ja">{{ d.portal_note_ja }}</span>
+          <span class="portal-note en">{{ d.portal_note_en }}</span>
+        {% endif %}
       </a></li>
     {% else %}
       <li class="empty">このオリジンに定義された画面はありません。</li>
     {% endfor %}
   </ul>
-  <h2>すべてのキュー</h2>
+  <h2><span class="ja">すべてのキュー</span><span class="en">All queues</span></h2>
   <ul class="modulelist small">
-    {% for d in all_definitions %}
+    {% for d in all_definitions|sort(attribute='display_order') %}
       <li><a href="{{ d.host.origin }}{{ d.host.route }}">
         <span class="modid">{{ d.module_id }}</span>
-        <strong>{{ d.name_ja }}</strong>
+        <strong class="ja">{{ d.name_ja }}</strong>
+        <span class="en">{{ d.name_en }}</span>
         <span class="mono">{{ d.host.origin }}{{ d.host.route }}</span>
+        {% if d.portal_note_ja %}
+          <span class="portal-note ja">{{ d.portal_note_ja }}</span>
+          <span class="portal-note en">{{ d.portal_note_en }}</span>
+        {% endif %}
       </a></li>
     {% endfor %}
   </ul>

@@ -15,6 +15,9 @@ module_id     = "M05"
 system        = "FI"
 name_ja       = "請求書承認・経費精算"
 name_en       = "invoice approval"
+display_order = 2
+portal_note_ja = "根拠規程なし（108/108 MISS）。請求書金額に承認権限を定める規程はコーパスに存在しません。推測しないことがこの画面の成果です。"
+portal_note_en = "no governing rule (108/108 MISS) — the refusal is the finding, not a gap"
 record_prefix = "P6"
 
 # records.jsonl `column_headers` on 108 distinct P6 records, verbatim.

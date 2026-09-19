@@ -34,18 +34,27 @@ def test_case_1_ok(svc):
     threshold = _threshold(r)
     assert threshold.status is Status.OK
     assert threshold.expected_ja == "役員承認"
+    # exactly one tier matches, so there is nothing to note about overlap
+    assert threshold.inference_note_ja is None
     assert r.clause["text_ja"] == "1回あたり5万円未満：部門長承認。5万円以上：役員承認。10万円以上：社長承認。"
     assert r.document["regulation_name_ja"] == "接待交際費規程"
 
 
 def test_case_2_flag(svc):
-    """P1-07106250-010, 接待交際費 135,181円 -> two tiers match -> FLAG, strictest 社長承認."""
+    """P1-07106250-010, 接待交際費 135,181円 -> 社長承認 band -> exceeds the queue's ceiling."""
     r = svc.prepare_record("P1-07106250-010", log=False)
     assert r.status is Status.FLAG
     threshold = _threshold(r)
     assert threshold.status is Status.FLAG
     assert threshold.expected_ja == "社長承認"
     assert "135,181円" in threshold.why_ja and "10万円以上" in threshold.why_ja
+    # the FLAG is about where the record was found, not about the clause being unreadable
+    assert "役員承認" in threshold.observed_ja          # the queue's declared ceiling
+    assert threshold.semantics == "MOST_SPECIFIC_TIER"
+    assert threshold.basis == "INF" and "[INF]" in threshold.basis_note_ja
+    # the literal overlap survives as a note, at lower prominence
+    assert threshold.inference_note_ja and "[INF]" in threshold.inference_note_ja
+    assert "重複" in threshold.inference_note_ja
     # the denominator is measured, not asserted: a lone FLAG would read as an anecdote
     assert r.population["n_same_status"] > 1
     assert r.population["n_queue"] == 120

@@ -87,6 +87,46 @@ class RecordTypeRule(Frozen):
         return False
 
 
+class AuthorityLadder(Frozen):
+    """The approval ladder a threshold clause names, and where this queue's ceiling sits.
+
+    Two separate things, deliberately kept apart because their evidence is not the same:
+
+      * `ladder_ja` is quoted from the clause. It is OBSERVED.
+      * `ceiling_ja` is the highest authority this queue is treated as able to dispose of
+        without escalating. On the HR settlement queue that is a **declared policy parameter**
+        and it is tagged `INF`: the capture does not determine it (接待交際費 settlements were
+        observed there spanning both the 役員承認 and the 社長承認 band). On the managerial
+        approval queue it is weakly observed and `basis` says so, with n.
+
+    `basis` is one of the EVIDENCE_TYPES vocabulary plus `INF`, and the panel renders the tag
+    next to the check, so a reader can see which half of the rule is measured.
+    """
+
+    ladder_ja: List[str]
+    ceiling_ja: str
+    basis: str = "INF"
+    basis_note_ja: str = ""
+    basis_note_en: str = ""
+
+    @field_validator("ceiling_ja")
+    @classmethod
+    def _ceiling_is_on_the_ladder(cls, v: str, info) -> str:
+        ladder = (info.data or {}).get("ladder_ja") or []
+        if ladder and v not in ladder:
+            raise ValueError(f"ceiling {v!r} is not one of the ladder rungs {ladder}")
+        return v
+
+    def rank(self, authority_ja: Optional[str]) -> int:
+        """Position on the ladder; -1 for an authority the clause does not name."""
+        if not authority_ja or authority_ja not in self.ladder_ja:
+            return -1
+        return self.ladder_ja.index(authority_ja)
+
+    def exceeds_ceiling(self, authority_ja: Optional[str]) -> bool:
+        return self.rank(authority_ja) > self.rank(self.ceiling_ja)
+
+
 class RequiredFields(Frozen):
     """Fields the screen must show before the rule can be evaluated at all.
 
@@ -158,6 +198,11 @@ class ModuleDefinition(Frozen):
     system: str
     name_ja: str
     name_en: str
+    #: Where this queue sits in the portal. The demo opens on a queue where the tool can help;
+    #: the queue where it correctly refuses comes second, framed as the finding it is.
+    display_order: int = 100
+    portal_note_ja: str = ""
+    portal_note_en: str = ""
     host: HostRef
     record_prefix: str
     column_headers_ja: List[str]
@@ -168,6 +213,7 @@ class ModuleDefinition(Frozen):
     governed_by: Optional[RecordTypeRule] = None
     document: Optional[DocumentRef] = None
     threshold: Optional[ThresholdRuleRef] = None
+    authority: Optional[AuthorityLadder] = None
     comment: CommentTemplate
     miss_reason_ja: str = ""
     miss_reason_en: str = ""

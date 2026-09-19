@@ -4,14 +4,20 @@ This module does not parse Japanese. `analysis/evidence` did that in Step 2 and 
 in `documents.jsonl` as structured `parsed.tiers`. What is left is arithmetic and the honest
 reporting of what the arithmetic does *not* settle.
 
-The one interesting decision is `evaluate_threshold`. 接待交際費規程 第２条 reads:
+The one interesting decision is how to read overlapping tiers. 接待交際費規程 第２条 reads:
 
     1回あたり5万円未満：部門長承認。5万円以上：役員承認。10万円以上：社長承認。
 
-Its tiers overlap. ¥135,181 satisfies both `5万円以上：役員承認` and `10万円以上：社長承認`, so the
-clause as written does not select a single approval authority for it. We report that as `FLAG`
-rather than silently applying a most-specific-wins convention the document never states. An
-amount that satisfies exactly one tier is `OK`: the clause routes it unambiguously.
+As a string, ¥135,181 satisfies both `5万円以上` and `10万円以上`. As a Japanese
+approval-authority clause it does not: tiers of this form are conventionally read as **bands**,
+where `5万円以上` means 5万〜10万 and the most specific matching tier wins. We apply band
+semantics — `MOST_SPECIFIC_TIER` — so ¥135,181 is unambiguously 社長承認. The literal overlap is
+kept and reported as a lower-prominence `INF` note rather than being silently resolved.
+
+A `FLAG` is then not a statement about the clause but about **where the record was found**: the
+authority the clause requires exceeds the ceiling declared for the queue the record sits in.
+That ceiling lives in `definitions/*.toml`, tagged with its basis, because on the HR settlement
+queue it is a declared policy parameter and not something the capture determines.
 """
 from __future__ import annotations
 
@@ -70,8 +76,15 @@ def matching_tiers(amount_jpy: int, tiers: Sequence[Dict[str, Any]]) -> List[Dic
     return out
 
 
+#: How overlapping tiers are read. Named so the choice is visible in the trace and the UI.
+SEMANTICS = "MOST_SPECIFIC_TIER"
+
+
 def strictest_tier(tiers: Sequence[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
-    """The matching tier with the highest threshold; ties resolve to the later clause sentence."""
+    """The most specific matching tier: highest threshold, later clause sentence breaking ties.
+
+    Under band semantics this is *the* applicable tier, not merely the strictest of several.
+    """
     if not tiers:
         return None
     return max(enumerate(tiers), key=lambda p: (float(p[1].get("value_jpy") or 0.0), p[0]))[1]
@@ -132,31 +145,67 @@ def evaluate_threshold(
                     f"this case and a human must."),
         )
 
-    strictest = strictest_tier(matched) or matched[-1]
-    consequent = str(strictest.get("consequent") or "")
-    reasons = [
-        f"{ref.variable_ja} {shown_amount} は「{t.get('raw')}」に該当 → {t.get('consequent')}"
-        for t in matched
-    ]
+    applicable = strictest_tier(matched) or matched[-1]
+    consequent = str(applicable.get("consequent") or "")
+    why_tier = (f"{ref.variable_ja} {shown_amount} は「{applicable.get('raw')}」に該当 "
+                f"→ {consequent}")
 
+    # The literal overlap is kept, but as a note rather than as the verdict.
+    overlap_note_ja = overlap_note_en = None
     if len(matched) > 1:
+        others = "・".join(f"「{t.get('raw')}」" for t in matched if t is not applicable)
+        overlap_note_ja = (f"[INF] {heading}の区分は文字どおりには重複します（{others} にも該当）。"
+                           f"帯（バンド）解釈をとり、最も限定的な区分を適用しました。")
+        overlap_note_en = (f"[INF] the tiers of {heading} overlap as written; band semantics "
+                           f"assumed and the most specific tier applied "
+                           f"({SEMANTICS}).")
+
+    ladder = definition.authority
+    if ladder is None:
+        return Check(
+            **base,
+            status=Status.OK,
+            expected_ja=consequent,
+            observed_ja=shown_amount,
+            why_ja=why_tier + "。",
+            why_en=f"the clause routes {shown_amount} to {consequent}.",
+            semantics=SEMANTICS,
+            inference_note_ja=overlap_note_ja,
+            inference_note_en=overlap_note_en,
+        )
+
+    ceiling = ladder.ceiling_ja
+    if ladder.exceeds_ceiling(consequent):
         return Check(
             **base,
             status=Status.FLAG,
             expected_ja=consequent,
-            observed_ja="この画面には承認権限の記録欄がありません",
-            why_ja="。".join(reasons) + f"。区分が{len(matched)}件該当するため、{heading}だけでは決まりません。",
-            why_en=(f"{len(matched)} tiers of the clause match {shown_amount}; the strictest is "
-                    f"{consequent}. The clause as written does not select between them, and this "
-                    f"screen records no approval authority, so a human decides."),
+            observed_ja=f"このキューの権限上限：{ceiling}",
+            why_ja=(why_tier + f"。必要な承認権限が、このキュー（{definition.name_ja}）の"
+                    f"権限上限 {ceiling} を超えています。"),
+            why_en=(f"{shown_amount} falls in the {applicable.get('raw')} band, which requires "
+                    f"{consequent}. That exceeds the declared ceiling for this queue "
+                    f"({definition.name_ja}), which is {ceiling}."),
+            semantics=SEMANTICS,
+            basis=ladder.basis,
+            basis_note_ja=ladder.basis_note_ja,
+            basis_note_en=ladder.basis_note_en,
+            inference_note_ja=overlap_note_ja,
+            inference_note_en=overlap_note_en,
         )
 
     return Check(
         **base,
         status=Status.OK,
         expected_ja=consequent,
-        observed_ja=shown_amount,
-        why_ja=reasons[0] + "。該当区分は1件のみです。",
-        why_en=(f"exactly one tier matches {shown_amount}; the clause routes it to {consequent} "
-                f"without ambiguity."),
+        observed_ja=f"このキューの権限上限：{ceiling}",
+        why_ja=why_tier + f"。キューの権限上限 {ceiling} の範囲内です。",
+        why_en=(f"{shown_amount} falls in the {applicable.get('raw')} band, which requires "
+                f"{consequent}, within this queue's declared ceiling of {ceiling}."),
+        semantics=SEMANTICS,
+        basis=ladder.basis,
+        basis_note_ja=ladder.basis_note_ja,
+        basis_note_en=ladder.basis_note_en,
+        inference_note_ja=overlap_note_ja,
+        inference_note_en=overlap_note_en,
     )

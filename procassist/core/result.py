@@ -53,6 +53,16 @@ class Check(Frozen):
     observed_ja: Optional[str] = None
     why_ja: Optional[str] = None
     why_en: Optional[str] = None
+    #: How overlapping tiers were read, when that mattered (e.g. "MOST_SPECIFIC_TIER").
+    semantics: Optional[str] = None
+    #: Evidence class of the part of the rule that is NOT quoted from the document: one of the
+    #: EVIDENCE_TYPES vocabulary, or "INF" for a declared policy parameter. Rendered as a tag.
+    basis: Optional[str] = None
+    basis_note_ja: Optional[str] = None
+    basis_note_en: Optional[str] = None
+    #: A fact kept alongside the verdict rather than folded into it.
+    inference_note_ja: Optional[str] = None
+    inference_note_en: Optional[str] = None
     provenance: Optional[Provenance] = None
 
 

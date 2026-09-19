@@ -10,6 +10,9 @@ module_id     = "M01"
 system        = "HR"
 name_ja       = "経費精算・給与変更"
 name_en       = "expense settlement + payroll change"
+display_order = 1
+portal_note_ja = "接待交際費規程 第２条 を適用できる唯一のキュー。OK と FLAG はここで出ます。"
+portal_note_en = "the one queue where the corpus's single authority rule and the amount it needs are on the same screen"
 record_prefix = "P1"
 
 # The queue table's own headers, verbatim, from records.jsonl `column_headers` on 120 distinct
@@ -64,6 +67,28 @@ identity_note_en    = "document_id is a capture-window content hash; 15 captures
 rule_id         = "3ece1f98df11:c002"
 variable_ja     = "金額"
 source_field_ja = "金額"
+
+# ── Approval ladder and this queue's ceiling ────────────────────────────────────────────────
+#
+# ladder_ja is QUOTED from 第２条, lowest authority first. That half is observed.
+#
+# ceiling_ja is NOT. It is a DECLARED POLICY PARAMETER, tagged INF, and it is the only knob of
+# its kind in the system. It is declared here rather than derived because we measured and the
+# capture does not determine it: of the 8 distinct 接待交際費 settlements observed on this queue
+# (pi-note on :5132), 5 fall in the 役員承認 band (60,936–98,018円) and 3 in the 社長承認 band
+# (118,189 / 123,224 / 135,181円), and no observed field — 種別, ステータス, exception_marker,
+# badge_ja — distinguishes the two groups (all 23 接待交際費 records are 種別 調整, all have
+# exception_marker false and no badge).
+#
+# So where a settlement clerk's authority stops is a question for the client, not for the
+# corpus. We declare 役員承認, surface the tag in the panel, and the client changes this one
+# line. Everything downstream follows from it.
+[authority]
+ladder_ja     = ["部門長承認", "役員承認", "社長承認"]
+ceiling_ja    = "役員承認"
+basis         = "INF"
+basis_note_ja = "[INF] このキューの権限上限は宣言値です。キャプチャからは決まりません（役員承認帯 5 件・社長承認帯 3 件が同じ画面で観測され、区別する項目はありません）。"
+basis_note_en = "[INF] declared policy parameter, not measured: both bands were observed on this queue (5 in 役員承認, 3 in 社長承認) with no field distinguishing them"
 
 # Reconstructed from payload.target_element.value on pi-note clicks at
 # http://127.0.0.1:5132/#/payroll-items — 142 of the 223 typed values on this queue take this
