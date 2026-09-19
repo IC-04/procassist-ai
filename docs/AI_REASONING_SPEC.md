@@ -1,38 +1,5 @@
 # AI_REASONING_SPEC — Execution Reasoner
 
-**Document:** `AI_REASONING_SPEC.md`  
-**Artifact type:** Technical specification  
-**Status:** Rescoped / governed by ADR-018  
-**Scope:** Execution-reasoner payload, output contract, model controls, reproducibility, failure handling, and ambiguity routing  
-**Submission purpose:** Formal specification for review and implementation traceability
-
-> **Submission status:** This document is preserved as an architecture/specification record. Its original scope has been retained, including superseded or deferred sections, so reviewers can trace how the execution reasoner is governed.
-
-## Submission Note
-
-This edition adds submission-facing navigation and integrity framing without silently changing the substantive specification. The original schemas, constraints, model configuration, cache design, failure behavior, cost/latency logging, tool/vision rules, and ambiguity-gate requirements are retained.
-
-The current governing scope is explicitly distinguished from deferred functionality: ADR-018 rescopes the LLM as a bounded adjudicator on the ambiguous tail and keeps the reasoner ablatable. Sections that remain in force and sections that are out of scope for the first implementation are identified below.
-
-## Reviewer Navigation
-
-- **§1–§2:** Reasoner job and input payload
-- **§3–§4:** Enforced output schema and prohibited model outputs
-- **§5–§9:** Prompt governance, pinned configuration, caching, retries, `--no-llm`, and observability
-- **§10–§12:** Few-shot, agentic tools, and selective vision — deferred/out-of-scope where stated
-- **§13:** Deterministic ambiguity gate and current routing constraint
-- **Governing decision:** ADR-018
-
-## Submission Integrity
-
-- The document remains a specification, not an experimental result.
-- Contractual constraints are preserved as requirements rather than presented as measured outcomes.
-- Deferred functionality remains explicitly marked rather than silently removed.
-- Dataset-specific leakage controls remain explicit.
-- Deterministic structural validity remains outside the LLM's authority.
-- Reproducibility, caching, failure handling, and `--no-llm` behavior remain part of the specification.
-- Any future change to governed architecture/specification should be recorded through the project's ADR process.
-
 ## 1. Job
 
 Given a local TEKG window, decide the relationship of one block to the block before it.
