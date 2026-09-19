@@ -13,8 +13,6 @@
 
 ---
 
-**Indrani Chattopadhyay** · IIT Bhubaneswar · Mechanical Engineering · indranichattopadhyay635@gmail.com
-
 **Assignment:** 7-day AI Engineer / Forward-Deployed Engineer recruitment task · ~55 hours of recorded effort · 449 tests passing
 
 ---
