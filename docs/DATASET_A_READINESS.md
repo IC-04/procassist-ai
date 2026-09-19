@@ -1,5 +1,4 @@
 # Dataset A — Ingestion and Readiness
-## Submission-Ready Edition
 
 **Document:** `DATASET_A_READINESS.md`  
 **Document type:** Dataset readiness / ingestion record  
@@ -10,12 +9,6 @@
 > **Submission purpose:** This document records the measured readiness of Dataset A for Phase 1. It is an evidence record, not a Phase 1 analysis. Ground-truth canonicalisation, evaluation, baselines, segmentation experiments, and parameter selection from Dataset A remain explicitly outside this document.
 
 ---
-
-## Submission Note
-
-This submission-ready edition preserves the substantive Dataset A readiness record, including source reconstruction, integrity measurements, schema compatibility, Dataset A/B factual comparisons, smoke-test results, dataset-specific observations, blockers, Git-safety findings, and the Phase 1 readiness decision.
-
-No measured result, caveat, observation, constraint, or implementation status has been silently removed or rewritten to make the record appear cleaner. In particular, the document continues to distinguish **readiness for Phase 1** from work that belongs to Phase 1 itself.
 
 ## Reviewer Navigation
 
