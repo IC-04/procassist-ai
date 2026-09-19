@@ -1,44 +1,5 @@
 # Architecture
 
-**Document:** `ARCHITECTURE.md`  
-**Document type:** System architecture / governing design record  
-**Status:** **CLOSED**  
-**Change authority:** Changes to this document require an ADR in `DECISIONS.md`.  
-**Submission purpose:** Preserve the project’s governing architecture, responsibility boundaries, approved dependencies, and known risks, while making the document suitable for formal review.
-
-> **Supersession status:** This architecture is partially superseded in the specific areas identified below. The supersession is preserved as part of the architectural record rather than silently rewritten.
-
-## Submission Note
-
-This edition preserves the substantive architecture and its recorded status. It does not silently reconcile older architectural stages with later ADRs or Step 1 specifications. In particular:
-
-- The original pipeline and decoder sections remain visible as historical architectural decisions, with their current supersession explicitly identified.
-- Step 1 is governed by the later `STEP1_SPEC.md` requirements and the corresponding ADRs.
-- Stages 7–10 of the original pipeline remain **Step 2 / Step 3 scope and deferred**.
-- The deterministic-versus-LLM responsibility boundary, approved dependency decisions, and known risks remain part of the architecture.
-- No metrics, claims, dependencies, risks, or implementation constraints have been removed merely for presentation.
-
-## Reviewer Navigation
-
-1. **Problem definition** — what the system is intended to recover and how it is evaluated.
-2. **Original pipeline** — the ten-stage architecture and its current supersession status.
-3. **Division of responsibility** — what deterministic code controls versus what the LLM may produce.
-4. **Decoder / safety mechanism** — the original global-consistency mechanism and its architectural rationale.
-5. **Approved dependencies** — accepted and rejected technology choices.
-6. **Known risks** — risks carried into implementation and their planned detection/fallbacks.
-
-## Submission Integrity
-
-- **Architectural authority is explicit:** this document is closed and changes require an ADR.
-- **Superseded material is retained:** historical stages are not presented as currently authoritative where later specifications replaced them.
-- **Scope boundaries are preserved:** deferred Step 2 / Step 3 work is not represented as completed.
-- **Responsibility boundaries remain explicit:** structural validity and numerical quantities are not delegated to the LLM.
-- **Negative/fallback paths remain visible:** the deterministic baseline and `--no-llm` execution mode are preserved.
-- **Dependency decisions remain auditable:** both reused and rejected dependencies are retained.
-- **Risk ownership remains visible:** each listed risk retains its detection and fallback path.
-
----
-
 ## 1. The problem, stated precisely
 
 Given a chronological stream of low-level desktop events with no process labels, no case
