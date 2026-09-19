@@ -15,6 +15,8 @@ from .core.definitions import ModuleDefinition
 from .core.impact import action_budget, total_budget
 from .core.engine import prepare
 from .core.result import PrepareResult, Provenance
+from .core.rules import SEMANTICS, format_amount_jpy, parse_amount_jpy
+from .core.trace import Trace
 from .measured import measured_action_budget
 
 #: Widened context shown under `View source`, in characters either side of the clause.
@@ -58,12 +60,19 @@ class Service:
     def prepare_record(self, record_id: str, trace_id: str = "", log: bool = True,
                        with_population: bool = True) -> PrepareResult:
         """Look the record up, load its clause, run the engine, record the suggestion."""
+        tr = Trace()
         row = self.records.get(record_id)
         if row is None:
             raise KeyError(record_id)
         definition = self.defs.for_record(record_id)
         if definition is None:
             raise KeyError(f"no definition for {record_id!r}")
+        tr.step("resolve definition", "定義の特定", "lookup",
+                definition.definition_id,
+                f"{definition.definition_id} — by record_prefix {definition.record_prefix}, "
+                f"not by module_id (ADR-022)")
+        tr.step("load record", "レコードの読み込み", "lookup", record_id,
+                f"{record_id} — {row['n_captures']} capture(s)")
 
         fields = row["fields"]
         clause = None
@@ -80,6 +89,10 @@ class Service:
             parsed = (rule or {}).get("parsed")
             siblings = (self.documents.siblings_by_rule_text(rule["raw_text_ja"])
                         if rule else [])
+            tr.step("resolve governing doc", "規程の特定", "lookup",
+                    f"{ref.regulation_name_ja}（module + record_type）",
+                    f"{ref.regulation_name_ja} (lookup: module + record_type)",
+                    link=f"/v1/source/{ref.document_id}/{ref.clause_id}")
             if excerpt is not None:
                 clause = excerpt
                 document_meta = {
@@ -94,6 +107,11 @@ class Service:
                     "identity_note_en": ref.identity_note_en,
                     "raw_rule_text_ja": (rule or {}).get("raw_text_ja"),
                 }
+                tr.step("localise clause", "条文の特定", "lookup",
+                        f"{excerpt.get('heading_ja')}  clause_id {ref.clause_id}",
+                        f"{excerpt.get('heading_ja')} · clause_id {ref.clause_id} · "
+                        f"char_span {excerpt['char_span']}",
+                        link=f"/v1/source/{ref.document_id}/{ref.clause_id}")
                 provenance = Provenance(
                     document_id=ref.document_id,
                     clause_id=ref.clause_id,
@@ -117,15 +135,15 @@ class Service:
             document_meta=document_meta,
             trace_id=trace_id or new_trace_id(),
         )
-        result = (base.model_copy(update={"population": self._population(definition, base)})
-                  if with_population else base)
+        self._trace_engine_steps(tr, definition, base, fields)
+        result = base
         if log:
             suggested = result.status.value
             authority = next((c.expected_ja for c in result.checks
                               if c.kind == "threshold" and c.expected_ja), None)
             if authority:
                 suggested = f"{result.status.value}:{authority}"
-            self.audit.append(
+            row_written = self.audit.append(
                 result.trace_id, "prepare",
                 definition_id=definition.definition_id,
                 module_id=definition.module_id,
@@ -135,7 +153,51 @@ class Service:
                                    for c in result.checks],
                         "draft_offered": result.draft is not None},
             )
-        return result
+            # The audit write is a real step with a real cost; it belongs in the trace.
+            tr.step("append audit", "監査ログの追記", "audit",
+                    f"seq {row_written['seq']} · row_hash {row_written['row_hash'][:8]}…",
+                    f"seq {row_written['seq']} · row_hash {row_written['row_hash'][:8]}… "
+                    f"(hash-chained to the previous row)")
+
+        update: Dict[str, Any] = {
+            "trace": tr.dump(),
+            "actions_avoided": action_budget(definition, base.draft,
+                                             self._lookup_count(base), self._measured),
+        }
+        if with_population:
+            update["population"] = self._population(definition, base)
+        return base.model_copy(update=update)
+
+    @staticmethod
+    def _trace_engine_steps(tr: Trace, definition: ModuleDefinition, base: PrepareResult,
+                            fields: Dict[str, Optional[str]]) -> None:
+        """Record the steps the engine took after the evidence was loaded."""
+        threshold = next((c for c in base.checks if c.kind == "threshold"), None)
+        miss = next((c for c in base.checks if c.kind == "lookup"), None)
+        if threshold is not None:
+            amount = parse_amount_jpy(fields.get(
+                definition.threshold.source_field_ja if definition.threshold else "金額"))
+            shown = format_amount_jpy(amount) if amount is not None else "（画面に項目なし）"
+            tr.step("evaluate threshold", "金額の判定", "threshold",
+                    f"金額 {shown} → {threshold.expected_ja}（{SEMANTICS}）",
+                    f"金額 {shown} → {threshold.expected_ja} ({SEMANTICS})")
+        elif miss is not None:
+            tr.step("resolve governing doc", "規程の特定", "lookup",
+                    f"MISS — {miss.observed_ja}",
+                    f"MISS — no rule governs {miss.observed_ja}; no fallback attempted")
+
+        required = [c for c in base.checks if c.kind == "required_field"]
+        marks = "  ".join(f"{c.label_ja.split('：')[-1]} "
+                          f"{'✓' if c.status.value == 'OK' else '✗'}" for c in required)
+        tr.step("check required fields", "必須項目の確認", "required", marks, marks)
+
+        if base.draft is not None:
+            tr.step("render draft", "下書きの生成", "template",
+                    f"template {definition.definition_id} · judgement EMPTY",
+                    f"template {definition.definition_id} · judgement EMPTY")
+        else:
+            tr.step("render draft", "下書きの生成", "template",
+                    "下書きなし（項目不足）", "no draft: a template slot is unfillable")
 
     # -- the whole queue at once -------------------------------------------------------------
 
@@ -167,8 +229,8 @@ class Service:
                 n_documents += 1
             if result.draft is not None:
                 n_drafts += 1
-            budget = action_budget(definition, result.draft, self._lookup_count(result),
-                                   self._measured)
+            budget = result.actions_avoided or action_budget(
+                definition, result.draft, self._lookup_count(result), self._measured)
             budgets.append(budget)
             out_rows.append({
                 "record_id": result.record_id,

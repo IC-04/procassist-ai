@@ -124,9 +124,18 @@
 
   function renderClause(r) {
     if (!r.clause) { return ""; }
+    var g = r.clause.gloss;
+    var glossBlock = g
+      ? '<div class="pa-clause-gloss">' +
+        '<span class="pa-glosslabel"><span class="ja">' + esc(g.label_ja) + "</span>" +
+        '<span class="en">' + esc(g.label_en) + "</span></span>" +
+        esc(g.gloss_en) + "</div>"
+      : "";
     return section("条文（clause）", "clause",
       '<p class="pa-clauseheading">' + esc(r.clause.heading_ja) + "</p>" +
-      '<blockquote class="pa-clause">' + esc(r.clause.text_ja) + "</blockquote>" +
+      // .clause-source: the authoritative Japanese, shown in every language mode.
+      '<blockquote class="pa-clause ja clause-source" id="pa-clausetext">' +
+      esc(r.clause.text_ja) + "</blockquote>" + glossBlock +
       '<p class="pa-note mono">char_span ' + esc(r.clause.char_span[0]) + "–" +
       esc(r.clause.char_span[1]) + " / " + esc(r.clause.body_len) + "</p>");
   }
@@ -138,12 +147,23 @@
       if (c.expected_ja) { rows += '<tr><th>Expected</th><td>' + esc(c.expected_ja) + "</td></tr>"; }
       if (c.observed_ja) { rows += '<tr><th>Observed</th><td>' + esc(c.observed_ja) + "</td></tr>"; }
       if (c.why_ja)      { rows += '<tr><th>Why</th><td>' + esc(c.why_ja) + "</td></tr>"; }
-      if (c.why_en)      { rows += '<tr><th></th><td class="pa-en">' + esc(c.why_en) + "</td></tr>"; }
+      if (c.why_en)      { rows += '<tr><th></th><td class="pa-en en">' + esc(c.why_en) + "</td></tr>"; }
+      var basis = c.basis
+        ? '<span class="pa-basis pa-basis-' + esc(c.basis) + '">' + esc(c.basis) + "</span>"
+        : "";
+      var basisNote = c.basis_note_ja
+        ? '<p class="pa-note"><span class="ja">' + esc(c.basis_note_ja) + "</span>" +
+          '<span class="en">' + esc(c.basis_note_en) + "</span></p>"
+        : "";
+      var infNote = c.inference_note_ja
+        ? '<p class="pa-infnote"><span class="ja">' + esc(c.inference_note_ja) + "</span>" +
+          '<span class="en">' + esc(c.inference_note_en) + "</span></p>"
+        : "";
       return '<li class="pa-check pa-' + esc(c.status) + '" data-check-id="' + esc(c.check_id) + '">' +
         '<div class="pa-checkhead"><span class="pa-mark">' + s.mark + "</span>" +
-        "<strong>" + esc(c.label_ja) + "</strong>" +
-        '<span class="pa-en">' + esc(c.label_en) + "</span></div>" +
-        '<table class="pa-kv pa-why">' + rows + "</table>" +
+        '<strong class="ja">' + esc(c.label_ja) + "</strong>" +
+        '<span class="pa-en en">' + esc(c.label_en) + "</span>" + basis + "</div>" +
+        '<table class="pa-kv pa-why">' + rows + "</table>" + basisNote + infNote +
         '<div class="pa-checkacts">' +
           '<button type="button" class="pa-chip pa-small" data-agree="' + i + '">同意</button>' +
           '<button type="button" class="pa-chip pa-small" data-dismiss="' + i + '">却下</button>' +
@@ -171,7 +191,100 @@
       "下書きを使う [Use draft]</button></div>" +
       '<p class="pa-note">判断（judgement）— 既定選択はありません</p>' +
       '<div class="pa-chips">' + chips + "</div>" +
-      '<p class="pa-note pa-en">' + esc(d.evidence_note_en) + "</p>");
+      '<p class="pa-note pa-en en">' + esc(d.evidence_note_en) + "</p>");
+  }
+
+  function renderImpact(r) {
+    var a = r.actions_avoided;
+    if (!a) { return ""; }
+    var sw = a.app_switches, ks = a.keystrokes, lu = a.lookups;
+    var body =
+      '<div class="pa-impact">' +
+        impactRow("アプリ切替", "app switches",
+                  sw.range[0] + "–" + sw.range[1]) +
+        impactRow("打鍵", "keystrokes", "~" + ks.exact) +
+        impactRow("参照", "look-ups", lu.exact) +
+      "</div>" +
+      '<p class="pa-impact-basis"><span class="ja">' + esc(sw.basis_ja) + " ／ " +
+      esc(ks.basis_ja) + "</span>" +
+      '<span class="en">' + esc(sw.basis_en) + " · " + esc(ks.basis_en) + "</span></p>" +
+      // The three numbers we will not invent. Shipped empty, on purpose.
+      '<div class="pa-calc">' +
+        '<label><span class="ja">1操作あたり秒数</span><span class="en">seconds per action</span>' +
+        '<input type="number" min="0" step="1" id="calc-spa" placeholder="—"></label>' +
+        '<label><span class="ja">年間処分件数</span><span class="en">dispositions per year</span>' +
+        '<input type="number" min="0" step="1" id="calc-dpy" placeholder="—"></label>' +
+        '<label><span class="ja">時間あたり人件費</span><span class="en">loaded hourly cost</span>' +
+        '<input type="number" min="0" step="1" id="calc-cost" placeholder="—"></label>' +
+        '<p class="pa-calc-out" id="calc-out"></p>' +
+        '<p class="pa-calc-note"><span class="ja">この3つの数値は貴社の数値です。' +
+        "本コーパスからは秒・円・人月を主張できません（取得環境で待ち時間が圧縮されています）。</span>" +
+        '<span class="en">These three numbers are yours to supply. This corpus cannot ' +
+        "support a claim in seconds, yen or FTE — waiting times were compressed in the " +
+        "capture environment.</span></p>" +
+      "</div>" +
+      '<p class="pa-note pa-en en">' + esc(a.caveat_en) + "</p>";
+    return section("回避される操作（actions avoided）", "impact", body);
+  }
+
+  function impactRow(ja, en, value) {
+    return '<div class="pa-impact-row"><span class="pa-impact-k">' +
+      '<span class="ja">' + esc(ja) + '</span><span class="en">' + esc(en) + "</span></span>" +
+      '<span class="pa-impact-v">' + esc(value) + "</span></div>";
+  }
+
+  function wireCalculator() {
+    var spa = document.getElementById("calc-spa");
+    var dpy = document.getElementById("calc-dpy");
+    var cost = document.getElementById("calc-cost");
+    var out = document.getElementById("calc-out");
+    if (!spa || !out) { return; }
+    function recompute() {
+      var a = state.result.actions_avoided;
+      var perRecord = [
+        a.app_switches.range[0] + a.lookups.exact,
+        a.app_switches.range[1] + a.lookups.exact
+      ];
+      var s = parseFloat(spa.value), d = parseFloat(dpy.value), c = parseFloat(cost.value);
+      if (!(s > 0) || !(d > 0)) { out.textContent = ""; return; }
+      var hoursLo = perRecord[0] * s * d / 3600, hoursHi = perRecord[1] * s * d / 3600;
+      var text = hoursLo.toFixed(0) + "–" + hoursHi.toFixed(0) + " h / year";
+      if (c > 0) {
+        text += "  ·  " + Math.round(hoursLo * c).toLocaleString() + "–" +
+          Math.round(hoursHi * c).toLocaleString() + " / year";
+      }
+      out.textContent = text + "  (your inputs, not ours)";
+    }
+    [spa, dpy, cost].forEach(function (el) { el.addEventListener("input", recompute); });
+  }
+
+  function renderTrace(r) {
+    if (!r.trace) { return ""; }
+    var rows = r.trace.steps.map(function (s) {
+      var detail = s.link
+        ? '<a class="pa-link" href="' + esc(s.link) + '" target="_blank" rel="noopener">' +
+          '<span class="ja">' + esc(s.detail_ja) + "</span>" +
+          '<span class="en">' + esc(s.detail_en) + "</span></a>"
+        : '<span class="ja">' + esc(s.detail_ja) + "</span>" +
+          '<span class="en">' + esc(s.detail_en) + "</span>";
+      return "<tr>" +
+        '<td class="tr-n">' + esc(s.n) + "</td>" +
+        '<td class="tr-step"><span class="ja">' + esc(s.name_ja) + "</span>" +
+        '<span class="en">' + esc(s.name_en) + "</span></td>" +
+        '<td class="tr-mech">' + esc(s.mechanism) + "</td>" +
+        '<td class="tr-detail">' + detail + "</td>" +
+        '<td class="tr-ms">' + esc(s.ms.toFixed ? s.ms.toFixed(2) : s.ms) + " ms</td>" +
+        "</tr>";
+    }).join("");
+    return '<details class="pa-trace-box" id="pa-trace">' +
+      "<summary><span class=\"ja\">エージェント実行トレース</span>" +
+      '<span class="en">Agent trace</span>' +
+      '<span class="pa-tracetotal">' + esc(r.trace.total_ms) + " ms · " +
+      esc(r.trace.steps.length) + " steps</span></summary>" +
+      '<table class="pa-trace">' + rows + "</table>" +
+      '<p class="pa-note"><span class="ja">' + esc(r.trace.note_ja) + "</span>" +
+      '<span class="en">' + esc(r.trace.note_en) + "</span></p>" +
+      "</details>";
   }
 
   function section(title, id, body) {
@@ -185,8 +298,11 @@
       '<div class="pa-head"><span class="pa-brand">ProcAssist</span>' +
       '<span class="pa-sub">prepares · does not decide</span></div>' +
       renderStatus(r) + renderRecord(r) + renderDocument(r) + renderClause(r) +
-      renderChecks(r) + renderDraft(r);
+      renderChecks(r) + renderDraft(r) + renderImpact(r) + renderTrace(r);
     wire();
+    wireCalculator();
+    markMatchedTier();
+    wireClauseSweep();
   }
 
   /* ── interaction. Every branch below is entered only by a human gesture. ─────────────── */
@@ -212,17 +328,77 @@
     }
   }
 
+  /* Wrap the tier text the threshold check actually matched, so it can be lit. Purely
+     presentational: the clause text itself is never altered, only wrapped in a span. */
+  function markMatchedTier() {
+    var box = document.getElementById("pa-clausetext");
+    var check = (state.result.checks || []).filter(function (c) {
+      return c.kind === "threshold" && c.expected_ja;
+    })[0];
+    if (!box || !check) { return; }
+    var text = box.textContent;
+    var idx = text.indexOf(check.expected_ja);
+    if (idx < 0) { return; }
+    // walk back to the start of the tier phrase (the sentence separator before it)
+    var start = Math.max(text.lastIndexOf("。", idx) + 1, 0);
+    var end = idx + check.expected_ja.length;
+    box.textContent = "";
+    box.appendChild(document.createTextNode(text.slice(0, start)));
+    var hit = document.createElement("span");
+    hit.className = "pa-hit";
+    hit.textContent = text.slice(start, end);
+    box.appendChild(hit);
+    box.appendChild(document.createTextNode(text.slice(end)));
+  }
+
+  function wireClauseSweep() {
+    var box = document.getElementById("pa-clausetext");
+    if (!box) { return; }
+    var checks = panel.querySelectorAll('li.pa-check[data-check-id^="threshold"]');
+    Array.prototype.forEach.call(checks, function (li) {
+      ["mouseenter", "focusin"].forEach(function (e) {
+        li.addEventListener(e, function () { box.classList.add("lit"); });
+      });
+      ["mouseleave", "focusout"].forEach(function (e) {
+        li.addEventListener(e, function () { box.classList.remove("lit"); });
+      });
+    });
+  }
+
+  /* A short typing reveal when the human presses [Use draft]. Capped at 400 ms total and
+     skipped entirely under prefers-reduced-motion; the final value is identical either way. */
+  function revealInto(field, text, done) {
+    if (window.matchMedia
+        && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      field.value = text;
+      done();
+      return;
+    }
+    var total = 380, start = performance.now();
+    function frame(now) {
+      var t = Math.min(1, (now - start) / total);
+      field.value = text.slice(0, Math.round(text.length * t));
+      if (t < 1) { requestAnimationFrame(frame); } else { field.value = text; done(); }
+    }
+    requestAnimationFrame(frame);
+  }
+
   function wire() {
     var use = document.getElementById("pa-usedraft");
     if (use) {
       use.addEventListener("click", function () {
         var field = noteField();
         if (!field) { return; }
-        field.value = composed();          // the note textarea is the ONLY host element we write
+        var text = composed();
         state.draftUsed = true;
-        state.baseText = field.value;
+        state.baseText = text;
+        // the note textarea is the ONLY host element this file ever writes to
+        revealInto(field, text, function () {
+          var chips = panel.querySelector(".pa-chips");
+          if (chips) { chips.classList.add("slidein"); }
+        });
         audit("draft_used", "pasted the draft into #" + ctx.noteId,
-              { text_ja: field.value, judgement: state.chosenJudgement });
+              { text_ja: text, judgement: state.chosenJudgement });
       });
     }
 

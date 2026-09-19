@@ -102,6 +102,10 @@ class PrepareResult(Frozen):
     #: single flagged record invites the reader to treat it as an anecdote; the denominator is
     #: what says whether it is one.
     population: Optional[Dict[str, object]] = None
+    #: What the engine did, step by step, with measured per-step timings. See core/trace.py.
+    trace: Optional[Dict[str, object]] = None
+    #: Actions this prepared record avoids, in counts and ranges. Never seconds, yen or FTE.
+    actions_avoided: Optional[Dict[str, object]] = None
     notes_en: List[str] = Field(default_factory=list)
 
     def model_post_init(self, _context: object) -> None:

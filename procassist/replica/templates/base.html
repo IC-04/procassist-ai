@@ -5,18 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}業務ポータル（レプリカ）{% endblock %}</title>
 <link rel="stylesheet" href="/_static/app.css">
+<script>
+/* Set the language class before first paint so nothing flashes in the wrong language.
+   Three states: ja (default) · en · both. Persisted per browser in localStorage. */
+(function(){try{var m=localStorage.getItem("procassist:lang")||"ja";
+document.documentElement.setAttribute("data-lang",m);}catch(e){
+document.documentElement.setAttribute("data-lang","ja");}}());
+</script>
 {% block head %}{% endblock %}
 </head>
 <body>
 <div class="badges" role="note" aria-label="honesty badges">
   {% for b in badges %}<span class="badge badge-{{ loop.index }}">{{ b }}</span>{% endfor %}
-  <span class="badge-note">このページは Dataset B の観測から再構成したレプリカです。実システムではありません。</span>
+  <span class="badge-note ja">このページは Dataset B の観測から再構成したレプリカです。実システムではありません。</span>
+  <span class="badge-note en">A replica reconstructed from Dataset B observations. Not a production system.</span>
 </div>
 
 <header class="chrome">
   <div class="addressbar" title="the (origin, route) key the module map turns on">
     <span class="origin">{{ origin }}</span><span
       class="route">{% if definition %}/#{{ definition.host.route }}{% else %}/#/{% endif %}</span>
+  </div>
+  <div class="langtoggle" role="group" aria-label="language">
+    <button type="button" data-lang="ja">日本語</button>
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="both">併記</button>
   </div>
   <nav class="portals">
     {% for p in ports %}
@@ -30,8 +43,7 @@
 <div class="modulebar">
   <span class="modid">{{ definition.module_id }}</span>
   <span class="sys">{{ definition.system }}</span>
-  <h1>{{ definition.name_ja }}</h1>
-  <span class="en">{{ definition.name_en }}</span>
+  <h1><span class="ja">{{ definition.name_ja }}</span><span class="en">{{ definition.name_en }}</span></h1>
 </div>
 {% endif %}
 
@@ -39,8 +51,10 @@
 
 <footer>
   <span>ProcAssist vertical slice · Step 3</span>
-  <span>records: build/dataset_b/evidence/records.jsonl（読み取り専用）</span>
+  <span class="mono">records: build/dataset_b/evidence/records.jsonl (read-only)</span>
+  <a href="/_evidence">エビデンス / Evidence</a>
 </footer>
+<script src="/_panel/lang.js" defer></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

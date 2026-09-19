@@ -18,7 +18,7 @@
   <div id="beforeafter" class="beforeafter" hidden></div>
   <table id="{{ definition.record_prefix|lower }}-table" class="queue">
     <thead><tr>
-      {% for h in definition.column_headers_ja %}<th>{{ h }}</th>{% endfor %}
+      {% for h in definition.column_headers_ja %}<th data-gloss="{{ h }}">{{ h }}</th>{% endfor %}
       <th class="col-agent">ProcAssist</th>
     </tr></thead>
     <tbody>
@@ -27,7 +27,7 @@
           data-record-id="{{ r.record_id }}"
           onclick="location.href='{{ definition.host.route }}/{{ r.record_id }}'">
         {% for h in definition.column_headers_ja %}
-          <td class="col-{{ loop.index }}">{{ r.fields.get(h) if r.fields.get(h) is not none else '—' }}</td>
+          <td class="col-{{ loop.index }}"{% if h in ('区分','申請種別','種別','ステータス','部署') %} data-gloss="{{ r.fields.get(h) }}"{% endif %}>{{ r.fields.get(h) if r.fields.get(h) is not none else '—' }}</td>
         {% endfor %}
         <td class="col-agent" data-agent-cell="{{ r.record_id }}"></td>
       </tr>

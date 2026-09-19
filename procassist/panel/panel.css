@@ -78,3 +78,87 @@ table.pa-why th{width:70px}
 .pa-chip.pa-small{border-radius:4px; padding:2px 10px; font-size:11.5px}
 .pa-n{color:#8a93a0; font-size:11px}
 .pa-chip.chosen .pa-n{color:#c9d6e6}
+
+/* Clause source text is authoritative and is shown in every language mode. Its gloss sits
+   beneath it, labelled, and never replaces it. */
+.pa-clause-gloss{margin:6px 0 0; padding:7px 10px; background:#fbfbf7;
+  border-left:3px solid #c9b98a; color:#4a4433; font-size:12px; line-height:1.7}
+.pa-glosslabel{display:block; font-size:10.5px; font-weight:700; letter-spacing:.04em;
+  color:#8a7c52; margin-bottom:2px}
+.pa-basis{display:inline-block; margin-left:6px; border-radius:3px; padding:0 6px;
+  font-size:10px; font-weight:700; letter-spacing:.04em; vertical-align:middle}
+.pa-basis-INF{background:#f1edfa; color:#6b4fa8; border:1px solid #c0b2e0}
+.pa-basis-OBSERVED{background:#eaf6f0; color:#0f7b4f; border:1px solid #9ccdb4}
+.pa-basis-DERIVED{background:#eef2f7; color:#1b4f8a; border:1px solid #b3c6dd}
+.pa-infnote{margin:5px 0 0; padding:6px 9px; background:#f7f5fb; border-left:3px solid #c0b2e0;
+  color:#4c4460; font-size:11.5px; line-height:1.65}
+
+/* ── Agent trace ────────────────────────────────────────────────────────────────────────── */
+.pa-trace-box{border-top:1px solid #e3e8ee; padding:10px 14px 12px}
+.pa-trace-box summary{cursor:pointer; font-size:12px; font-weight:700; color:#5b6672;
+  letter-spacing:.04em; text-transform:uppercase; list-style:none; display:flex;
+  align-items:baseline; gap:8px}
+.pa-trace-box summary::-webkit-details-marker{display:none}
+.pa-trace-box summary::before{content:"▸"; transition:transform 140ms ease}
+.pa-trace-box[open] summary::before{content:"▾"}
+.pa-tracetotal{margin-left:auto; font-weight:400; text-transform:none; letter-spacing:0;
+  color:#8a93a0; font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:11px}
+table.pa-trace{width:100%; border-collapse:collapse; margin-top:8px; font-size:11.5px;
+  line-height:1.6}
+table.pa-trace td{padding:3px 6px 3px 0; vertical-align:top; border-bottom:1px solid #f1f4f7}
+.tr-n{width:14px; color:#aab4bf; font-variant-numeric:tabular-nums}
+.tr-step{white-space:nowrap; font-weight:700; color:#3b4553}
+.tr-mech{white-space:nowrap; color:#6b4fa8; font-family:"SF Mono",ui-monospace,Menlo,monospace;
+  font-size:10.5px}
+.tr-detail{color:#4a5561; word-break:break-word}
+.tr-ms{text-align:right; white-space:nowrap; color:#8a93a0;
+  font-family:"SF Mono",ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums}
+
+/* ── Impact strip in the panel footer ───────────────────────────────────────────────────── */
+.pa-impact{display:grid; gap:3px}
+.pa-impact-row{display:flex; gap:8px; align-items:baseline; font-size:12px}
+.pa-impact-k{color:var(--muted); width:110px; flex:none}
+.pa-impact-v{font-weight:700; font-variant-numeric:tabular-nums}
+.pa-impact-basis{color:#8a93a0; font-size:10.5px; line-height:1.55; margin:4px 0 0}
+.pa-calc{margin-top:9px; padding:8px 10px; background:#f7f9fb; border:1px solid #e3e8ee;
+  border-radius:4px}
+.pa-calc label{display:flex; align-items:center; gap:6px; font-size:11.5px; color:#4a5561;
+  margin-bottom:4px}
+.pa-calc input{width:88px; margin-left:auto; padding:2px 6px; border:1px solid #cfd6de;
+  border-radius:3px; font:inherit; font-size:11.5px; text-align:right}
+.pa-calc-out{margin:6px 0 0; font-size:11.5px; color:#3b4553}
+.pa-calc-note{margin:4px 0 0; color:#8a93a0; font-size:10.5px; line-height:1.55}
+
+/* ── Motion. Restrained: nothing loops, nothing bounces, nothing runs past 600 ms. ─────── */
+@keyframes pa-slidein{from{opacity:0; transform:translateX(18px)} to{opacity:1; transform:none}}
+.panel{animation:pa-slidein 200ms cubic-bezier(.16,1,.3,1) both}
+
+@keyframes pa-statusfade{from{opacity:0} to{opacity:1}}
+.pa-status{animation:pa-statusfade 220ms ease both}
+
+/* One attention pulse on a FLAG, once, never repeating. */
+@keyframes pa-flagpulse{
+  0%{box-shadow:inset 0 0 0 0 rgba(168,82,11,0)}
+  40%{box-shadow:inset 0 0 0 2px rgba(168,82,11,.45)}
+  100%{box-shadow:inset 0 0 0 0 rgba(168,82,11,0)}
+}
+.pa-status.pa-FLAG{animation:pa-statusfade 220ms ease both, pa-flagpulse 600ms ease 220ms 1}
+
+/* The clause sweep: the tier the check actually used, lit when that check is hovered. */
+.pa-clause mark, .pa-clause .pa-hit{background:none; color:inherit; position:relative}
+.pa-clause .pa-hit::after{content:""; position:absolute; inset:-1px -3px;
+  background:linear-gradient(90deg, rgba(232,196,120,.85), rgba(232,196,120,.25));
+  border-radius:2px; z-index:-1; transform:scaleX(0); transform-origin:left;
+  transition:transform 320ms cubic-bezier(.16,1,.3,1)}
+.pa-clause.lit .pa-hit::after{transform:scaleX(1)}
+
+.pa-chips{transition:opacity 180ms ease, transform 180ms cubic-bezier(.16,1,.3,1)}
+.pa-chips.slidein{animation:pa-chipsin 180ms cubic-bezier(.16,1,.3,1) both}
+@keyframes pa-chipsin{from{opacity:0; transform:translateY(-5px)} to{opacity:1; transform:none}}
+.pa-chip{transition:background 120ms ease, border-color 120ms ease, color 120ms ease}
+
+@media (prefers-reduced-motion: reduce){
+  .panel, .pa-status, .pa-status.pa-FLAG, .pa-chips.slidein{animation:none}
+  .pa-clause .pa-hit::after{transition:none; transform:scaleX(1)}
+  .pa-chips, .pa-chip{transition:none}
+}

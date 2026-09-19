@@ -146,3 +146,75 @@ td.col-agent.settle > *{animation:pa-settle 120ms cubic-bezier(.16,1,.3,1) both}
   td.col-agent.settle > *{animation:none}
   .agent-btn{transition:none}
 }
+
+/* ── JA / EN / 併記 ──────────────────────────────────────────────────────────────────────
+   A display toggle. The engine already carries both languages; this only chooses what shows.
+   Regulation clause text is exempt: .clause-source is always visible, in every mode. */
+:root[data-lang="ja"] .en{display:none}
+:root[data-lang="en"] .ja:not(.clause-source):not(.keep-ja){display:none}
+:root[data-lang="both"] .ja + .en::before{content:"／ "; color:#aab4bf}
+:root[data-lang="both"] .en{color:var(--muted)}
+.ja + .en{margin-left:.4em}
+:root[data-lang="en"] .ja + .en{margin-left:0}
+
+.langtoggle{display:flex; border:1px solid var(--line); border-radius:4px; overflow:hidden;
+  margin-left:auto}
+.langtoggle button{background:#fff; border:none; border-right:1px solid var(--line);
+  padding:3px 11px; font:inherit; font-size:12px; color:var(--muted); cursor:pointer}
+.langtoggle button:last-child{border-right:none}
+.langtoggle button.on{background:var(--accent); color:#fff}
+.chrome{gap:10px}
+footer a{color:var(--accent)}
+
+/* ── /_evidence — typeset as a result, not as a document ────────────────────────────────── */
+.ev{max-width:1180px}
+.ev-title{font-size:21px; margin:2px 0 14px; display:flex; align-items:baseline; gap:10px;
+  flex-wrap:wrap}
+.ev-sub{font-size:12px; font-weight:400; color:var(--muted)}
+.ev-absent{padding:14px; background:#f4f6f8; border-left:3px solid #9aa5b1; color:#4a5561}
+.ev-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(430px,1fr)); gap:14px}
+.ev-card{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:14px}
+.ev-card h2{font-size:13px; margin:0 0 10px; letter-spacing:.03em; color:#3b4553}
+.ev-meta{color:var(--muted); font-size:11.5px; line-height:1.7; margin:6px 0 0}
+
+table.ev-gates{width:100%; border-collapse:collapse; font-size:12.5px}
+.ev-gid{width:26px; font-weight:700; color:var(--accent); vertical-align:top; padding-top:4px}
+.ev-crit{padding:4px 8px 0 0; line-height:1.65}
+.ev-verdict{white-space:nowrap; font-weight:700; font-size:11px; text-align:right;
+  vertical-align:top; padding-top:4px}
+tr.ev-pass .ev-verdict{color:var(--ok)}
+tr.ev-fail .ev-verdict{color:var(--flag)}
+tr.ev-gev td{padding:1px 0 9px; color:#7a8592; font-size:11px; line-height:1.6;
+  border-bottom:1px solid #f1f4f7}
+
+.ev-bars{display:grid; gap:5px; margin-top:8px}
+.ev-bar-row{display:flex; align-items:center; gap:8px; font-size:12px}
+.ev-bid{width:22px; font-weight:700; color:var(--muted); font-size:11px}
+.ev-bname{width:180px; flex:none; color:#3b4553}
+.ev-bar{flex:1; height:13px; background:#eef1f5; border-radius:2px; overflow:hidden}
+.ev-bar > i{display:block; height:100%; background:#aab8c6; border-radius:2px;
+  transition:width 600ms cubic-bezier(.16,1,.3,1)}
+.ev-winner .ev-bar > i{background:var(--accent)}
+.ev-winner{font-weight:700}
+.ev-bval{width:118px; text-align:right; font-variant-numeric:tabular-nums}
+.ev-ci{color:var(--muted); font-weight:400; font-size:10.5px}
+.ev-punch{margin:11px 0 0; padding:9px 12px; background:#eef2f7; border-left:3px solid var(--accent);
+  font-size:12.5px; line-height:1.75; color:#20334a}
+
+.ev-big{margin:2px 0 0; font-size:30px; font-weight:700; color:var(--ok);
+  font-variant-numeric:tabular-nums}
+.ev-biglabel{font-size:12px; font-weight:400; color:var(--muted); margin-left:6px}
+table.ev-h3{width:100%; border-collapse:collapse; margin-top:9px; font-size:11.5px}
+table.ev-h3 td{padding:2px 6px 2px 0; border-bottom:1px solid #f4f6f8;
+  font-variant-numeric:tabular-nums}
+.ev-h3-no{color:var(--flag)}
+.ev-p{color:var(--muted)}
+.ev-verdict-sm{font-weight:700; font-size:10.5px; text-align:right}
+.ev-tag{display:inline-block; margin:2px 4px 0 0; padding:0 6px; background:#eef1f5;
+  border-radius:3px; font-size:10.5px}
+
+.ev-limits ul{margin:0; padding-left:17px; display:grid; gap:7px}
+.ev-limits li{font-size:12.5px; line-height:1.7}
+.ev-why{display:block; color:#8a93a0; font-size:11px; line-height:1.6}
+.ev-verdictline{margin:14px 0 0; padding:11px 14px; background:#1b2430; color:#e6edf5;
+  border-radius:6px; font-size:12.5px; line-height:1.8}

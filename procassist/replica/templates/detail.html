@@ -16,8 +16,8 @@
     <h2>{{ row.record_id }}</h2>
     <dl class="fields">
       {% for h in definition.column_headers_ja %}
-        <dt>{{ h }}</dt>
-        <dd class="f-{{ loop.index }}">{{ row.fields.get(h) if row.fields.get(h) is not none else '—' }}</dd>
+        <dt data-gloss="{{ h }}">{{ h }}</dt>
+        <dd class="f-{{ loop.index }}"{% if h in ('区分','申請種別','種別','ステータス','部署') %} data-gloss="{{ row.fields.get(h) }}"{% endif %}>{{ row.fields.get(h) if row.fields.get(h) is not none else '—' }}</dd>
       {% endfor %}
     </dl>
     {% if row.statuses_observed_ja|length > 1 %}
@@ -28,16 +28,16 @@
         上表は最初の観測です。</p>
     {% endif %}
 
-    <label class="notelabel" for="{{ definition.note_element_id }}">コメント</label>
+    <label class="notelabel" for="{{ definition.note_element_id }}" data-gloss="コメント">コメント</label>
     <textarea id="{{ definition.note_element_id }}" class="input" rows="3"
               placeholder="{{ definition.comment.placeholder_ja }}"></textarea>
 
     <div class="hostactions">
-      <button id="{{ definition.submit_element_id }}" class="primary" type="button">登録確定</button>
+      <button id="{{ definition.submit_element_id }}" class="primary" type="button" data-gloss="登録確定">登録確定</button>
       {% if definition.note_element_id == 'la-note' %}
         {# 差戻し is offered by this screen's own placeholder and was typed 0 times in 282
            uses of la-note across Dataset B. Rendered because its absence is a finding. #}
-        <button id="btn-la-reject" class="secondary" type="button">差戻し</button>
+        <button id="btn-la-reject" class="secondary" type="button" data-gloss="差戻し">差戻し</button>
         <span class="never-observed">差戻し：観測 0 回 / la-note 282 回</span>
       {% endif %}
     </div>

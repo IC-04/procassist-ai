@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}エビデンス / Evidence{% endblock %}
+{% block main %}
+<section class="pad ev">
+  <h1 class="ev-title"><span class="ja">計測結果</span><span class="en">What was measured</span>
+    <span class="ev-sub">Step 2 · read from the committed artifacts, not typed by hand</span></h1>
+
+  {% if not gates_rows %}
+    <p class="ev-absent">build/dataset_b/evidence/ is not present, so this page has nothing to
+      read. It states no numbers of its own.</p>
+  {% else %}
+
+  <div class="ev-grid">
+    <div class="ev-card">
+      <h2><span class="ja">1 ・ 4つの判定ゲート</span><span class="en">1 · The four gates</span></h2>
+      <table class="ev-gates">
+        {% for g in gates_rows %}
+        <tr class="ev-{{ 'pass' if g.verdict == 'PASS' else 'fail' }}">
+          <td class="ev-gid">{{ g.id }}</td>
+          <td class="ev-crit"><span class="ja">{{ g.criterion_ja }}</span><span class="en">{{ g.criterion_en }}</span></td>
+          <td class="ev-verdict">{{ g.verdict }}</td>
+        </tr>
+        <tr class="ev-gev"><td></td><td colspan="2">{{ g.evidence_en }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div class="ev-card">
+      <h2><span class="ja">2 ・ 検索のベースライン</span><span class="en">2 · The retrieval baselines</span></h2>
+      <p class="ev-meta">n = {{ retrieval.n }} labelled pairs · {{ retrieval.n_labels }} document labels · leave-one-out, seed 7</p>
+      <div class="ev-bars">
+        {% for b in retrieval.ladder %}
+          <div class="ev-bar-row {{ 'ev-winner' if b.id == 'B3' }}">
+            <span class="ev-bid">{{ b.id }}</span>
+            <span class="ev-bname"><span class="ja">{{ b.name_ja }}</span><span class="en">{{ b.name_en }}</span></span>
+            <span class="ev-bar"><i style="width:{{ (b.value * 100)|round(1) }}%"></i></span>
+            <span class="ev-bval">{{ (b.value * 100)|round(1) }}%{% if b.ci %}
+              <span class="ev-ci">[{{ (b.ci[0]*100)|round(1) }}–{{ (b.ci[1]*100)|round(1) }}]</span>{% endif %}</span>
+          </div>
+        {% endfor %}
+      </div>
+      <p class="ev-punch">A learned retriever must exceed <strong>{{ (retrieval.bar * 100)|round(1) }}%</strong>
+        before this evidence could distinguish it from the lookup table.
+        We built the harness, ran the baselines, and the table won.</p>
+    </div>
+
+    <div class="ev-card">
+      <h2><span class="ja">3 ・ H3：処分の前に文書が開かれる</span><span class="en">3 · H3 — a document is opened before disposing</span></h2>
+      <p class="ev-big">{{ hypotheses.h3.n_supported }} / {{ hypotheses.h3.n_modules }}
+        <span class="ev-biglabel">modules SUPPORTED</span></p>
+      <p class="ev-meta">rates {{ (hypotheses.h3.rate_min*100)|round(1) }}%–{{ (hypotheses.h3.rate_max*100)|round(1) }}%
+        against a permutation null (10,000 shuffles, seed 7) ·
+        {{ hypotheses.h3.n_p_below_001 }} of {{ hypotheses.h3.n_supported }} at p &lt; 0.001</p>
+      <table class="ev-h3">
+        {% for m in hypotheses.h3.per_module %}
+          <tr class="{{ 'ev-h3-no' if m.result != 'SUPPORTED' }}">
+            <td class="mono">{{ m.module_id }}</td>
+            <td>{{ (m.rate*100)|round(1) if m.rate is not none else '—' }}%</td>
+            <td class="ev-p">p={{ '%.4f'|format(m.p) if m.p is not none else '—' }}</td>
+            <td>n={{ m.n }}</td>
+            <td class="ev-verdict-sm">{{ m.result }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+      <p class="ev-meta">Summary across all four hypotheses × eleven modules:
+        {% for k, v in hypotheses.summary.items() %}<span class="ev-tag">{{ k }} {{ v }}</span>{% endfor %}</p>
+    </div>
+
+    <div class="ev-card ev-limits">
+      <h2><span class="ja">4 ・ このシステムにできないこと</span><span class="en">4 · What this system cannot do</span></h2>
+      <ul>
+        {% for l in limits_rows %}
+          <li><span class="ja">{{ l.ja }}</span><span class="en">{{ l.en }}</span>
+            <span class="ev-why">{{ l.why_en }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <p class="ev-verdictline">{{ retrieval.verdict }}</p>
+  {% endif %}
+</section>
+{% endblock %}

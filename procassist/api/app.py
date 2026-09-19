@@ -21,7 +21,9 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 
 from ..adapters.audit import EVENT_TYPES, new_trace_id
+from ..adapters import evidence as ev
 from ..core.definitions import ModuleDefinition
+from ..i18n import clause_gloss, gloss, term
 from ..service import Service
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -99,22 +101,21 @@ def create_app(service: Optional[Service] = None) -> FastAPI:
         return templates.TemplateResponse(
             request, "portal.html", {**chrome(request, None), "here": here})
 
-    @app.get("/{route_name}", response_class=HTMLResponse)
-    def queue(request: Request, route_name: str) -> Any:
-        definition = definition_here(request, "/" + route_name)
-        rows = svc.queue(definition.definition_id)
-        return templates.TemplateResponse(
-            request, "queue.html", {**chrome(request, definition), "rows": rows})
+    @app.get("/_evidence", response_class=HTMLResponse)
+    def evidence_page(request: Request) -> Any:
+        """Everything here is read from the committed artifacts. No number is typed in."""
+        return templates.TemplateResponse(request, "evidence.html", {
+            **chrome(request, None),
+            "gates_rows": ev.gates() if ev.hypothesis_summary() else [],
+            "hypotheses": ev.hypothesis_summary(),
+            "retrieval": ev.retrieval_baselines(),
+            "limits_rows": ev.limits(),
+        })
 
-    @app.get("/{route_name}/{record_id}", response_class=HTMLResponse)
-    def detail(request: Request, route_name: str, record_id: str) -> Any:
-        definition = definition_here(request, "/" + route_name)
-        row = svc.record(record_id)
-        if row is None or row["record_prefix"] != definition.record_prefix:
-            raise HTTPException(404, f"{record_id} is not a record on this queue")
-        return templates.TemplateResponse(
-            request, "detail.html", {**chrome(request, definition), "row": row,
-                                     "route_name": route_name})
+    @app.get("/v1/evidence")
+    def evidence_json() -> JSONResponse:
+        return JSONResponse({"gates": ev.gates(), "hypotheses": ev.hypothesis_summary(),
+                             "retrieval": ev.retrieval_baselines(), "limits": ev.limits()})
 
     # -- the ProcAssist API -------------------------------------------------------------------
 
@@ -124,7 +125,12 @@ def create_app(service: Optional[Service] = None) -> FastAPI:
             result = svc.prepare_record(body.record_id, trace_id=body.trace_id or new_trace_id())
         except KeyError as exc:
             raise HTTPException(404, str(exc)) from exc
-        return JSONResponse(result.model_dump(mode="json"))
+        payload = result.model_dump(mode="json")
+        # The clause's committed reference gloss travels with it, clearly labelled. The
+        # Japanese source text is never replaced and is never translated at runtime.
+        if payload.get("clause"):
+            payload["clause"]["gloss"] = clause_gloss(payload["clause"].get("text_ja"))
+        return JSONResponse(payload)
 
     @app.post("/v1/prepare_queue")
     def prepare_queue(body: PrepareQueueRequest) -> JSONResponse:
@@ -148,12 +154,38 @@ def create_app(service: Optional[Service] = None) -> FastAPI:
         return JSONResponse({"rows": svc.audit.tail(n), "count": svc.audit.count(),
                              "chain_ok": svc.audit.verify_chain()})
 
+    @app.get("/v1/gloss")
+    def gloss_table() -> JSONResponse:
+        """The committed JA→EN gloss. Static, offline, no model anywhere near it."""
+        return JSONResponse(gloss())
+
     @app.get("/v1/source/{document_id}/{clause_id}")
     def source(document_id: str, clause_id: str) -> JSONResponse:
         excerpt = svc.documents.excerpt(document_id, clause_id, 400)
         if excerpt is None:
             raise HTTPException(404, "no such clause capture")
         return JSONResponse(excerpt)
+
+    # ── The replica's wildcard routes are registered LAST, deliberately ──────────────────
+    # Starlette matches in declaration order, so `/{route_name}` would otherwise swallow any
+    # single-segment literal route added after it — `/v1/gloss` did exactly that once.
+    # Everything literal is above; the two catch-alls are here.
+    @app.get("/{route_name}", response_class=HTMLResponse)
+    def queue(request: Request, route_name: str) -> Any:
+        definition = definition_here(request, "/" + route_name)
+        rows = svc.queue(definition.definition_id)
+        return templates.TemplateResponse(
+            request, "queue.html", {**chrome(request, definition), "rows": rows})
+
+    @app.get("/{route_name}/{record_id}", response_class=HTMLResponse)
+    def detail(request: Request, route_name: str, record_id: str) -> Any:
+        definition = definition_here(request, "/" + route_name)
+        row = svc.record(record_id)
+        if row is None or row["record_prefix"] != definition.record_prefix:
+            raise HTTPException(404, f"{record_id} is not a record on this queue")
+        return templates.TemplateResponse(
+            request, "detail.html", {**chrome(request, definition), "row": row,
+                                     "route_name": route_name})
 
     return app
 

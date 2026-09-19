@@ -150,3 +150,67 @@ def test_every_interaction_is_recorded_and_the_chain_holds(client):
 def test_an_unaudited_event_type_is_refused(client):
     r = client.post("/v1/event", json={"trace_id": "tr_x", "event_type": "auto_approved"})
     assert r.status_code == 400
+
+
+# ── route ordering: a literal path must never be swallowed by the replica's catch-all ──────
+
+@pytest.mark.parametrize("path", ["/v1/gloss", "/v1/evidence", "/v1/audit/tail", "/_evidence"])
+def test_literal_routes_are_not_shadowed_by_the_wildcard(client, path):
+    """`/{route_name}` is declared last for this reason; `/v1/gloss` was shadowed once."""
+    r = _get(client, HR, path)
+    assert r.status_code == 200, f"{path} returned {r.status_code}"
+
+
+def test_the_gloss_never_touches_regulation_text_or_record_data(client):
+    g = _get(client, HR, "/v1/gloss").json()
+    terms = g["terms"]
+    # the clause gloss lives in its own section, labelled, and is never in `terms`
+    assert "1回あたり5万円未満：部門長承認。5万円以上：役員承認。10万円以上：社長承認。" not in terms
+    clause = g["clauses"]["1回あたり5万円未満：部門長承認。5万円以上：役員承認。10万円以上：社長承認。"]
+    assert "参考訳" in clause["label_ja"] and "not authoritative" in clause["label_en"]
+    # no amount, record id or person's name is glossed
+    for key in terms:
+        assert "円" not in key and not key.startswith(("P1-", "P6-", "P9-", "E2", "V3"))
+
+
+def test_prepare_carries_the_clause_gloss_beside_the_japanese_never_instead_of_it(client):
+    body = client.post("/v1/prepare", json={"record_id": "P1-07106250-010"}).json()
+    clause = body["clause"]
+    assert clause["text_ja"] == "1回あたり5万円未満：部門長承認。5万円以上：役員承認。10万円以上：社長承認。"
+    assert clause["gloss"]["gloss_en"]
+    assert "not authoritative" in clause["gloss"]["label_en"]
+
+
+def test_the_agent_trace_names_its_mechanisms(client):
+    body = client.post("/v1/prepare", json={"record_id": "P1-07106250-010"}).json()
+    trace = body["trace"]
+    names = [s["name_en"] for s in trace["steps"]]
+    assert names == ["resolve definition", "load record", "resolve governing doc",
+                     "localise clause", "evaluate threshold", "check required fields",
+                     "render draft", "append audit"]
+    assert set(trace["mechanisms"]) == {"lookup", "threshold", "required", "template", "audit"}
+    assert all(s["ms"] >= 0 for s in trace["steps"])
+    # steps 3 and 4 link to the provenance endpoint
+    assert trace["steps"][2]["link"] == trace["steps"][3]["link"]
+    assert _get(client, HR, trace["steps"][2]["link"]).status_code == 200
+    assert "no model is consulted" in trace["note_en"]
+
+
+def test_the_evidence_page_matches_the_json_artifacts(client):
+    import json as _json
+    import os as _os
+    path = "build/dataset_b/evidence/retrieval_feasibility.json"
+    if not _os.path.exists(path):
+        pytest.skip("Dataset B evidence is not present")
+    with open(path, encoding="utf-8") as fh:
+        raw = _json.load(fh)["baselines_by_document_heading"]
+    html = _get(client, HR, "/_evidence").text
+    for value in (raw["B0_random"], raw["B1_most_frequent_overall"],
+                  raw["B2_most_frequent_per_module"],
+                  raw["B3_module_and_record_type_lookup"]):
+        assert f"{round(value * 100, 1)}%" in html, value
+    assert f"{round(raw['B3_wilson_95ci'][1] * 100, 1)}%" in html      # the bar to beat
+    assert str(raw["n"]) in html and str(raw["n_distinct_documents"]) in html
+    assert "the table won" in html
+    for limit in ("cannot decide", "cannot detect errors", "差戻し"):
+        assert limit in html
