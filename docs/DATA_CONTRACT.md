@@ -1,10 +1,5 @@
 # DATA_CONTRACT
 
-Every artifact the pipeline produces. If code and this file disagree, fix one of them and
-record why in `WORK_LOG.md`.
-
-`DATA_SCHEMA.md` governs **input**. This file governs **everything we generate**.
-
 ## 0. Field trust levels
 
 | Level | Fields | Rule |
