@@ -1,0 +1,14 @@
+step1_label,n_executions,dominant_module,dominant_module_jp,dominant_share,all_modules
+leave-applications-social-insurance__p00,27,M10,契約管理,0.89,M10:24; M08:1; UNASSIGNED:1; M04:1
+payroll-items__p01,24,M05,請求書承認・経費精算,0.92,M05:22; M09:1; M10:1
+resident-tax__p02,23,M04,福利厚生申請,0.26,M04:6; M09:6; M08:5; M01:5; M05:1
+onboarding__p03,21,M03,入社手続き,1.0,M03:21
+social-insurance__p04,16,M11,IT申請,0.5,M11:8; M01:2; M02:1; UNASSIGNED:1; M04:1; M03:1; M05:1; M09:1
+payroll-items__p05,13,M01,経費精算・給与変更,0.77,M01:10; M09:2; M04:1
+leave-applications-onboarding__p06,12,M07,経費承認（管理職）,0.83,M07:10; M01:1; M08:1
+onboarding__p07,11,M06,支払処理,0.82,M06:9; M02:1; M04:1
+dashboard__p08,10,UNASSIGNED,(unassigned),0.4,UNASSIGNED:4; M09:3; M05:1; M11:1; M01:1
+hr人事給与システム__p09,9,UNASSIGNED,(unassigned),1.0,UNASSIGNED:9
+leave-applications-resident-tax__p10,7,M08,発注管理,0.86,M08:6; M10:1
+leave-applications-payroll-items__p11,6,M02,勤怠・休暇申請,0.83,M02:5; M01:1
+onboarding-social-insurance__p12,4,UNASSIGNED,(unassigned),0.75,UNASSIGNED:3; M03:1

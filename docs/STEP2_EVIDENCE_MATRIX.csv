@@ -1,0 +1,25 @@
+evidence,source,directly_observable,ground_truth,inference,reliability,potential_failure_mode
+"Event type, timestamp, sequence",events.jsonl,YES,Yes (of what the agent recorded),No,High,Agent gaps; text_input_complete documented unreliable
+Active application / process name,events.jsonl context.active_app,YES,No — an app is not a process,No,High,-
+Window title,events.jsonl,YES,NO — a filename is not a business meaning,No,High as a string,Title lags the tab at switch: 18-23% of blocks on an origin carry another system's title
+Browser origin (:5132/:5133/:5134),active_browser_tab.url,YES,No,No,High,-
+Browser route (/payroll-items etc.),active_browser_tab.url,YES,NO — THE CENTRAL TRAP,No,High as a string; worthless as semantics,One route renders three different business functions
+"Element id (btn-pi-ok, pi-note)",browser_click element.attributes.id,YES,No,No,High,"Only 12 distinct ids; route-derived, so they inherit the route ambiguity"
+Element text on click,-,NO — text_content never populated,-,-,-,Cannot tell which record or which button was clicked
+Form field id + placeholder,browser_form_input payload.field,YES,No — a UI label,No,High,"Describes the field's role, not the record's outcome"
+Form field VALUE,-,NO — value:null on all 608 inputs,-,-,-,No entered value is recoverable anywhere
+Clipboard CONTENT,-,NO — text_content:null on all 872 events,-,-,-,"Only text_length survives (24-80 chars, median 42)"
+Typed text,keystroke payload.character,Partially,No,No,Low,"2014 printable presses, 887 are Ctrl+V; no free text typed anywhere"
+Screen H1 / nav item / table cells / badges / buttons,SCREENSHOTS ONLY (4746 files),"Yes, by reading",No — still a UI label,No,High for what the screen said,Not machine-available; 20 of 4746 read; sampling is a judgement
+Reference document contents,SCREENSHOTS ONLY,Yes,No,No,High,4 of 13 documents read in full; 9 unread
+Column headers,SCREENSHOTS ONLY,Yes,NO — demonstrably wrong,No,LOW,"M06 header reads 入社日 above cells containing 振込 ¥1,182,500"
+参照書類 field naming the governing document,SCREENSHOTS ONLY,Yes,"No — a system label, but a reliable one",No,High,Only observed on M10; unknown whether all modules carry it
+種別 badge 定常/調整,SCREENSHOTS ONLY,Yes,NO — SYSTEM LABEL,No,Medium,Demonstrably does not follow its own written rule
+⚠ exception marker,SCREENSHOTS ONLY,Yes,No — system label,No,Medium,Meaning entirely unknown
+照合項目数 item count,SCREENSHOTS ONLY,Yes,No — system label,No,Medium,Appears on several modules with different meanings
+Step-1 segment boundaries,segments_rich.jsonl,Yes as output,NO — Dataset B has no GT,It IS an inference,"Measured on A only: boundary F1 ~0.69, ARI ~0.68 @ match rate 0.76",Accuracy does not transfer from A to B
+Step-1 label text (payroll-items__p01),procmine/label.py::_name,Yes as output,NO,Yes — ORIGIN-BLIND by construction,LOW as semantics,Built from sig['routes'][:2]; this is the root cause of the previous error
+Step-1 cluster assignment,segments_rich.cluster,Yes as output,No,Yes,Moderate-good; 8 of 11 clusters >=0.77 pure,70% of the distance metric is origin-qualified
+Operator identity,source.username_hash,YES,"Yes, as a pseudonymous identity",No,High,Cannot separate two people sharing a machine
+Disposition count (btn-*-ok clicks),events.jsonl,YES,"Yes, as an interaction count",No,High,NOT a business case count without the per-module ratio; only 72.5% fall inside an execution
+Business volume / monetary value / error rate / FTE cost / criticality / API availability,-,NO,-,-,UNAVAILABLE,Any figure would be invented
