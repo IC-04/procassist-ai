@@ -1,4 +1,4 @@
-# DATA_CONTRACT — Submission-Ready Data Contract
+# DATA_CONTRACT
 
 **Status:** Authoritative pipeline data contract  
 **Scope:** Generated artifacts and deliverable schemas  
