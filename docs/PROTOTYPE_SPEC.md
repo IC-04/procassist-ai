@@ -1,12 +1,31 @@
-> **⏸ DEFERRED — Step 2 / Step 3 scope. Not in effect.**
-> The current objective is Step 1 only (`docs/STEP1_SPEC.md`, ADR-016). Do not implement from
-> this document until Step 1 exits at S-DONE. Retained because the design may be revived.
+# Prototype Specification — Streamlit Application
+
+## Submission-Ready Specification
+
+| Item | Status |
+|---|---|
+| Scope | Step 2 / Step 3 prototype and demonstration layer |
+| Current status | **DEFERRED — NOT IN EFFECT** |
+| Activation condition | Step 1 must first exit at **S-DONE** |
+| Runtime | Local Streamlit application |
+| Primary purpose | Demonstrate the reconstructed-execution → reasoning → process-family → automation → workflow story |
+| Source document | `PROTOTYPE_SPEC.md` |
+| Implementation boundary | No implementation from this specification before Step 1 S-DONE |
+
+> **Important scope gate:** The current objective remains Step 1 (`docs/STEP1_SPEC.md`, ADR-016). This specification is retained for later revival and must not be implemented until Step 1 exits at **S-DONE**.
+
+### Reviewer navigation
+
+1. [What it must demonstrate](#1-what-it-must-demonstrate)
+2. [Backend → UI contract](#2-backend--ui-contract)
+3. [Pages](#3-pages)
+4. [Non-goals](#4-non-goals)
+5. [Acceptance](#5-acceptance)
 
 ---
 
-# PROTOTYPE_SPEC — Streamlit application
 
-## 1. What it must demonstrate
+## 1. What It Must Demonstrate
 
 One continuous story, clickable end to end:
 
@@ -21,7 +40,7 @@ system.** That is only possible because `evidence_used` is a required field from
 Run: `streamlit run app/main.py` · Data: `build/<dataset>/` only. **The app never calls an LLM
 at render time and never re-runs the pipeline.** Everything is precomputed.
 
-## 2. Backend → UI contract
+## 2. Backend → UI Contract
 
 | UI need | File | Spec |
 |---|---|---|
@@ -75,12 +94,12 @@ The generated procedure for the selected family: numbered steps, screenshots whe
 `REQUIRES_HUMAN` markers highlighted, and the workflow-skeleton JSON in a code block with a
 download button. A caption states the target system was not available and what that means.
 
-## 4. Non-goals
+## 4. Non-Goals
 
 No authentication, no database, no live telemetry ingest, no editing, no background jobs,
 no deployment. It runs locally for a demo.
 
-## 5. Acceptance
+## 5. Acceptance Criteria
 
 - [ ] `streamlit run app/main.py` starts with no traceback on a fresh clone + `make build-b`
 - [ ] All seven pages render for Dataset B
@@ -89,3 +108,14 @@ no deployment. It runs locally for a demo.
 - [ ] P6 shows no monetary figure and every column carries a class badge
 - [ ] P7 offers a downloadable workflow JSON
 - [ ] Every page degrades gracefully when its input file is absent
+
+
+---
+
+## Submission Integrity
+
+This specification is a **deferred design**, not evidence that the Streamlit prototype has been implemented or validated.
+
+Its intended implementation remains conditional on Step 1 reaching **S-DONE**. The specification therefore does not claim that the listed pages, backend artifacts, generated SOPs/workflows, or acceptance criteria have already been satisfied.
+
+The original implementation boundaries are preserved: the application is a local, precomputed demonstration; it does not run the pipeline or call an LLM at render time, and missing backend artifacts must produce explicit, graceful status messages rather than page crashes.

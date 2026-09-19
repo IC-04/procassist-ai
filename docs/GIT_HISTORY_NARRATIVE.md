@@ -1,4 +1,29 @@
-# Git history as an engineering narrative — Step 2.5
+# Git History as an Engineering Narrative — Step 2.5
+
+## Submission-Ready Narrative
+
+**Status:** Submission-ready engineering history  
+**Scope:** Step 2.5 — Git history / engineering narrative  
+**Purpose:** Document what the commit history establishes, including refutations, corrections, scope decisions, and verification that Step 1 remained frozen.  
+**Evidence basis:** Repository Git history and the artifacts described in this report.
+
+> **Submission note:** This document is a historical engineering narrative. It records what the cited commits establish and does not replace the authoritative Step 1 specification or later phase specifications.
+
+## Reviewer Navigation
+
+1. [The graph](#the-graph)
+2. [Phase-by-phase narrative](#phase-by-phase)
+3. [Commits recording negative or refuting results](#commits-that-record-a-negative-or-refuting-result)
+4. [Confirmation that Step 1 was not modified](#confirmation-that-step-1-was-not-modified)
+5. [Tags](#tags)
+
+## Submission Integrity
+
+- The document distinguishes completed work, superseded hypotheses, corrections, and negative results.
+- Refutations are retained rather than rewritten out of the history.
+- The narrative does not claim that a negative result is a failed implementation; it records what the evidence ruled out.
+- Step 1 is explicitly checked for non-modification during this history window.
+- The final test-suite result and repository tags are reported as recorded in the source.
 
 Fourteen commits, six phases, one blocked start. The history is a graded deliverable, so this
 document says what each commit establishes and names the ones that record a refutation.

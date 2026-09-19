@@ -1,4 +1,35 @@
-# EVALUATION_PROTOCOL
+# Evaluation Protocol
+
+## Submission-Ready Protocol
+
+**Status:** Authoritative evaluation protocol  
+**Scope:** Evaluation and reporting for the process-execution reconstruction work  
+**Purpose:** Define reproducible, auditable scoring, ground-truth handling, baselines, stability requirements, and candidate-reachability reporting.
+
+> **Submission note.** This document defines the evaluation contract. It does not by itself claim that every experiment described here has been completed. Reported results must come from the persistent experiment artifacts required by `EXPERIMENT_PROTOCOL`.
+
+### Reviewer navigation
+
+1. [What is scored](#-1-what-is-scored)
+2. [Two coordinate systems](#-2-two-coordinate-systems--compute-both)
+3. [Interfaces](#-3-interfaces)
+4. [Ground-truth tiers](#-4-ground-truth-tiers--report-all-three)
+5. [Scoring discontinuous executions](#-5-scoring-discontinuous-executions)
+6. [Baselines](#-6-baselines--implement-in-phase-1-keep-forever)
+7. [Stability and reporting discipline](#-7-stability-and-reporting-discipline)
+8. [Ground-truth populations](#-8-ground-truth-populations--state-one-with-every-number-adr-017)
+9. [Candidate reachability](#-9-candidate-reachability--a-separate-measurement-never-an-accuracy-figure)
+
+### Submission integrity
+
+- Boundary quality and label consistency remain separate evaluation axes.
+- Ground-truth populations and denominators must be named with every reported number.
+- Candidate reachability is not an accuracy metric.
+- Dataset B produces no accuracy claims because it has no ground truth.
+- Negative findings, limitations, and convention choices are part of the evaluation record.
+- No source content below has been silently replaced with external assumptions.
+
+---
 
 The harness is built **before** the first segmenter (Phase 1). Every later experiment reuses it.
 Do not over-engineer it: one module, pure functions, no framework.

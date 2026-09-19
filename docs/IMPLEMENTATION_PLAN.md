@@ -1,7 +1,22 @@
-# IMPLEMENTATION_PLAN
+# Implementation Plan — Submission-Ready Scope Record
 
-**Revised 2026-09-13 (ADR-016).** The eight-phase plan is withdrawn. The current scope is
-**Step 1 only**; task detail lives in `docs/STEP1_SPEC.md`, which is authoritative.
+## Submission Status
+
+**Status:** Superseded as the active implementation plan; retained as the historical scope record for Step 1.  
+**Revision:** 2026-09-13 (ADR-016)  
+**Current authoritative implementation specification:** `docs/STEP1_SPEC.md`  
+**Current scope:** Step 1 only  
+**Step 2 / Step 3:** Deferred until Step 1 reaches **S-DONE**
+
+> **Submission note:** This document records the withdrawal of the former eight-phase implementation plan and the resulting Step 1 execution order. It is a scope-control document, not a replacement for the authoritative Step 1 specification.
+
+## Reviewer Navigation
+
+1. [What happened to the phases](#what-happened-to-the-phases)
+2. [Step 1 order](#step-1-order)
+3. [Gates](#gates)
+4. [What changes the plan](#what-changes-the-plan)
+5. [Submission integrity](#submission-integrity)
 
 ## What happened to the phases
 
@@ -18,7 +33,7 @@
 
 Phases 2–7 files carry a banner and must not be implemented from.
 
-## Step 1 order (summary — detail in `STEP1_SPEC.md` §7)
+## Step 1 Order
 
 ```
 1  ship segments.jsonl for B from current blocks        ← the deliverable does not yet exist
@@ -49,3 +64,10 @@ Phases 2–7 files carry a banner and must not be implemented from.
 - **S-E4 already beats `B5-dwell` comfortably** → consider shipping deterministic-only and
   spending the remaining budget on Steps 2–3; run S-E5 anyway, because the ablation number is
   itself a reportable result.
+## Submission Integrity
+
+- This document does **not** authorize implementation of the withdrawn phases 2–7.
+- `docs/STEP1_SPEC.md` remains the authoritative source for Step 1 task detail.
+- The Step 1 sequence is explicitly gated; later work must not be started merely because it appears in the historical phase list.
+- Step 2 may be designed only after the **S-DONE** gate is satisfied.
+- The decision gates and stop conditions below are preserved as explicit reviewer checkpoints.

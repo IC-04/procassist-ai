@@ -1,8 +1,35 @@
-# Step 1 — reconstructing business-process executions from desktop telemetry
+# STEP 1 — Business-Process Execution Inference
+## Submission-Ready Final Report
 
-**Status: frozen.** Dataset B's `segments.jsonl` is the deliverable; every accuracy figure below
-is measured on Dataset A against its ground truth, on the **scoreable canonical** population,
-with its denominator stated. Step 2 and Step 3 are not started.
+**Document type:** Final Step 1 report  
+**Status:** Frozen / submission-ready  
+**Scope:** Step 1 — reconstructing business-process executions from desktop telemetry  
+**Primary deliverable:** Dataset B `segments.jsonl`  
+**Evaluation basis:** Dataset A ground truth, scoreable canonical population  
+**Step 2 / Step 3:** Not started  
+
+> **Submission note:** This report records the frozen Step 1 method, measured results, validation evidence, limitations, Dataset B output, and freeze conditions. It does **not** claim that Step 2 or Step 3 has been completed.
+
+### Reviewer navigation
+1. [Headline results](#1-headline)
+2. [Reorientation that made the result possible](#2-the-reorientation-that-made-the-result-possible)
+3. [Identity: representation → similarity → grouping](#3-identity-representation--similarity--grouping)
+4. [B5 ARI question](#4-the-b5-ari-question-head-on)
+5. [LLM decision](#5-why-there-is-no-llm)
+6. [Residual findings](#6-the-residual-named-as-a-finding)
+7. [Limitations](#7-limitations--stated-not-buried)
+8. [Populations and denominators](#8-populations-and-denominators)
+9. [Method and verification findings](#9-the-method--and-what-it-caught)
+10. [Dataset B output](#10-dataset-b-output--no-accuracy-claims)
+11. [Freeze](#11-freeze)
+
+### Submission integrity
+- Accuracy figures are explicitly tied to Dataset A ground truth and stated denominators.
+- Candidate-space reachability is kept separate from segmentation accuracy.
+- Dataset B is treated as unvalidated because it has no ground truth.
+- The shipped path is `--no-llm`; no LLM dependency is hidden in the final pipeline.
+- The report preserves documented limitations and negative findings rather than presenting only successful results.
+- Step 1 ends at the documented freeze; Step 2 and Step 3 are explicitly outside this report.
 
 ---
 
@@ -29,7 +56,7 @@ overstate the remaining headroom by a factor of three.
 
 ---
 
-## 2. The reorientation that made the result possible
+## 2. The Reorientation That Made the Result Possible
 
 The project's first number was **59.9% reachability at τ=2 s**, and it was nearly read as a
 representation ceiling — as evidence that normalisation had destroyed the information. It had
@@ -53,7 +80,7 @@ No block-edge method can place this boundary at all.
 
 ---
 
-## 3. Identity: representation → similarity → grouping
+## 3. Identity: Representation → Similarity → Grouping
 
 Identity was treated as a representation problem, not as "structural labels, then an LLM merge".
 Three named views — **WHERE** (surface/route/origin footprint and visit shape), **HOW**
@@ -75,7 +102,7 @@ which is why all four are always reported. On A the method self-selects **15 com
 
 ---
 
-## 4. The B5 ARI question, head on
+## 4. The B5 ARI Question, Head On
 
 B5-dwell posts **ARI 0.797** against our 0.681 and it is not better at identity. Matched-segment
 ARI is not comparable across arms, for two reasons that compound: it is computed only over the
@@ -110,7 +137,7 @@ exceeds our pre-tie-break 0.418 — its fragments are pure — while its complet
 
 ---
 
-## 5. Why there is no LLM
+## 5. Why There Is No LLM
 
 An LLM was **sized three times against a measured ceiling and rejected three times on evidence.**
 
@@ -133,7 +160,7 @@ out of scope for Step 1 and is recorded rather than half-built.
 
 ---
 
-## 6. The residual, named as a finding
+## 6. The Residual, Named as a Finding
 
 S-E6b set out to fix the largest identity defect and instead falsified the mechanism behind it.
 The offending cross-process pairs have a surface **Jaccard of exactly 1.00** — *identical*
@@ -153,7 +180,7 @@ of desktop telemetry, not a defect in the method, and no amount of clustering re
 
 ---
 
-## 7. Limitations — stated, not buried
+## 7. Limitations — Stated, Not Buried
 
 - **Interruption stitching 0.337** (from 0.122), at count ratio 0.98 and 17 labels. There is no
   resumption model; fragments of one suspended execution share a label only by resemblance. Read
@@ -196,7 +223,7 @@ of desktop telemetry, not a defect in the method, and no amount of clustering re
 
 ---
 
-## 8. Populations and denominators
+## 8. Populations and Denominators
 
 | population | n | use |
 |---|---|---|
@@ -211,7 +238,7 @@ never presented as accuracy (EVALUATION_PROTOCOL §9).
 
 ---
 
-## 9. The method — and what it caught
+## 9. The Method — and What It Caught
 
 **Every gate measured a ceiling before anything was built.** That discipline caught **six**
 denominator, mechanism or verification errors, three of them in my own claims:
@@ -249,7 +276,7 @@ discriminating; and B was never tuned to resemble A.
 
 ---
 
-## 10. Dataset B output — no accuracy claims
+## 10. Dataset B Output — No Accuracy Claims
 
 `segments.jsonl`, produced by the frozen code with no B-specific branch: `make run-b` is
 `build-b` + `segment-b`, and `cli.segment()` is the **single** writer of the deliverable, which

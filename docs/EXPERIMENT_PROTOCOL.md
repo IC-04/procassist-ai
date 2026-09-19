@@ -1,4 +1,30 @@
-# EXPERIMENT_PROTOCOL
+# Experiment Protocol
+
+## Submission-Ready Specification
+
+**Status:** Submission-ready protocol  
+**Scope:** Experiment evidence, reproducibility, reporting, and decision records  
+**Authority:** This document defines the required evidence structure for experiments governed by the project  
+**Purpose:** Ensure every reported experiment is reproducible, inspectable, and traceable to an immutable configuration and evidence directory.
+
+> **Submission note.** This document specifies how experiments must be recorded and reported. It does not itself claim that any particular experiment has been run or that any listed result has been achieved.
+
+## Reviewer Navigation
+
+1. [Evidence and directory layout](#1-layout)
+2. [`config.json`](#2-configjson)
+3. [`samples.jsonl`](#3-samplesjsonl)
+4. [`report.md` template](#4-reportmd-template)
+5. [Reporting rules](#5-reporting-rules)
+
+## Submission Integrity
+
+- No experimental result may be reported from memory, console scrollback, or an isolated notebook cell.
+- Each experiment must leave a persistent evidence directory containing the configuration, metrics, per-item records, and human-readable report.
+- Experiment identifiers are immutable; changed configurations require new experiment IDs.
+- Results must be reported per stratum and with their tolerance/domain specified.
+- Negative results and failed attempts are first-class deliverables.
+- Generative-AI use must be recorded in the experiment evidence and summarized in `WORK_LOG.md`.
 
 No experiment result is reported from memory, from console scrollback, or from a notebook cell.
 Every experiment leaves a directory. These directories become the evidence base for the final

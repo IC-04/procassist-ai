@@ -1,4 +1,42 @@
-# DATA_CONTRACT
+# DATA_CONTRACT — Submission-Ready Data Contract
+
+**Status:** Authoritative pipeline data contract  
+**Scope:** Generated artifacts and deliverable schemas  
+**Source:** `DATA_CONTRACT.md`  
+**Submission version:** 2026-09-19
+
+## Submission Note
+
+This document defines the contracts for artifacts produced by the pipeline. It governs generated
+outputs; `DATA_SCHEMA.md` remains the governing specification for inputs. The substantive schema,
+invariants, examples, and constraints below are preserved from the source contract.
+
+This submission-ready presentation does **not** claim that every artifact described here has been
+generated or that every implementation requirement has already been validated. It records the
+contract against which implementation and tests are to be judged.
+
+## Reviewer Navigation
+
+- [§0 Field trust levels](#0-field-trust-levels)
+- [§1 Activity blocks](#1-builddatasetblocksjsonl--activity-blocks)
+- [§2 Surface key grammar](#2-surface-key-grammar)
+- [§3 TEKG graph](#3-builddatasettekgsession_idjson--graph)
+- [§4 Reasoner payload](#4-builddatasetwindows-session_idwnnnnjson--reasoner-payload)
+- [§5 Ground truth](#5-ground-truth-dataset-a-only)
+- [§6 Final deliverable](#6-segmentsjsonl--the-deliverable)
+- [§7 Family / variant](#7-family--variant)
+- [§8 Automation opportunity](#8-automation-opportunity)
+- [§9 Experiments](#9-experiments)
+- [§10 Step 1 additions](#10-step-1-additions-2026-09-13-adr-015)
+
+## Submission Integrity
+
+- `segments.jsonl` is the externally submitted artifact and has an exact four-key contract.
+- Ground-truth artifacts are Dataset A only and are not inference inputs.
+- Candidate generation may use retained event-level information, but no candidate field may be derived from GT.
+- Internal `segments_rich.jsonl` is explicitly non-submission output.
+- Generated artifacts must remain consistent with this contract; discrepancies must be recorded in `WORK_LOG.md`.
+
 
 Every artifact the pipeline produces. If code and this file disagree, fix one of them and
 record why in `WORK_LOG.md`.

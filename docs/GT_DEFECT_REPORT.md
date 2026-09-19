@@ -1,4 +1,33 @@
-# GT_DEFECT_REPORT — Dataset A ground truth, measured
+# Dataset A Ground-Truth Defect Report
+
+## Submission-Ready Report
+
+> **Status:** Frozen measurement report  
+> **Scope:** Dataset A — all 63 sessions  
+> **Phase:** Phase 1 (Task 1.3)  
+> **Purpose:** Quantify the consistency, limitations, and observable defects of the Dataset A ground truth before using it for segmentation evaluation.  
+> **Source artifact:** `GT_DEFECT_REPORT.md`  
+> **Submission note:** This report presents measured properties of the ground-truth artifact. It does not claim that the ground truth is independently validated truth; it explicitly treats the GT as evidence whose measurement quality must be understood before accuracy figures are interpreted.
+
+## Reviewer Navigation
+
+1. [Corpus](#1-corpus)
+2. [Documented defects — measured](#2-the-documented-defects--measured)
+3. [Fragmentation](#3-fragmentation--the-number-that-decides-how-central-m2b-is)
+4. [Duration and task structure](#4-duration-and-task-structure)
+5. [Chunk continuation](#5-chunk-continuation)
+6. [Confidence tiers](#6-confidence-tiers-evaluation_protocol-4)
+7. [`expected_boundaries` semantics](#7-expected_boundaries--semantics-task-14-evidence)
+8. [Telemetry truncation](#8-a-defect-the-gt-does-not-document-telemetry-truncation)
+9. [Summary for interpreting accuracy](#9-summary-for-the-reader-of-any-accuracy-number)
+
+## Submission Integrity
+
+- All quantitative claims remain grounded in the measured Dataset A corpus described below.
+- Documented defects are distinguished from omissions and from GT-versus-telemetry coverage problems.
+- The report does not silently repair inconvenient observations; the truncated session is explicitly retained and reported.
+- Ground-truth consistency is distinguished from independent validation: the manifest and stream agree, but are not independent sources.
+- Findings that affect later evaluation design, such as interruption handling and the absence of step-level GT structure, are stated explicitly rather than inferred away.
 
 **Date** 2026-09-13 · **Phase** 1 (Task 1.3) · **Scope** all 63 sessions of `dataset_a`
 **Produced by** `procmine/gt.py` under the repair rules frozen in ADR-011, before any
@@ -34,7 +63,7 @@ Stream record types: `clipboard_paste` 3,010 · `task_started` 2,009 · `process
 
 ---
 
-## 2. The documented defects — measured
+## 2. The Documented Defects — Measured
 
 | Defect (`DATA_SCHEMA.md` §3) | Rate measured | Verdict |
 |---|---|---|
@@ -85,7 +114,7 @@ provenance in `split_id_source`.
 
 ---
 
-## 3. Fragmentation — the number that decides how central M2b is
+## 3. Fragmentation — The Number That Decides How Central M2b Is
 
 Fragments are linked by `split_id`, **not** by `case_id`.
 
@@ -123,7 +152,7 @@ convention is the one that will discriminate between methods.
 
 ---
 
-## 4. Duration and task structure
+## 4. Duration and Task Structure
 
 Canonical execution duration:
 
@@ -153,7 +182,7 @@ on at most 43% of executions.
 
 ---
 
-## 5. Chunk continuation
+## 5. Chunk Continuation
 
 | | count |
 |---|---|
@@ -170,7 +199,7 @@ guaranteed false boundaries.
 
 ---
 
-## 6. Confidence tiers (EVALUATION_PROTOCOL §4)
+## 6. Confidence Tiers (EVALUATION_PROTOCOL §4)
 
 | Tier | Executions | Share |
 |---|---|---|
@@ -184,7 +213,7 @@ With no disputed records, the tier-1 / tier-3 sensitivity line that
 
 ---
 
-## 7. `expected_boundaries` — semantics (Task 1.4 evidence)
+## 7. `expected_boundaries` — Semantics (Task 1.4 Evidence)
 
 3,698 entries across 63 sessions.
 
@@ -215,7 +244,7 @@ complete, and additionally carries `process_code`, which boundary entries do not
 
 ---
 
-## 8. A defect the GT does *not* document: telemetry truncation
+## 8. A Defect the GT Does *Not* Document: Telemetry Truncation
 
 Not a ground-truth defect but a GT-versus-telemetry one, found while validating alignment.
 
@@ -243,7 +272,7 @@ can be attributed rather than explained away.
 
 ---
 
-## 9. Summary for the reader of any accuracy number
+## 9. Summary for the Reader of Any Accuracy Number
 
 1. The GT is **internally consistent to the millisecond**; the two sources never disagree.
 2. The two defects `DATA_SCHEMA.md` warns about **do not occur** here.

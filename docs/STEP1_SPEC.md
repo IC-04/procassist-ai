@@ -1,10 +1,35 @@
-# STEP1_SPEC — Business-process execution inference
+# STEP 1 — Business-Process Execution Inference
+## Submission-Ready Specification
 
-**Status** AUTHORITATIVE for the current work. Supersedes the pipeline description in
-`ARCHITECTURE.md` §3 and the task files `phases/PHASE_2..4.md`.
-**Scope** Step 1 only. Steps 2 and 3 are **not designed in this document and must not be
-designed until Step 1 exits at gate S-DONE.**
-**Date** 2026-09-13 · **Replaces** the phase plan from `IMPLEMENTATION_PLAN.md` v1
+**Document status:** AUTHORITATIVE  
+**Scope:** Step 1 only  
+**Date:** 2026-09-13  
+**Supersedes:** `ARCHITECTURE.md` §3 and `phases/PHASE_2..4.md`  
+**Replaces:** `IMPLEMENTATION_PLAN.md` v1
+
+> **Submission note:** This document defines the authoritative Step 1 scope, architecture, contracts, evaluation protocol, experiments, implementation order, and definition of done. It does **not** design Step 2 or Step 3. Those stages must not begin until Step 1 reaches **S-DONE**.
+
+### Reviewer navigation
+
+1. [Objective](#0-the-objective-stated-once)
+2. [Conceptual correction](#1-the-conceptual-correction)
+3. [Architecture and stage contracts](#2-architecture--two-levels-one-gate)
+4. [Output contract](#4-output-contract)
+5. [Evaluation](#5-evaluation)
+6. [Experiments and decision gates](#6-experiments--exactly-six-each-with-a-decision-it-changes)
+7. [Implementation order](#7-implementation-order)
+8. [Definition of done](#8-definition-of-done-for-step-1)
+9. [Non-goals](#9-non-goals-for-this-specification)
+
+### Submission integrity
+
+- **Dataset A** is the laboratory dataset and the only source of ground-truth evaluation.
+- **Dataset B** is the client dataset and receives the same frozen code; no dataset-specific logic may cross from A to B.
+- Candidate reachability is explicitly separated from segmentation accuracy.
+- The LLM is bounded, optional, and subject to mandatory ablation.
+- `--no-llm` remains a supported execution mode.
+- No inference component may read ground-truth artifacts.
+- Step 1 stops at **S-DONE**; only then may Step 2 be designed.
 
 ---
 
@@ -62,7 +87,7 @@ problems without measured evidence.
 
 ---
 
-## 2. Architecture — two levels, one gate
+## 2. Architecture — Two Levels, One Gate
 
 ```
 raw telemetry
@@ -366,7 +391,7 @@ point.**
 
 ---
 
-## 6. Experiments — exactly six, each with a decision it changes
+## 6. Experiments — Exactly Six, Each With a Decision It Changes
 
 Every experiment produces `experiments/<exp_id>/{config,metrics,samples,report}` per
 `EXPERIMENT_PROTOCOL.md`. **No result is reported from console scrollback.** The Phase 1 ceiling

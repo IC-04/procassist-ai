@@ -1,251 +1,557 @@
-# Step 2.5 — hypothesis verification
+# Step 2.5 — Hypothesis Verification
 
-**The strong hypothesis is false on this dataset.** This document makes that a deliverable
-rather than a gap.
+**Status: VERIFIED AND REFRAMED**
 
-Every claim is tagged OBSERVED / INFERENCE and carries its artifact. No VLM was used anywhere in
-this programme (`docs/PHASE4_SCOPE_DECISION.md`): every number below comes from telemetry the
-recorder already captured.
+> **Decision:** The strong hypothesis is false on Dataset B. This is a deliverable, not an unresolved gap.
 
----
+This document records the evidence used to test the original hypothesis, distinguishes observations from inference, and defines the conclusions that remain valid for Step 3.
 
-## 1. The hypothesis, as originally stated
-
-> Operators apply recoverable written rules to record variables, and an AI system can learn that
-> decision function.
-
-In its strong form this requires four things to be true at once: that the task and outcome are
-observable; that a rule exists and can be recovered; that the record carries the rule's inputs;
-and that the outcome varies enough to tell rule-application apart from confirm-and-proceed.
+**Evidence policy:** Every substantive claim is tagged as observed or inferred in the underlying analysis and carries its supporting artifact. No VLM was used anywhere in the programme; the reported values come from telemetry already captured by the recorder.
 
 ---
 
-## 2. The four-gate decision table
+## Executive Summary
+
+The original hypothesis proposed that:
+
+> Operators apply recoverable written rules to record variables, and an AI system can learn that decision function.
+
+Testing required four conditions to hold simultaneously:
+
+1. the task and outcome must be observable;
+2. a governing rule must be recoverable;
+3. the record must contain the variables required by that rule;
+4. the outcome must vary sufficiently to distinguish rule application from confirm-and-proceed behaviour.
+
+The evidence shows:
+
+- **G1 — Observability:** PASS
+- **G2 — Recoverable governing rule:** PASS
+- **G3 — Required record variables:** FAIL
+- **G4 — Outcome variance:** FAIL for the system disposition, but **reopened for operator annotations**
+
+The strong hypothesis is therefore **refuted**.
+
+The decisive evidence is that **0 of 225 observed dispositions were negative**, with no backward status transitions and no records reaching two terminal states. At the same time, the parsed rule's required variables are often absent from the records on the modules where the rule hypothesis was tested.
+
+A later telemetry sweep found a different signal: **26 of 481 operator-typed comments contain exception markers**, showing that the operator's annotation is variable even though the system disposition is not. This supports a narrower possible target—predicting operator annotation—but that is a materially different task and is not the original decision function.
+
+What survives most strongly is **H3**: operators open a governing reference document before recording a disposition at substantially higher-than-chance rates in 10 of 11 modules. This licenses an evidence-assembly task, not automated decision-making.
+
+---
+
+# 1. Original Hypothesis
+
+The original hypothesis was:
+
+> **Operators apply recoverable written rules to record variables, and an AI system can learn that decision function.**
+
+In its strong form, this hypothesis requires four conditions to hold at once:
+
+- the task and outcome are observable;
+- a rule exists and can be recovered;
+- the record contains the inputs required by the rule;
+- the outcome varies enough to distinguish rule application from confirm-and-proceed behaviour.
+
+The four conditions are tested independently below.
+
+---
+
+# 2. Four-Gate Decision
 
 | Gate | Criterion | Verdict | Evidence |
 |---|---|---|---|
-| **G1** | Task, record type and outcome are OBSERVED, not inferred | **PASS** | `records.jsonl` 3,011 rows · `outcomes.jsonl` 549 rows · 216 queue tables · `screen_text.jsonl` 939 captures — all from `context.extracted_text`, zero VLM inference |
-| **G2** | A governing rule is recoverable from a content-identified document | **PASS** | `documents.jsonl` 112 content-hashed bodies; 接待交際費 threshold parsed to `<¥50,000→部門長 / ≥¥50,000→役員 / ≥¥100,000→社長` |
-| **G3** | The record carries the variables that rule needs | **FAIL** | H4: 4 REFUTED, 7 INSUFFICIENT. 金額 present on 9.1% (LO 契約管理), 1.0% (HR 入社手続き), 2.3% (FI 支払処理) of records |
-| **G4** | The outcome variable has enough variance to distinguish rule-application from confirm-and-proceed | **FAIL for the system disposition · REOPENED for the operator's annotation** | 225/225 toasts positive, 0 backward transitions, 0 double-terminal records over 25,495,968 characters — **but** 26 of 481 distinct operator-typed comments carry 差異あり / 要注意 / 要確認 |
+| **G1** | Task, record type, and outcome are observed rather than inferred | **PASS** | `records.jsonl`: 3,011 rows; `outcomes.jsonl`: 549 rows; 216 queue tables; `screen_text.jsonl`: 939 captures. All derive from `context.extracted_text`; zero VLM inference |
+| **G2** | A governing rule is recoverable from a content-identified document | **PASS** | `documents.jsonl`: 112 content-hashed bodies; the 接待交際費 threshold parses to `<¥50,000 → 部門長 / ≥¥50,000 → 役員 / ≥¥100,000 → 社長` |
+| **G3** | The record carries the variables required by that rule | **FAIL** | H4: 4 REFUTED, 7 INSUFFICIENT. 金額 is present on 9.1% of LO\|契約管理 records, 1.0% of HR\|入社手続き records, and 2.3% of FI\|支払処理 records |
+| **G4** | Outcome variance is sufficient to distinguish rule application from confirm-and-proceed | **FAIL for system disposition; REOPENED for operator annotation** | 225/225 observed dispositions positive; 0 backward transitions; 0 double-terminal records over 25,495,968 characters. However, 26 of 481 distinct operator-typed comments contain 差異あり / 要注意 / 要確認 |
 
-`[DATASET]` OBSERVED throughout. G4's reopening is §6.
+`[DATASET]` throughout. The reopening of G4 is addressed in §6.
 
 ---
 
-## 3. Per-hypothesis verdicts
+# 3. Hypothesis-Level Results
 
-**H5–H18 do not exist.** The programme defined and tested four hypotheses; no H5 through H18 was
-ever specified in any document in this repository. Reporting eighteen would be inventing fourteen.
-What exists is **four hypotheses × eleven modules = 44 verdicts**, all in
-`build/dataset_b/evidence/hypothesis_tests.json`.
+The programme defined and tested **four hypotheses across eleven modules**, producing 44 module-level verdicts.
 
-Declared before the numbers were inspected: evidence floor **n ≥ 8** per module; permutation
-nulls at **10,000 shuffles, seed 7**.
+> **H5–H18 do not exist in the repository.**
 
-| Summary | count |
+Reporting eighteen hypotheses would invent fourteen that were never specified.
+
+Evidence floor:
+
+```text
+n ≥ 8 per module
+```
+
+Permutation nulls:
+
+```text
+10,000 shuffles
+seed = 7
+```
+
+## 3.1 Summary
+
+| Hypothesis | Verdict Summary |
 |---|---|
-| H1 UNTESTABLE / INSUFFICIENT | 8 / 3 |
-| H2 REFUTED / INSUFFICIENT | 3 / 8 |
-| **H3 SUPPORTED / REFUTED** | **10 / 1** |
-| H4 REFUTED / INSUFFICIENT | 4 / 7 |
-
-| H | Module | n | Statistic | Verdict |
-|---|---|---|---|---|
-| H1 | M01 HR|経費精算・給与変更 | 33 | polarity {'positive': 33} | **UNTESTABLE** |
-| H1 | M02 HR|勤怠・休暇申請 | 11 | polarity {'positive': 11} | **UNTESTABLE** |
-| H1 | M03 HR|入社手続き | 36 | polarity {'positive': 36} | **UNTESTABLE** |
-| H1 | M04 HR|福利厚生申請 | 5 | polarity {'positive': 5} | **INSUFFICIENT_EVIDENCE** |
-| H1 | M05 FI|請求書承認・経費精算 | 31 | polarity {'positive': 31} | **UNTESTABLE** |
-| H1 | M06 FI|支払処理 | 11 | polarity {'positive': 11} | **UNTESTABLE** |
-| H1 | M07 FI|経費承認（管理職） | 5 | polarity {'positive': 5} | **INSUFFICIENT_EVIDENCE** |
-| H1 | M08 FI|発注管理 | 3 | polarity {'positive': 3} | **INSUFFICIENT_EVIDENCE** |
-| H1 | M09 LO|在庫管理 | 32 | polarity {'positive': 32} | **UNTESTABLE** |
-| H1 | M10 LO|契約管理 | 18 | polarity {'positive': 18} | **UNTESTABLE** |
-| H1 | M11 LO|IT申請 | 16 | polarity {'positive': 16} | **UNTESTABLE** |
-| H2 | M01 HR|経費精算・給与変更 | 20 | rho=-0.2737, p=0.2317 | **REFUTED** |
-| H2 | M02 HR|勤怠・休暇申請 | 1 |  | **INSUFFICIENT_EVIDENCE** |
-| H2 | M03 HR|入社手続き | 3 |  | **INSUFFICIENT_EVIDENCE** |
-| H2 | M04 HR|福利厚生申請 | 2 |  | **INSUFFICIENT_EVIDENCE** |
-| H2 | M05 FI|請求書承認・経費精算 | 19 | rho=-0.0668, p=0.7816 | **REFUTED** |
-| H2 | M06 FI|支払処理 | 1 |  | **INSUFFICIENT_EVIDENCE** |
-| H2 | M07 FI|経費承認（管理職） | 1 |  | **INSUFFICIENT_EVIDENCE** |
-| H2 | M08 FI|発注管理 | 1 |  | **INSUFFICIENT_EVIDENCE** |
-| H2 | M09 LO|在庫管理 | 8 | rho=-0.6905, p=0.0718 | **REFUTED** |
-| H2 | M10 LO|契約管理 | 1 |  | **INSUFFICIENT_EVIDENCE** |
-| H2 | M11 LO|IT申請 | 2 |  | **INSUFFICIENT_EVIDENCE** |
-| H3 | M01 HR|経費精算・給与変更 | 65 | rate=0.7846, p=0.0 | **SUPPORTED** |
-| H3 | M02 HR|勤怠・休暇申請 | 14 | rate=1.0, p=0.0002 | **SUPPORTED** |
-| H3 | M03 HR|入社手続き | 46 | rate=0.9348, p=0.0 | **SUPPORTED** |
-| H3 | M04 HR|福利厚生申請 | 25 | rate=0.84, p=0.0 | **SUPPORTED** |
-| H3 | M05 FI|請求書承認・経費精算 | 46 | rate=0.8043, p=0.0002 | **SUPPORTED** |
-| H3 | M06 FI|支払処理 | 26 | rate=0.8462, p=0.0163 | **SUPPORTED** |
-| H3 | M07 FI|経費承認（管理職） | 24 | rate=0.875, p=0.0263 | **SUPPORTED** |
-| H3 | M08 FI|発注管理 | 28 | rate=0.8571, p=0.0 | **SUPPORTED** |
-| H3 | M09 LO|在庫管理 | 34 | rate=0.6765, p=0.0521 | **REFUTED** |
-| H3 | M10 LO|契約管理 | 44 | rate=0.8636, p=0.0 | **SUPPORTED** |
-| H3 | M11 LO|IT申請 | 29 | rate=0.6552, p=0.0102 | **SUPPORTED** |
-| H4 | M01 HR|経費精算・給与変更 | 688 | 金額 on 565/688 = 0.8212 | **INSUFFICIENT_EVIDENCE** |
-| H4 | M02 HR|勤怠・休暇申請 | 133 | 金額 on 12/133 = 0.0902 | **REFUTED** |
-| H4 | M03 HR|入社手続き | 410 | 金額 on 4/410 = 0.0098 | **REFUTED** |
-| H4 | M04 HR|福利厚生申請 | 74 | 金額 on 24/74 = 0.3243 | **INSUFFICIENT_EVIDENCE** |
-| H4 | M05 FI|請求書承認・経費精算 | 372 | 金額 on 324/372 = 0.871 | **INSUFFICIENT_EVIDENCE** |
-| H4 | M06 FI|支払処理 | 132 | 金額 on 3/132 = 0.0227 | **REFUTED** |
-| H4 | M07 FI|経費承認（管理職） | 60 | 金額 on 23/60 = 0.3833 | **INSUFFICIENT_EVIDENCE** |
-| H4 | M08 FI|発注管理 | 29 | 金額 on 23/29 = 0.7931 | **INSUFFICIENT_EVIDENCE** |
-| H4 | M09 LO|在庫管理 | 388 | 金額 on 203/388 = 0.5232 | **INSUFFICIENT_EVIDENCE** |
-| H4 | M10 LO|契約管理 | 241 | 金額 on 22/241 = 0.0913 | **REFUTED** |
-| H4 | M11 LO|IT申請 | 193 | 金額 on 33/193 = 0.171 | **INSUFFICIENT_EVIDENCE** |
-### 3.1 UNTESTABLE is not REFUTED, and the difference matters
-
-`[INF]` H2 REFUTED means a test ran and found nothing: amount does not predict handling effort
-(ρ = −0.27, −0.07, −0.69; p = 0.23, 0.78, 0.07). That is a result about the world.
-
-H1 UNTESTABLE means **no test can run**. The dependent variable is a constant, so every
-predictor — including `return "approve"` — scores 100%. An accuracy figure here would not be a
-weak result; it would be a meaningless one, and reporting it would be the error. This is the
-more serious of the two facts.
+| **H1** | 8 UNTESTABLE / 3 INSUFFICIENT |
+| **H2** | 3 REFUTED / 8 INSUFFICIENT |
+| **H3** | **10 SUPPORTED / 1 REFUTED** |
+| **H4** | 4 REFUTED / 7 INSUFFICIENT |
 
 ---
 
-## 4. The refutation, stated plainly
+## 3.2 H1 — Outcome/Disposition Polarity
 
-**The original hypothesis is false in its strong form.** `[DATASET]` + `[INF]`
+| Module | n | Statistic | Verdict |
+|---|---:|---|---|
+| M01 HR\|経費精算・給与変更 | 33 | `{'positive': 33}` | **UNTESTABLE** |
+| M02 HR\|勤怠・休暇申請 | 11 | `{'positive': 11}` | **UNTESTABLE** |
+| M03 HR\|入社手続き | 36 | `{'positive': 36}` | **UNTESTABLE** |
+| M04 HR\|福利厚生申請 | 5 | `{'positive': 5}` | **INSUFFICIENT_EVIDENCE** |
+| M05 FI\|請求書承認・経費精算 | 31 | `{'positive': 31}` | **UNTESTABLE** |
+| M06 FI\|支払処理 | 11 | `{'positive': 11}` | **UNTESTABLE** |
+| M07 FI\|経費承認（管理職） | 5 | `{'positive': 5}` | **INSUFFICIENT_EVIDENCE** |
+| M08 FI\|発注管理 | 3 | `{'positive': 3}` | **INSUFFICIENT_EVIDENCE** |
+| M09 LO\|在庫管理 | 32 | `{'positive': 32}` | **UNTESTABLE** |
+| M10 LO\|契約管理 | 18 | `{'positive': 18}` | **UNTESTABLE** |
+| M11 LO\|IT申請 | 16 | `{'positive': 16}` | **UNTESTABLE** |
 
-The decisive fact is **0 negative outcomes in 225 observed dispositions**, corroborated by 0
-backward status transitions, 0 records reaching two terminal states, and 0 negative terms in
-disposition position across 25,495,968 characters of telemetry.
+### Important distinction
 
-There is therefore **no supervision signal for a decision function**. A model trained on this
-data learns `return approve`, scores 100% on every split, and is worth nothing. The failure is
-not that the model would be weak — it is that the evaluation cannot distinguish a good model
-from a constant.
+`UNTESTABLE` is not equivalent to `REFUTED`.
 
----
+`[INF]` A REFUTED result means that a test could run and failed to find the proposed relationship.
 
-## 5. Why the refutation is structural, not a measurement artifact
+An UNTESTABLE result means the dependent variable is constant, so the test cannot distinguish a real model from a constant predictor such as:
 
-`[INF]` G3 and G4 fail for **compatible reasons**, and that is what makes this more than a
-sampling accident.
+```text
+return "approve"
+```
 
-If the operator were applying the parsed threshold rule, the record would have to carry 金額.
-On three of the four REFUTED modules it carries it on **1–9%** of records. The deciding variable
-is absent from the thing being decided on.
-
-So the two failures corroborate: **the operator is not deciding from the record, and there is no
-decision recorded**. A dataset where the rule's input is missing *and* the rule's output never
-varies is not a dataset where a decision is being made and we failed to measure it. It is a
-dataset where the observed work is confirmation, not adjudication.
-
-**The single contradiction, reported at its true weight.** `P1-07048822-009`: 接待交際費,
-¥123,224, which is ≥¥100,000, so the parsed rule says 社長承認 — and the system shows 承認権限
-= 役員. `[DATASET]` OBSERVED. **n = 1.** One record supports no conclusion. It is recorded
-because it is the only in-scope test of the only parsed threshold rule in the dataset, and
-because a single contradiction is worth more as a stated limit than as an omission.
+An accuracy of 100% in that setting would be meaningless rather than impressive.
 
 ---
 
-## 6. Phase 3.9 — the free sweep, and what it changed
+## 3.3 H2 — Amount Versus Handling Effort
 
-31 negative/exception/reversal terms were swept across **every string value in every event** —
-1,563,587 values, 25,495,968 characters, 20,477 events — plus 4,746 screenshot filenames and 898
-record-status series, with a keyword-free structural test for reversal. `[DATASET]`
+| Module | n | Statistic | Verdict |
+|---|---:|---|---|
+| M01 HR\|経費精算・給与変更 | 20 | ρ = -0.2737, p = 0.2317 | **REFUTED** |
+| M02 HR\|勤怠・休暇申請 | 1 | — | **INSUFFICIENT_EVIDENCE** |
+| M03 HR\|入社手続き | 3 | — | **INSUFFICIENT_EVIDENCE** |
+| M04 HR\|福利厚生申請 | 2 | — | **INSUFFICIENT_EVIDENCE** |
+| M05 FI\|請求書承認・経費精算 | 19 | ρ = -0.0668, p = 0.7816 | **REFUTED** |
+| M06 FI\|支払処理 | 1 | — | **INSUFFICIENT_EVIDENCE** |
+| M07 FI\|経費承認（管理職） | 1 | — | **INSUFFICIENT_EVIDENCE** |
+| M08 FI\|発注管理 | 1 | — | **INSUFFICIENT_EVIDENCE** |
+| M09 LO\|在庫管理 | 8 | ρ = -0.6905, p = 0.0718 | **REFUTED** |
+| M10 LO\|契約管理 | 1 | — | **INSUFFICIENT_EVIDENCE** |
+| M11 LO\|IT申請 | 2 | — | **INSUFFICIENT_EVIDENCE** |
 
-**For the system disposition, the null result holds:** 0 candidate negative outcomes, 0 backward
-transitions, 0 lateral transitions, 0 records with two terminal states, 0 filename hits.
+`[INF]`
 
-**Two findings changed the picture anyway.**
+For the tested modules, the available evidence does not establish amount as a predictor of handling effort.
 
-### 6.1 The UI exposes a rejection path that was never used
+---
+
+## 3.4 H3 — Document Consultation
+
+| Module | n | Rate | p-value | Verdict |
+|---|---:|---:|---:|---|
+| M01 HR\|経費精算・給与変更 | 65 | 0.7846 | 0.0000 | **SUPPORTED** |
+| M02 HR\|勤怠・休暇申請 | 14 | 1.0000 | 0.0002 | **SUPPORTED** |
+| M03 HR\|入社手続き | 46 | 0.9348 | 0.0000 | **SUPPORTED** |
+| M04 HR\|福利厚生申請 | 25 | 0.8400 | 0.0000 | **SUPPORTED** |
+| M05 FI\|請求書承認・経費精算 | 46 | 0.8043 | 0.0002 | **SUPPORTED** |
+| M06 FI\|支払処理 | 26 | 0.8462 | 0.0163 | **SUPPORTED** |
+| M07 FI\|経費承認（管理職） | 24 | 0.8750 | 0.0263 | **SUPPORTED** |
+| M08 FI\|発注管理 | 28 | 0.8571 | 0.0000 | **SUPPORTED** |
+| M09 LO\|在庫管理 | 34 | 0.6765 | 0.0521 | **REFUTED** |
+| M10 LO\|契約管理 | 44 | 0.8636 | 0.0000 | **SUPPORTED** |
+| M11 LO\|IT申請 | 29 | 0.6552 | 0.0102 | **SUPPORTED** |
+
+**Result: H3 is supported in 10 of 11 modules.**
+
+---
+
+## 3.5 H4 — Presence of Amount
+
+| Module | n | Amount Present | Verdict |
+|---|---:|---:|---|
+| M01 HR\|経費精算・給与変更 | 688 | 565/688 = 0.8212 | **INSUFFICIENT_EVIDENCE** |
+| M02 HR\|勤怠・休暇申請 | 133 | 12/133 = 0.0902 | **REFUTED** |
+| M03 HR\|入社手続き | 410 | 4/410 = 0.0098 | **REFUTED** |
+| M04 HR\|福利厚生申請 | 74 | 24/74 = 0.3243 | **INSUFFICIENT_EVIDENCE** |
+| M05 FI\|請求書承認・経費精算 | 372 | 324/372 = 0.8710 | **INSUFFICIENT_EVIDENCE** |
+| M06 FI\|支払処理 | 132 | 3/132 = 0.0227 | **REFUTED** |
+| M07 FI\|経費承認（管理職） | 60 | 23/60 = 0.3833 | **INSUFFICIENT_EVIDENCE** |
+| M08 FI\|発注管理 | 29 | 23/29 = 0.7931 | **INSUFFICIENT_EVIDENCE** |
+| M09 LO\|在庫管理 | 388 | 203/388 = 0.5232 | **INSUFFICIENT_EVIDENCE** |
+| M10 LO\|契約管理 | 241 | 22/241 = 0.0913 | **REFUTED** |
+| M11 LO\|IT申請 | 193 | 33/193 = 0.1710 | **INSUFFICIENT_EVIDENCE** |
+
+---
+
+# 4. The Strong Hypothesis Is Refuted
+
+The original hypothesis is **false in its strong form**.
+
+`[DATASET] + [INF]`
+
+The decisive fact is:
+
+> **0 negative outcomes in 225 observed dispositions.**
+
+This is corroborated by:
+
+- 0 backward status transitions;
+- 0 records reaching two terminal states;
+- 0 negative terms in disposition position;
+- 25,495,968 characters of telemetry searched.
+
+There is therefore **no supervision signal for a decision function**.
+
+A model trained on this dataset could learn:
+
+```text
+return approve
+```
+
+and achieve 100% on every split.
+
+That would not demonstrate a successful decision model. It would demonstrate that the evaluation target is constant.
+
+The problem is therefore structural rather than a question of model quality.
+
+---
+
+# 5. Why the Refutation Is Structural
+
+`[INF]`
+
+G3 and G4 fail for mutually compatible reasons.
+
+If operators were applying the parsed threshold rule, the record would need to contain the variable required by that rule.
+
+Yet on three of the four REFUTED H4 modules, 金額 appears on only **1–9% of records**.
+
+Thus the variable required to apply the proposed rule is generally absent from the record being processed.
+
+The two observations reinforce one another:
+
+> **The deciding variable is usually absent from the record, and the system-level decision never varies.**
+
+This is inconsistent with the strong interpretation that operators are applying a recoverable rule to record variables.
+
+It is more consistent with the observed workflow being **confirmation rather than adjudication**.
+
+## 5.1 The Single Contradictory Record
+
+One in-scope test of the parsed threshold rule produces a contradiction:
+
+```text
+Record: P1-07048822-009
+Category: 接待交際費
+Amount: ¥123,224
+```
+
+The parsed rule states that amounts ≥ ¥100,000 require:
+
+```text
+社長承認
+```
+
+but the system displays:
+
+```text
+承認権限 = 役員
+```
+
+`[DATASET]` OBSERVED.
+
+However:
+
+> **n = 1.**
+
+This single record cannot establish a general conclusion. It is retained because it is the only in-scope test of the only parsed threshold rule and therefore defines an important limitation of the evidence.
+
+---
+
+# 6. Phase 3.9 — Free Sweep and G4 Reopening
+
+A subsequent free sweep searched for negative, exception, and reversal signals across the complete telemetry.
+
+The sweep covered:
+
+- **31 negative/exception/reversal terms**
+- **1,563,587 string values**
+- **25,495,968 characters**
+- **20,477 events**
+- **4,746 screenshot filenames**
+- **898 record-status series**
+
+A keyword-free structural reversal test was also applied.
+
+`[DATASET]`
+
+## 6.1 System-Disposition Null Result
+
+For the system disposition, the null result remains:
+
+- 0 candidate negative outcomes
+- 0 backward transitions
+- 0 lateral transitions
+- 0 records with two terminal states
+- 0 filename hits
+
+Therefore, the original conclusion about the **system-level disposition target** remains unchanged.
+
+---
+
+## 6.2 The UI Contains an Unused Rejection Path
 
 The disposition comment box is labelled:
 
-> 「承認コメントまたは**差戻し**理由を入力してください…」 — *enter an approval comment or a send-back reason*
+> 「承認コメントまたは**差戻し**理由を入力してください…」
 
-`[DATASET]` OBSERVED, 1,748 occurrences. `[INF]` So 差戻し (send-back) is a **supported action
-that was never exercised in this window**. This reframes G4: the dataset does not show that
-rejection never happens — it shows that this ~2-hour capture contains none. Any system built or
-evaluated here has never seen the branch the interface is built around.
+Meaning: enter an approval comment or a send-back reason.
 
-### 6.2 G4 REOPENS — for the operator's annotation, not the system's outcome
+`[DATASET]` This text occurs **1,748 times**.
 
-`payload.target_field.value` on keystroke events carries **what the operator typed**: 481
-distinct comments over 1,347 events, an evidence source roughly half the size of the
-`extracted_text` corpus and **entirely missed by Pass 0**, which read only `context.extracted_text`.
+`[INF]` The evidence establishes that `差戻し` is a **supported UI action that was never exercised during this capture window**.
 
-`[DATASET]` OBSERVED — **26 of 481 (5.4%) carry an exception marker:**
+This does not prove that rejection never occurs in real operation. It establishes only that this approximately two-hour dataset contains no observed instance of that branch.
 
-| Clean | n | Flagged | n | Module |
-|---|---|---|---|---|
-| 差異なし | 36 | **差異あり** | **19** | 請求書照合 (invoice matching) |
-| 通常 | 46 | **要注意** | **7** | 発注管理 (PO management) |
+---
+
+## 6.3 G4 Reopens for Operator Annotations
+
+`payload.target_field.value` on keystroke events records what the operator typed.
+
+This produces:
+
+- **481 distinct comments**
+- **1,347 comment-related events**
+
+This evidence source is roughly half the size of the `extracted_text` corpus and was missed by the initial Pass 0 analysis, which examined only `context.extracted_text`.
+
+### Exception-marked comments
+
+**26 of 481 comments (5.4%) contain an exception marker.**
+
+| Clean Annotation | n | Flagged Annotation | n | Module |
+|---|---:|---|---:|---|
+| 差異なし | 36 | **差異あり** | **19** | 請求書照合 |
+| 通常 | 46 | **要注意** | **7** | 発注管理 |
 | 確認完了 | 16 | 要確認 | 19 | — |
 
+Examples:
+
 > 「請求書照合完了。INV-2026-7351　金額：1,218,687円。**差異あり要確認**。」
+
 > 「発注管理処理。発注変更：サーバー保守部品　数量 380　合計 14,078,240円　**要注意**。発注書確認・**登録完了**。」
 
-**Every flagged record was still disposed positively.** The second example is flagged *and*
-completed in the same sentence.
+Importantly:
 
-`[INF]` So there **is** a supervision signal, and it is not the one the hypothesis assumed. The
-learnable target is **"predict the annotation"**, not "predict the decision" — a different and
-much smaller claim, at n = 19 and n = 7.
+> **Every flagged record was still disposed positively.**
 
-**This also corrects a claim I made and committed.** Commit `d5b2f67` reported a clean null
-result and closed G4. It read only the places a *system* outcome would appear and never looked
-at what the operator wrote. Corrected in `a83111b`; both commits stand in history.
+The second example is explicitly flagged and nevertheless completed in the same sentence.
 
----
+### Interpretation
 
-## 7. What survives
+`[INF]`
 
-**H3 is SUPPORTED in 10 of 11 modules** `[DATASET]`, at rates 0.66–1.00 against a permutation
-null that places document-open events uniformly inside the same execution span, most p < 0.001.
+There is therefore a supervision signal—but it is **not the target proposed by the original hypothesis**.
 
-> Operators retrieve a record, **open a governing reference document**, and record a
-> disposition — far more often than chance placement.
+The potentially learnable target is:
 
-**What that licenses:** that document consultation is a real and near-universal step in this
-work, and that identifying *which* document is being consulted is a well-posed task with
-observed labels.
+> **predict the operator's annotation**
 
-**What it does not license** `[INF]`: any claim that the document's content *determined* the
-outcome. H3 measures sequence, not causation. The operator may consult the document to confirm a
-decision already made, to satisfy a procedural requirement, or out of habit. G3 and G4 make the
-causal reading actively unlikely — the deciding variable is usually absent from the record, and
-the outcome never varies.
+rather than:
+
+> **predict the system disposition**
+
+This is a materially smaller and different task, with observed flagged counts of only **n = 19** and **n = 7** in the identified categories.
+
+It should not be conflated with decision prediction.
 
 ---
 
-## 8. Threats to validity
+## 6.4 Correction to the Analysis History
 
-`[DATASET]` unless marked.
+The initial analysis committed to a clean null result and closed G4.
 
-1. **`extracted_text` covers 4.59% of events** (939 of 20,477). Every content claim is measured
-   on the subset of screens that happened to be captured with text. There is no evidence about
-   the rest.
-2. **Redaction.** `clipboard_change.text_content` is null on all 872 events; only `text_length`
-   survives. Element and field labels are hashed in `uia_v2` and `dom_v2`.
-3. **Compressed waiting times.** `README.md` states waits are compressed in the capture
-   environment, so **all durations are comparative only**. No figure here is wall-clock effort.
-4. **One ~2-hour window, 15 sessions, 4 operators.** No seasonality, no volume, and — per §6.1 —
-   no observed instance of the rejection branch the UI supports.
-5. **Module keys disagree** (ADR-022): the URL is wrong about the displayed screen in 21% of
-   captures, and `FI|予算差異分析` is missing from the inventory entirely. Per-module counts in
-   §3 are keyed by URL and inherit that error.
-6. **A parser defect found during Phase 3.9 and left in place:** `records.py` mis-assigns
-   `status_ja` on the 発注管理 table, putting a record id in the status field on 19 rows, because
-   that table has a different column count. It does not affect the outcome counts, which come
-   from toasts, and it is recorded rather than quietly patched.
-7. **`n = 1`** for the only in-scope test of the only parsed threshold rule (§5).
+Commit `d5b2f67` read only locations where a system outcome would appear and did not inspect operator-entered text.
+
+This was corrected in commit `a83111b`.
+
+Both commits remain in the project history.
+
+This correction is retained explicitly rather than silently overwriting the earlier result.
 
 ---
 
-## 9. What this means for Step 3
+# 7. What Survives
 
-Not a recommendation — that is `docs/STEP3_TARGET_REFRAME.md`. Only the constraint this document
-imposes:
+## H3: Document Consultation
 
-**A system built on Dataset B cannot be evaluated on whether it decides correctly**, because no
-incorrect decision was ever observed. It can be evaluated on whether it **assembles the right
-evidence** — which is what H3 licenses, and the only thing it licenses.
+**H3 is supported in 10 of 11 modules.**
+
+The observed rates range from approximately **0.66 to 1.00**, against a permutation null that places document-open events uniformly within the same execution span; most p-values are < 0.001.
+
+`[DATASET]`
+
+The surviving empirical statement is:
+
+> Operators retrieve a record, **open a governing reference document**, and record a disposition more often than expected under chance placement.
+
+### What this licenses
+
+The evidence supports the claim that:
+
+- document consultation is a real and near-universal step in the observed workflow;
+- identifying which document is being consulted is a well-posed task;
+- observed document-open events provide labels for that task.
+
+### What this does not license
+
+`[INF]`
+
+H3 measures **sequence, not causation**.
+
+It does not establish that document content determined the outcome.
+
+The operator may consult the document:
+
+- to confirm a decision already made;
+- to satisfy a procedural requirement;
+- out of habit;
+- or for another reason not represented in the telemetry.
+
+The G3 and G4 results make the causal interpretation unsupported: the proposed deciding variable is often absent from the record, while the system-level outcome does not vary.
+
+---
+
+# 8. Threats to Validity
+
+Unless otherwise marked, the following limitations are `[DATASET]`.
+
+### 8.1 Limited `extracted_text` Coverage
+
+`extracted_text` covers **4.59% of events**:
+
+```text
+939 / 20,477
+```
+
+Therefore, every content-based claim is measured on the subset of screens that happened to be captured with text.
+
+There is no direct evidence about the remaining events.
+
+### 8.2 Redaction
+
+`clipboard_change.text_content` is null on all **872 events**; only `text_length` survives.
+
+Element and field labels are hashed in:
+
+```text
+uia_v2
+dom_v2
+```
+
+### 8.3 Compressed Waiting Times
+
+`README.md` states that waits are compressed in the capture environment.
+
+Therefore:
+
+> **All durations are comparative only. No duration in this document should be interpreted as wall-clock effort.**
+
+### 8.4 Limited Observation Window
+
+The dataset covers approximately:
+
+- **2 hours**
+- **15 sessions**
+- **4 operators**
+
+It therefore provides no basis for conclusions about:
+
+- seasonality;
+- workload volume;
+- broader operational variation;
+- the rejection branch that the UI supports but which did not occur in the observed window.
+
+### 8.5 Module-Key Reconciliation
+
+The module keys disagree.
+
+Under ADR-022, the URL is incorrect about the displayed screen in approximately **21% of captures**, and `FI|予算差異分析` is missing from the existing inventory.
+
+Per-module counts that were originally keyed by URL inherit this limitation.
+
+### 8.6 Parser Defect
+
+A parser defect discovered during Phase 3.9 remains documented rather than silently patched.
+
+`records.py` misassigns `status_ja` on the 発注管理 table for **19 rows**, placing a record ID in the status field because that table has a different column count.
+
+This does **not** affect the outcome counts, which come from toasts.
+
+### 8.7 Single-Record Rule Test
+
+The only in-scope test of the only parsed threshold rule has:
+
+```text
+n = 1
+```
+
+No general conclusion can be drawn from it.
+
+---
+
+# 9. Constraint Imposed on Step 3
+
+This section states the implication for the next phase without replacing the Step 3 design document.
+
+The appropriate Step 3 target is documented separately in:
+
+```text
+docs/STEP3_TARGET_REFRAME.md
+```
+
+The constraint imposed by this verification is:
+
+> **A system built on Dataset B cannot be evaluated on whether it decides correctly, because no incorrect decision was observed.**
+
+The defensible evaluation target is whether the system can:
+
+> **assemble and surface the right evidence**
+
+This is what H3 supports, and it is the strongest conclusion the present dataset licenses.
+
+---
+
+# 10. Final Decision Gate
+
+| Question | Result |
+|---|---|
+| Is the original strong decision-learning hypothesis supported? | **No — refuted** |
+| Is the task/outcome observable? | **Yes** |
+| Is a governing rule recoverable? | **Yes** |
+| Does the record consistently contain the rule's required inputs? | **No** |
+| Does the system disposition provide sufficient target variance? | **No** |
+| Does operator-entered annotation contain a smaller variable signal? | **Yes, but sparsely** |
+| Is document consultation empirically supported? | **Yes, in 10 of 11 modules** |
+| Can Dataset B justify automated disposition? | **No** |
+| Can Dataset B support evidence-assembly / document-identification work? | **Yes** |
+
+### Bottom line
+
+The evidence does **not** support building an AI system that decides the disposition.
+
+It **does** support a narrower, testable problem around **identifying and assembling the evidence operators consult before recording the disposition**.
+
+That is the boundary that should be carried into Step 3.

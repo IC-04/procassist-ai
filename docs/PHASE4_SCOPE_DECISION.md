@@ -1,13 +1,39 @@
-# Phase 4 — scope decision: the blanket VLM pass is cancelled
+# Phase 4 — Scope Decision: Blanket VLM Pass Cancelled
 
-**Decision: zero VLM calls. Zero dollars spent.** `[DATASET]` `[INF]`
+## Submission-Ready Decision Record
 
-Artifact: `build/dataset_b/evidence/vlm_ledger.jsonl` (0 rows)
-Script: `analysis/evidence/vlm_micro.py`
+| Field | Value |
+|---|---|
+| **Artifact type** | Phase decision / evidence record |
+| **Decision** | Blanket VLM pass cancelled; zero VLM calls |
+| **Dataset** | Dataset B |
+| **Scope** | Phase 4-Micro / evidence review |
+| **Status** | **Final decision record** |
+| **Spend** | **$0.00** |
+| **Implementation consequence** | Bounded visual-extraction capability retained; no blanket execution |
+
+> **Submission note:** This document records a completed scope decision supported by observed telemetry and bounded verification. It does **not** claim that visual extraction is universally unnecessary; it records why the blanket Phase 4 pass was not justified for the questions examined, what residual uncertainty remains, and what capability was retained for controlled future use.
+
+## Reviewer Navigation
+
+1. Original Phase 4 premise and why it no longer applies
+2. Three sanctioned Phase 4-Micro questions and answers
+3. Bounded visual-extraction capability retained
+4. Actual spend
+5. Known cost of the cancellation
+
+## Submission Integrity
+
+- Evidence-derived observations are explicitly marked `[DATASET]`; inferences are explicitly marked `[INF]`.
+- The decision is based on the available text telemetry and bounded verification described below.
+- Zero VLM calls means no visual-model result is presented as evidence.
+- Residual uncertainty is stated explicitly rather than treated as resolved.
+- The retained extractor is fail-safe and auditable; it does not silently substitute a different provenance path.
+- This record does not expand the Phase 4 scope beyond the questions and residual defined here.
 
 ---
 
-## 1. What was originally scoped, and why it no longer applies
+## 1. Original Scope and Why It No Longer Applies
 
 Phase 4 was designed before Pass 0 ran. Its premise was that the screens were only available as
 pixels, so a vision model would be needed to read record values, queue contents and badges
@@ -31,7 +57,7 @@ machine at all, and ADR-007's rejection of global OCR pipelines stands.
 
 ---
 
-## 2. The three sanctioned Phase 4-Micro questions, and their answers
+## 2. Sanctioned Phase 4-Micro Questions and Answers
 
 ### Q1 — what does the ⚠ marker on FI|発注管理 denote? **ANSWERED FROM TEXT**
 
@@ -71,7 +97,7 @@ The variance it did find is operator-typed text, which needs no visual confirmat
 
 ---
 
-## 3. What was built anyway, and why
+## 3. Bounded Capability Retained, and Why
 
 The capability exists, bounded and auditable, so that **not spending is a measured decision
 rather than an absence**:
@@ -90,7 +116,7 @@ rather than an absence**:
 
 ---
 
-## 4. What was actually spent
+## 4. Actual Spend
 
 | | |
 |---|---|
@@ -101,7 +127,7 @@ rather than an absence**:
 
 ---
 
-## 5. What this decision costs
+## 5. Cost and Residual Uncertainty
 
 Stated plainly, because a cancellation should carry its own downside: `[INF]`
 
