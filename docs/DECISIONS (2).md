@@ -1,37 +1,5 @@
 # Architecture Decision Records
 
-**Document:** `DECISIONS.md`  
-**Document type:** Architecture Decision Records (ADR)  
-**Status:** Append-only decision history  
-**Coverage:** ADR-001 onward, including subsequent addenda  
-**Submission purpose:** Authoritative record of architectural decisions, their consequences, and the evidence used to make or revise them.
-
-## Submission Note
-
-This edition preserves the substantive ADR history, including accepted decisions, supersession/addenda, negative results, corrections, and implementation consequences. No decision, metric, evidence claim, or ADR outcome has been silently removed or rewritten for presentation.
-
-The governing rule remains: **an ADR is required to change anything in `ARCHITECTURE.md` or a `*_SPEC.md`.** Each ADR records its ID, date, status, context, decision, consequences, and evidence.
-
-## Reviewer Navigation
-
-- **ADR-001 onward:** foundational architecture and normalization decisions
-- **ADR-010–018:** dataset transfer, GT governance, Step 1 scope, evaluation, and bounded AI decisions
-- **ADR-019–021:** A→B transfer rules, decoder structure, and process identity
-- **ADR-021 addenda:** identity corrections, freeze, deliverable provenance, and dependency governance
-- **ADR-022–025:** Step 2 evidence reconciliation, VLM governance, hypothesis refutation, and ProcAssist decisions
-- **Final addenda:** subsequent corrections and implementation decisions are retained in chronological order below
-
-## Submission Integrity
-
-- This document is an **engineering decision record**, not a retrospective claim that every earlier hypothesis was correct.
-- Superseded decisions and negative results remain visible because they document how the design changed in response to evidence.
-- Dataset-specific observations are retained with their stated provenance and are not silently generalized.
-- Architectural constraints and evidence are distinguished from inference and judgement where the source does so.
-- The append-only structure is preserved; later corrections appear as addenda rather than rewriting earlier ADRs.
-- Deferred Step 2/Step 3 material remains subject to the scope gates recorded in the ADR history.
-
----
-
 ### ADR-001 · 2026-09-11 · accepted · Chunks are dissolved during normalisation
 **Context** `DATA_SCHEMA.md` §1: chunks are fixed recording-time buckets with no business
 meaning; `correlation.sequence_number` restarts per chunk.
