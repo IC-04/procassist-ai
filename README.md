@@ -1,248 +1,230 @@
-NAME:INDRANI CHATTOPADHYAY
-UNIVERSITY: IIT BHUBANESWAR
-DEPARTMENT:MECHANICAL ENGINEERING
-EMAIL ADDRESS: indranichattopadhyay635@gmail.com
+# ProcMine & ProcAssist — From Desktop Telemetry to Document-Grounded Automation
 
-# Intern Selection Task: From Operation Logs to an Automation Proposal
-
-**Duration:** 7 days
-**Submission:** Full repository (including Git history) + final report
+> **Inferring business-process executions from raw keystroke-level desktop logs, and building a human-in-the-loop AI assistant for back-office regulatory decisions.**
 
 ---
 
-## Background
+## Author
 
-You have been assigned as an FDE (Forward Deployed Engineer) to a client company.
-
-In this company's back-office departments (HR, Finance, Logistics, and others), staff
-spend their days moving back and forth between internal business systems and desktop
-applications such as Excel and Word, processing routine paperwork. For these employees,
-this kind of work continues all day long.
-
-The company already runs a desktop agent that collects PC operation logs from its staff.
-Every keystroke, click, and application switch is recorded in chronological order.
-
-Management has one request:
-
-> **"Use these logs to tell us where automation would have the greatest impact on our
-> operations. And show us something that actually works."**
-
-However, what is recorded is only **operations**. Nothing in the log says
-"this person is now processing an expense claim" or "this is an onboarding procedure."
-The logs have been piling up untouched. Right now, nobody knows what work is being done,
-by whom, or how much time it takes.
+| | |
+|---|---|
+| **Name** | Indrani Chattopadhyay |
+| **University** | Indian Institute of Technology (IIT) Bhubaneswar |
+| **Department** | Mechanical Engineering |
+| **Email** | indranichattopadhyay635@gmail.com |
 
 ---
 
-## Goal
+## Project Overview
 
-**Produce a proposal that maximizes the client's ROI, and demonstrate it with something
-that actually runs.**
+A Japanese company's desktop agent captures every keystroke, click, and application switch from back-office staff across HR, Finance, and Logistics. Nothing in the logs indicates *what* work is being done. Management's brief:
 
-Technical accuracy is not the objective in itself. Your judgment is what is being
-assessed — including how you choose to spend your 7 days.
+> *"Use these logs to tell us where automation would have the greatest impact on our operations. And show us something that actually works."*
+
+This repository delivers a **four-layer system** built over a 7-day engagement (~55 hours):
+
+| Step | Deliverable | Key Result |
+|---|---|---|
+| **Step 1** — Execution inference | `segments.jsonl` | Boundary **F1 0.690** (2.67× strongest baseline), identity **ARI 0.681**, no LLM on the critical path |
+| **Step 2** — Business analysis | 12-module process inventory with automation candidates | Re-performed after a semantic-validation defect was found and corrected |
+| **Step 2.5** — Hypothesis testing | 4-gate evidence framework | The strong automation hypothesis was **refuted** — zero negative outcomes in 225 dispositions |
+| **Step 3** — ProcAssist | A running document-grounded preparation tool | Resolves regulations, localises clauses, drafts comments — **human decides** |
+
+**449 tests passing, 2 skipped.**
 
 ---
 
-## Provided Data
-
-See **`DATA_SCHEMA.md`** for the full data specification.
-
-### Dataset A (with ground truth / 63 sessions / ~162,000 events)
+## Architecture
 
 ```
-dataset_a/
-  ses_<date>-<time>-<machine>/
-    chunk_<date>-<time>-<machine>/
-      events.jsonl        <- raw operation log
-      manifest.json       <- chunk metadata
-      screenshots/        <- screen captures referenced by screenshot events
-    gt.jsonl              <- ground truth
-    gt_manifest.json      <- ground truth summary (per session)
+Raw desktop telemetry (keystrokes · clicks · app switches · screenshots)
+  → Normalisation           dissolve recording chunks, canonicalise surfaces
+  → Activity blocks         contiguous interaction runs (containers, NOT boundary units)
+  → Candidate generation    event-anchored + gap-anchored boundary candidates
+  → Candidate scoring       deterministic scoring with structural features
+  → Ambiguity gate          routes uncertain tail to adjudicator
+  → Constrained decoder     global consistency under hard invariants
+  → Process identity        similarity → kNN graph → Louvain community detection
+  → Business analysis       modules · effort · operators · variants · dispositions
+  → Hypothesis testing      4 declared gates · permutation nulls · pre-registered floors
+  → ProcAssist              retrieve · localise · validate · draft · HUMAN DECIDES
 ```
 
-`gt.jsonl` records when each business process started and ended.
-Use this dataset to build and validate your approach.
+### Key Design Principles
 
-Note that a single session may be split across multiple chunks. This is a property of
-how the agent records data — it is not an anomaly.
+- **LLMs are bounded**: the model may produce types, relationships, and names — never timestamps, durations, or structural decisions
+- **Deterministic safety net**: total LLM failure degrades the system to its deterministic baseline, never breaks it
+- **No dataset leakage**: the production pipeline is tested with Dataset A absent from disk — a dependency on it fails the build
 
-### Dataset B (no ground truth / 15 sessions / ~20,000 events)
+---
+
+## Datasets
+
+| Property | Dataset A | Dataset B |
+|---|---|---|
+| Role | Engineering & validation | **Production analysis target** |
+| Sessions | 63 | 15 |
+| Events | ~162,000 | ~20,000 |
+| Screenshots | 34,563 | 4,746 |
+| Ground truth | Yes | **None** |
+| Departments | One set | **Different departments, processes, applications** |
+
+All screen text, process names, and application UI are in **Japanese**. Translation tools and LLMs were used where needed.
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- Python ≥ 3.10
+
+### Setup
+
+```bash
+make setup
+```
+
+Creates `.venv` with all dependencies. Use `.venv/bin/python` for everything.
+
+### Produce the Step 1 deliverable
+
+```bash
+make run-b          # perception artifacts + segments.jsonl
+```
+
+Or directly:
+```bash
+python -m procmine.cli --dataset dataset_b --segment
+```
+
+### Run ProcAssist (Step 3)
+
+```bash
+.venv/bin/python -m procassist.api
+```
+
+Then open:
+| Queue | URL | Demonstrates |
+|---|---|---|
+| HR 経費精算 | http://127.0.0.1:5132/payroll-items | OK / FLAG verdicts against 接待交際費規程 |
+| FI 請求書承認 | http://127.0.0.1:5133/payroll-items | **MISS** — no regulation governs an invoice amount |
+| FI 経費承認（管理職） | http://127.0.0.1:5133/leave-applications | **REQUIRES_REVIEW** — deciding variable absent |
+
+### Run tests
+
+```bash
+make test
+```
+
+---
+
+## Make Targets
+
+| Target | Description |
+|---|---|
+| `make setup` | Create `.venv` and install `procmine` with dev extras |
+| `make test` | Run the pytest suite |
+| `make build-b` | Build perception + TEKG artifacts for Dataset B |
+| `make run-b` | Full pipeline: perception → `segments.jsonl` |
+| `make validate-segments` | Check `segments.jsonl` against the data contract |
+| `make clean` | Remove `build/` and Python caches |
+
+---
+
+## Repository Structure
 
 ```
-dataset_b/
-  ses_<date>-<time>-<machine>/
-    chunk_<date>-<time>-<machine>/
-      events.jsonl        <- raw operation log
-      manifest.json       <- chunk metadata
-      screenshots/        <- screen captures referenced by screenshot events
+├── procmine/                  # Step 1: segmentation & identity pipeline
+│   ├── normalise.py           #   telemetry normalisation
+│   ├── blocks.py              #   activity block construction
+│   ├── candidates.py          #   boundary candidate generation
+│   ├── score.py               #   candidate scoring
+│   ├── gate.py                #   ambiguity gate
+│   ├── decoder.py             #   constrained global decoder
+│   ├── identity.py            #   process identity (kNN + Louvain)
+│   ├── label.py               #   consistent labelling
+│   ├── evaluate.py            #   evaluation metrics
+│   ├── cli.py                 #   command-line interface
+│   └── ...
+├── procassist/                # Step 3: ProcAssist automation tool
+│   ├── core/                  #   pure logic: rules, lookup, engine, comments
+│   ├── adapters/              #   I/O: documents, records, audit trail
+│   ├── replica/               #   business-system screen replicas (Jinja2)
+│   ├── panel/                 #   injected side panel (JS + CSS)
+│   ├── api/                   #   FastAPI server
+│   ├── challenger/            #   local retriever (BM25 + char-3-gram)
+│   ├── i18n/                  #   JA→EN glossary
+│   └── measured/              #   action budget from telemetry
+├── analysis/                  # Step 2 inventory & figure scripts
+├── definitions/               # process definition TOMLs (the artifact that executes)
+├── experiments/               # numbered experiments (E01, SE1–SE8)
+├── tests/                     # 28 test modules (449 tests)
+├── docs/                      # all technical documentation & ADRs
+├── figures/                   # generated analysis figures
+├── reports/                   # Step 2 analysis report
+├── segments.jsonl             # THE deliverable
+├── pyproject.toml             # project metadata & dependencies
+├── Makefile                   # build automation
+└── FINAL_REPORT.md            # comprehensive submission report
 ```
 
-**This is the production data you are asked to analyze.** There is no ground truth.
-It comes from different departments performing different work than Dataset A,
-and the applications in use are also different.
+---
+
+## Documentation Reading Order
+
+| # | Document | What it covers |
+|---|---|---|
+| 0 | `FINAL_REPORT.md` | **Start here.** The full engagement end-to-end |
+| 1 | `docs/STEP1_REPORT.md` | Segmentation: boundary F1 0.690, identity ARI 0.681 |
+| 2 | `docs/STEP2_AUTOMATION_OPPORTUNITY.md` | Module inventory and candidate analysis |
+| 3 | `docs/STEP2_MODULE_KEY_RECONCILIATION.md` | Authoritative module keys (ADR-022) |
+| 4 | `docs/STEP2_HYPOTHESIS_VERIFICATION.md` | **The strong hypothesis is refuted** — 4-gate table |
+| 5 | `docs/PHASE4_SCOPE_DECISION.md` | Vision-model pass cancelled: 0 images, $0.00 |
+| 6 | `docs/STEP3_TARGET_REFRAME.md` | Why a lookup table beats AI on current evidence |
+| 7 | `procassist/README.md` | **ProcAssist** — how to run and what to click |
+| 8 | `docs/GIT_HISTORY_NARRATIVE.md` | Commit history as an engineering narrative |
+| 9 | `docs/WORK_LOG.md` | 7-day postmortem: hypotheses, experiments, 8 pivots |
+
+ADRs (001–025) are in `docs/DECISIONS.md`, append-only. Evidence artifacts are under `build/dataset_b/evidence/`.
 
 ---
 
-## Tasks
+## Key Results
 
-### Step 1 — Recover units of work from the logs
+### Step 1 — Execution Inference
 
-`events.jsonl` is simply a list of keystrokes, clicks, and application switches
-**in the order they occurred.** There are no markers saying "an expense claim started here"
-or "it ended here."
+- **Boundary F1 0.690** at τ=2s (precision 0.680, recall 0.702)
+- **2.67×** improvement over the strongest of six baselines
+- Segment-count ratio of **0.98** — gains are not from over-segmenting
+- Candidate reachability: **88.0%** against a measured ceiling of **90.0%**
 
-Your task is to recover "one coherent unit of work" from this stream.
-In other words, **the goal of Step 1 is to segment a continuous sequence of events into
-individual executions of business processes.**
+### Step 1 — Process Identity
 
-#### What makes this difficult
+- **ARI 0.681 / NMI 0.738** via kNN similarity graph + Louvain community detection
+- 17 discovered labels vs. 51 from structural signatures (ARI 0.431)
+- LLM was sized three times and declined three times, each against a measured ceiling
 
-Real office workers do not behave the way a textbook would suggest.
+### Step 3 — ProcAssist
 
-- **Work is not contiguous.** A person switches to a different task partway through one,
-  then returns to it later
-- **The same process appears many times a day.** Different cases are processed
-  using the same procedure, over and over
-- **The same process does not always follow the same steps.** Depending on the case
-  and the conditions, the systems visited and the items checked will differ
-- **Operations unrelated to any business process are mixed in**
-
-#### How to proceed
-
-Start with Dataset A. Because A includes ground truth (`gt.jsonl`), **you can measure
-how correct your approach is.** How far you push accuracy — and what you consider
-"good enough" — is left to your judgment.
-
-For the output format, see the Deliverables section.
-
-### Step 2 — Analyze the work and identify automation candidates
-
-Apply your Step 1 approach to Dataset B, and analyze the operations based on its output.
-
-- What processes are performed, how often, and how much time do they consume?
-- How many people are involved?
-- Are there different handling patterns within the same process?
-
-Then, **propose which processes should be automated, in priority order.**
-Explain the reasoning behind that ordering.
-
-### Step 3 — Build an automation tool
-
-From the candidates identified in Step 2, build the one (or ones) you judge to have
-the greatest impact.
-
-The form your "automation tool" takes is up to you. Any of the following is acceptable,
-as are approaches not listed here:
-
-- An AI agent (for example, something like Copilot given a set of procedure definitions)
-- A workflow definition (n8n, Power Automate, etc.)
-- A deterministic script (Python, PowerShell, etc.)
-- A desktop application
-- A web application
-
-#### Consider feasibility when choosing
-
-An idea with large potential impact is worthless if it cannot be built. Before deciding
-what to target, assess the **overall development difficulty**. For example:
-
-- How would you access the data in the target system?
-- How complex is the business logic? How many decision branches are there?
-- What operational and governance constraints apply?
-- What risks would only surface once implementation begins?
-
-The information you can extract from the provided logs is limited.
-**We are looking at how well you can anticipate realistic risks from that limited
-information.** Proposals built purely on optimistic assumptions will not score well.
-
-#### Decide the number and scope yourself
-
-**We do not specify how many tools to build.** Whether you build one thing specialized
-for a single process, or a general mechanism that can be extended across several processes
-(for example, a shared foundation with per-process definitions) — **that decision is itself
-part of the ROI question.**
-
-A broadly applicable design has a higher ceiling, but delivers zero value if you cannot
-finish it. State clearly what you chose to cover, what you deferred to a later phase,
-and why.
-
-#### What your report must explain
-
-A working prototype is sufficient. Polish itself is not evaluated; judgment is.
-Your report must address the following four points:
-
-1. **Why you chose that process, and why that scope**
-2. **Why you chose that implementation form** — including why you rejected the alternatives
-3. **What manual work remains after deployment**, and what impact can realistically be expected
-4. **What risks you anticipate in implementation and rollout, and how you would address them**
-   — including what evidence led you to anticipate each risk
+- Resolves governing regulation → localises clause → evaluates record → drafts operator comment
+- **Judgement slot left empty** — human completes and submits
+- Agent mode: 23 documents, 120 drafts, **0 dispositions taken**
+- Impact measured in **operator actions**, not time (compressed waiting times preclude absolute claims)
 
 ---
 
-## Deliverables
+## Technology Stack
 
-1. **Step 1 output** — the result of applying your approach to Dataset B,
-   submitted as `segments.jsonl`
-
-   One JSON object per line:
-
-   ```json
-   {"session_id": "ses_20260701-183232-LAPTOP-76QMG9DE", "start": "2026-07-01T18:32:32Z", "end": "2026-07-01T18:35:41Z", "label": "expense_processing"}
-   ```
-
-   | Field | Description |
-   |---|---|
-   | `session_id` | The session directory name |
-   | `start` / `end` | Segment start and end time (ISO 8601, UTC) |
-   | `label` | Your own name for the process. **Use the same label for the same process** |
-
-   The label text itself is not evaluated — name them however you like.
-   What is evaluated is whether the boundaries between units of work are correct,
-   and whether the same process consistently receives the same label.
-
-2. **Full repository** — include your Git history (we review how the work progressed)
-
-3. **Final report** — must include:
-   - Your Step 2 analysis, the prioritized automation candidates, and the reasoning
-   - A description of what you built in Step 3, **why that process and scope**,
-     and **why that implementation form**
-   - **What manual work remains after deployment, and the impact you realistically expect**
-   - **Anticipated implementation and rollout risks, with your mitigation approach**
-   - How you allocated the 7 days, and why
-
-4. **Work log** — what you were thinking each day, what you tried, and what did not work
+| Layer | Technology |
+|---|---|
+| Language | Python 3.12 |
+| Inference | NumPy, SciPy, scikit-learn, NetworkX, RapidFuzz, segeval |
+| Product | FastAPI, Pydantic v2, Jinja2, SQLite, vanilla JS |
+| **Not used** | No vector database, no model API, no agent framework |
 
 ---
 
-## Notes and Constraints
+## License
 
-- **No ground truth is provided for Dataset B.** We will score your submission
-  after you submit it.
-- **The logs come from a Japanese company.** Screen text, business process names, and
-  application UI content are in Japanese. You are free to use translation tools or LLMs.
-- These logs were recorded in a test environment, so the waiting time within each
-  operation is shorter than in real production use. Judge candidates by comparing
-  processes against each other rather than by absolute figures.
-- Some events in `events.jsonl` (`text_input_complete`) are unreliably recorded.
-  Reconstruct from other events if you need that information.
-- **You are free to use generative AI.** Please record how you used it in your work log.
-- Any programming language or library is acceptable.
-
----
-
-## FAQ
-
-**Q. How accurate does Step 1 need to be?**
-A. We will not give you a threshold. Deciding what counts as "good enough" is part of
-the task.
-
-**Q. Does the Step 3 tool need to be production-ready?**
-A. No. A working prototype is sufficient.
-
-**Q. Will I score higher by building something technically sophisticated?**
-A. No. We evaluate the client's ROI. What matters is whether your technical choices
-fit the objective.
-
-**Q. I could not complete all three steps.**
-A. Record in your work log why you did not, and how you arrived at the decisions you made
-along the way.
+This repository is a recruitment submission. All rights reserved.
