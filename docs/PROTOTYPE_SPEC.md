@@ -1,30 +1,5 @@
 # Prototype Specification — Streamlit Application
 
-## Submission-Ready Specification
-
-| Item | Status |
-|---|---|
-| Scope | Step 2 / Step 3 prototype and demonstration layer |
-| Current status | **DEFERRED — NOT IN EFFECT** |
-| Activation condition | Step 1 must first exit at **S-DONE** |
-| Runtime | Local Streamlit application |
-| Primary purpose | Demonstrate the reconstructed-execution → reasoning → process-family → automation → workflow story |
-| Source document | `PROTOTYPE_SPEC.md` |
-| Implementation boundary | No implementation from this specification before Step 1 S-DONE |
-
-> **Important scope gate:** The current objective remains Step 1 (`docs/STEP1_SPEC.md`, ADR-016). This specification is retained for later revival and must not be implemented until Step 1 exits at **S-DONE**.
-
-### Reviewer navigation
-
-1. [What it must demonstrate](#1-what-it-must-demonstrate)
-2. [Backend → UI contract](#2-backend--ui-contract)
-3. [Pages](#3-pages)
-4. [Non-goals](#4-non-goals)
-5. [Acceptance](#5-acceptance)
-
----
-
-
 ## 1. What It Must Demonstrate
 
 One continuous story, clickable end to end:
