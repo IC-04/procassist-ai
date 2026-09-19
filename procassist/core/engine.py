@@ -8,9 +8,12 @@ Order matters and is the whole logic of the thing:
 3. Evaluate the clause.
 4. Render the operator's comment with the judgement left empty.
 
-The draft is offered even when the status is `FLAG`: the comment is the operator's own wording
-about work they are doing anyway, and withholding it would only make the flag easier to ignore.
-It is withheld on `MISS`, where we have no grounds to claim the work was checked at all.
+The draft is offered whatever the status, including `MISS`. The comment template and the
+authority rule are independently evidenced — the invoice template was typed 129 times on
+`:5133/#/payroll-items` whether or not any regulation governs an invoice amount — so
+withholding the comment because the rule lookup missed would suppress evidence we have in
+order to express a gap in evidence we do not. What the engine withholds, always, is the
+judgement.
 """
 from __future__ import annotations
 
@@ -40,26 +43,16 @@ def prepare(
     notes: list[str] = []
 
     lookup = find_document(definition, fields)
-    if not lookup.hit:
+    if lookup.hit:
+        if definition.threshold is not None:
+            checks.append(evaluate_threshold(definition, fields, parsed_rule,
+                                             provenance or Provenance()))
+    else:
         checks.append(miss_check(definition, lookup, fields))
-        return PrepareResult(
-            trace_id=trace_id,
-            definition_id=definition.definition_id,
-            module_id=definition.module_id,
-            module_name_ja=definition.name_ja,
-            record_id=record_id,
-            record_fields=dict(fields),
-            status=Status.MISS,
-            document=None,
-            clause=None,
-            checks=checks,
-            draft=None,
-            notes_en=[lookup.reason_en] + notes,
-        )
-
-    if definition.threshold is not None:
-        checks.append(evaluate_threshold(definition, fields, parsed_rule,
-                                         provenance or Provenance()))
+        notes.append(lookup.reason_en)
+        clause = None
+        document_meta = None
+        parsed_rule = None
 
     draft = render(definition, fields)
     if draft is None:

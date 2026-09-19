@@ -1,0 +1,90 @@
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+# M01 · HR 経費精算・給与変更  —  employee expense settlement
+#
+# This is the one queue in Dataset B where the corpus's single parsed authority rule and the
+# amount it needs are on the same screen. Every value below is quoted from Dataset B; the
+# evidence is in the comment above it. Nothing here is inferred, rounded or tidied.
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+definition_id = "hr_expense_settlement"
+module_id     = "M01"
+system        = "HR"
+name_ja       = "経費精算・給与変更"
+name_en       = "expense settlement + payroll change"
+record_prefix = "P1"
+
+# The queue table's own headers, verbatim, from records.jsonl `column_headers` on 120 distinct
+# P1 records. Keyed on record_prefix, not module_id: ADR-022 measured module_id wrong about the
+# screen in 21% of captures, while P1→HR 経費精算・給与変更 holds at purity 1.00.
+column_headers_ja = ["ID", "社員ID", "氏名", "区分", "金額", "種別", "ステータス"]
+
+# Element ids and the placeholder, verbatim from payload.target_element on Dataset B click
+# events: pi-note used 472 times across portals, btn-pi-ok 240 times.
+note_element_id   = "pi-note"
+submit_element_id = "btn-pi-ok"
+success_toast_ja  = "登録確定しました"
+
+# analysis/evidence/modules.py, read off a Dataset B screenshot showing URL bar, breadcrumb and
+# highlighted nav item together. The production app is a hash-router SPA.
+[host]
+origin            = "http://127.0.0.1:5132"
+route             = "/payroll-items"
+production_url_ja = "http://127.0.0.1:5132/#/payroll-items"
+
+[required]
+fields_ja = ["ID", "区分", "金額"]
+reason_ja = "規程の判定に必要な項目です。"
+
+# The only parsed `threshold` rule in the whole corpus governs 接待交際費. It is matched on the
+# queue's own 区分 column, whose value for these rows is exactly 接待交際費 (69 rows raw,
+# 23 distinct records).
+[governed_by]
+field_ja  = "区分"
+equals_ja = "接待交際費"
+
+# 接待交際費規程 第２条（承認権限）, from documents.jsonl.
+#
+# document_id is a sha256 of the captured body text, NOT a document identity: 15 distinct
+# document_ids carry this same clause text under 5 different Word window titles
+# (gyomu_itaku_keihi_kitei, settai_keihi_kitei, shinkuitorihikisaki_touroku_tetsuzuki,
+# nyusha_checklist_shinsotsu_batch, …). The regulation name is the identity that means
+# something; the id says which capture the excerpt on screen was taken from.
+#
+# The heading is written with a FULLWIDTH ２ in the source and is kept that way.
+[document]
+regulation_name_ja  = "接待交際費規程"
+clause_id           = "c002"
+clause_heading_ja   = "第２条（承認権限）"
+document_id         = "3ece1f98df11868f955b86b6dc8623adae78dc3ca6eb2dd1fe6547655e496bc5"
+identity_note_en    = "document_id is a capture-window content hash; 15 captures carry this clause"
+
+# The tiers themselves are NOT restated here. rules.py reads parsed.tiers from documents.jsonl,
+# so this file and the corpus cannot drift apart.
+#   1回あたり5万円未満：部門長承認。5万円以上：役員承認。10万円以上：社長承認。
+[threshold]
+rule_id         = "3ece1f98df11:c002"
+variable_ja     = "金額"
+source_field_ja = "金額"
+
+# Reconstructed from payload.target_element.value on pi-note clicks at
+# http://127.0.0.1:5132/#/payroll-items — 142 of the 223 typed values on this queue take this
+# exact shape (the other 81 are 給与変更登録, the module's other half).
+# Verbatim example:  経費精算確認済み。費目：接待交際費　金額：135,181円。規程内であることを確認した。
+# Note the ideographic space 　 (U+3000) before 金額, and 円 as a suffix — there is no ¥ here.
+[comment]
+element_id      = "pi-note"
+placeholder_ja  = "処理内容・確認コメントを入力してください…"
+template_ja     = "経費精算確認済み。費目：{expense_type}　金額：{amount}。{judgement}。"
+judgement_slot  = "judgement"
+observed_n      = 142
+evidence_note_en = "142/223 typed values on this queue; exactly one disposition was ever typed"
+
+[comment.slots]
+expense_type = "field:区分"
+amount       = "amount:金額"
+
+# One chip, because exactly one disposition was observed. A second is not invented to make the
+# UI symmetrical. It still has to be clicked: nothing is preselected.
+[[comment.judgement_options]]
+text_ja     = "規程内であることを確認した"
+observed_n  = 142
+offered_by_ja = "観測されたもの"

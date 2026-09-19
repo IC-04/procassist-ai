@@ -4,7 +4,7 @@ This module does not parse Japanese. `analysis/evidence` did that in Step 2 and 
 in `documents.jsonl` as structured `parsed.tiers`. What is left is arithmetic and the honest
 reporting of what the arithmetic does *not* settle.
 
-The one interesting decision is `evaluate_threshold`. 接待交際費規程 第2条 reads:
+The one interesting decision is `evaluate_threshold`. 接待交際費規程 第２条 reads:
 
     1回あたり5万円未満：部門長承認。5万円以上：役員承認。10万円以上：社長承認。
 
@@ -94,10 +94,13 @@ def evaluate_threshold(
     raw = fields.get(source)
     amount = parse_amount_jpy(raw)
 
+    # The clause is named by the heading captured in the document, verbatim: Dataset B writes
+    # 第２条 with a fullwidth ２, and normalising it here would be a silent edit of source text.
+    heading = provenance.clause_heading_ja or "該当条文"
     base = dict(
         check_id="threshold.approval_authority",
         kind="threshold",
-        label_ja=f"{provenance.clause_id and ''}承認権限（{ref.variable_ja}）".lstrip(),
+        label_ja=f"承認権限（{ref.variable_ja}）",
         label_en="approval authority by amount",
         provenance=provenance,
     )
@@ -109,7 +112,7 @@ def evaluate_threshold(
             status=Status.REQUIRES_REVIEW,
             expected_ja=f"{ref.variable_ja}（数値）",
             observed_ja=shown,
-            why_ja=f"{ref.variable_ja}がこの画面にないため、第2条の判定ができません。",
+            why_ja=f"{ref.variable_ja}がこの画面にないため、{heading}の判定ができません。",
             why_en=(f"{ref.variable_ja} is required to evaluate the clause and this screen does "
                     f"not carry it; the tier cannot be selected without inventing a value."),
         )
@@ -124,7 +127,7 @@ def evaluate_threshold(
             status=Status.REQUIRES_REVIEW,
             expected_ja="該当する区分",
             observed_ja=shown_amount,
-            why_ja=f"{ref.variable_ja} {shown_amount} に該当する区分が条文にありません。",
+            why_ja=f"{ref.variable_ja} {shown_amount} に該当する区分が{heading}にありません。",
             why_en=(f"no tier of the clause covers {shown_amount}; the clause does not decide "
                     f"this case and a human must."),
         )
@@ -142,7 +145,7 @@ def evaluate_threshold(
             status=Status.FLAG,
             expected_ja=consequent,
             observed_ja="この画面には承認権限の記録欄がありません",
-            why_ja="。".join(reasons) + f"。区分が{len(matched)}件該当するため、条文だけでは決まりません。",
+            why_ja="。".join(reasons) + f"。区分が{len(matched)}件該当するため、{heading}だけでは決まりません。",
             why_en=(f"{len(matched)} tiers of the clause match {shown_amount}; the strictest is "
                     f"{consequent}. The clause as written does not select between them, and this "
                     f"screen records no approval authority, so a human decides."),

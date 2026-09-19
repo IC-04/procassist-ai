@@ -27,6 +27,7 @@ class Provenance(Frozen):
 
     document_id: Optional[str] = None
     clause_id: Optional[str] = None
+    clause_heading_ja: Optional[str] = None
     char_span: Optional[Tuple[int, int]] = None
     rule_id: Optional[str] = None
     capture_ids: List[str] = Field(default_factory=list)

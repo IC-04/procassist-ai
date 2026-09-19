@@ -1,0 +1,66 @@
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+# M05 · FI 請求書承認・経費精算  —  invoice approval
+#
+# This definition deliberately declares NO governing document. Dataset B contains exactly one
+# parsed threshold rule — 接待交際費規程 第２条 — and it is keyed on 費目, which an invoice record
+# does not carry: P6's 区分 reads 「請求書承認 INV-2026-xxxx」. No regulation in the corpus
+# establishes an approval authority for an invoice amount.
+#
+# The honest output is therefore MISS, on every record in this queue. A fabricated rule would
+# make for a tidier demo and would be a lie about the evidence. The comment template below is
+# separately evidenced and is still offered: the operator types it either way.
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+definition_id = "fi_invoice_approval"
+module_id     = "M05"
+system        = "FI"
+name_ja       = "請求書承認・経費精算"
+name_en       = "invoice approval"
+record_prefix = "P6"
+
+# records.jsonl `column_headers` on 108 distinct P6 records, verbatim.
+column_headers_ja = ["ID", "社員ID", "氏名", "区分", "金額", "種別", "ステータス"]
+note_element_id   = "pi-note"
+submit_element_id = "btn-pi-ok"
+success_toast_ja  = "登録確定しました"
+
+# No [governed_by], no [document], no [threshold]. The reason is shown to the operator verbatim.
+miss_reason_ja = "請求書金額について、承認権限を定める規程はこのコーパスでは確認されていません。接待交際費規程第２条は費目を条件とする規程であり、請求書には費目がありません。"
+miss_reason_en = "no governing authority rule established for an invoice amount: the corpus's only parsed threshold rule is keyed on 費目, which an invoice record does not carry"
+
+# analysis/evidence/modules.py. The production app is a hash-router SPA.
+[host]
+origin            = "http://127.0.0.1:5133"
+route             = "/payroll-items"
+production_url_ja = "http://127.0.0.1:5133/#/payroll-items"
+
+[required]
+fields_ja = ["ID", "区分", "金額"]
+reason_ja = "照合コメントの作成に必要な項目です。"
+
+# Reconstructed from payload.target_element.value on pi-note clicks at
+# http://127.0.0.1:5133/#/payroll-items — 129 typed values, all of this shape.
+# Verbatim example:  請求書照合完了。INV-2026-7347　金額：1,832,962円。差異なし承認。
+# Note 　 (U+3000) before 金額 and 円 as a suffix; this module never writes ¥.
+[comment]
+element_id      = "pi-note"
+placeholder_ja  = "処理内容・確認コメントを入力してください…"
+template_ja     = "請求書照合完了。{invoice_no}　金額：{amount}。差異{judgement}。"
+judgement_slot  = "judgement"
+observed_n      = 129
+evidence_note_en = "129 typed values on this queue; two dispositions observed, 85 and 44"
+
+[comment.slots]
+invoice_no = "suffix:区分|請求書承認 "
+amount     = "amount:金額"
+
+# Both chips are observed. Neither is preselected — the 差異 slot is the judgement, and the
+# engine leaves it empty.
+[[comment.judgement_options]]
+text_ja       = "なし承認"
+observed_n    = 85
+offered_by_ja = "観測されたもの"
+
+[[comment.judgement_options]]
+text_ja       = "あり要確認"
+observed_n    = 44
+offered_by_ja = "観測されたもの"

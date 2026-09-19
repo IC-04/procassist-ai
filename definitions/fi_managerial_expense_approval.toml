@@ -1,0 +1,78 @@
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+# M07 · FI 経費承認（管理職）  —  managerial expense approval
+#
+# This is the queue the 接待交際費規程 is actually read against. Two pieces of evidence say so:
+#
+#   1. the comment operators type here is 「経費承認（管理職）。費目：接待交際費　金額：35,227円。
+#      規程確認のうえ承認。」 — "approved after confirming the regulation";
+#   2. the captured Word document that carries 第２条 has that very comment text at the top of
+#      its body (「経費承認（管理職）。費目：接待交際費　金額：44,872円。規程確認のうえ承認。」),
+#      i.e. the regulation was open on screen while these approvals were being made.
+#
+# And the queue table has no 金額 column at all. The approver confirming compliance with an
+# amount-tiered authority rule cannot see the amount on this screen. That is why every
+# 接待交際費 record here comes back REQUIRES_REVIEW rather than OK or FLAG — the engine will not
+# guess a number it was not shown.
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+definition_id = "fi_managerial_expense_approval"
+module_id     = "M07"
+system        = "FI"
+name_ja       = "経費承認（管理職）"
+name_en       = "managerial expense approval"
+record_prefix = "P9"
+
+# records.jsonl `column_headers` on 24 distinct P9 records, verbatim. Note: no 金額.
+column_headers_ja = ["ID", "社員ID", "氏名", "申請種別", "期間・詳細", "部署", "ステータス"]
+note_element_id   = "la-note"
+submit_element_id = "btn-la-ok"
+success_toast_ja  = "登録確定しました"
+
+[host]
+origin            = "http://127.0.0.1:5133"
+route             = "/leave-applications"
+production_url_ja = "http://127.0.0.1:5133/#/leave-applications"
+
+[required]
+fields_ja = ["ID", "申請種別"]
+reason_ja = "この画面が保持する項目です。"
+
+# Same rule as the HR queue, matched on this screen's own column name: 申請種別, not 区分.
+[governed_by]
+field_ja  = "申請種別"
+equals_ja = "接待交際費"
+
+[document]
+regulation_name_ja = "接待交際費規程"
+clause_id          = "c002"
+clause_heading_ja  = "第２条（承認権限）"
+document_id        = "3ece1f98df11868f955b86b6dc8623adae78dc3ca6eb2dd1fe6547655e496bc5"
+identity_note_en   = "document_id is a capture-window content hash; 15 captures carry this clause"
+
+# source_field_ja names a column this screen does not have. That is the point: the engine looks
+# for 金額, does not find it, and says so instead of substituting anything.
+[threshold]
+rule_id         = "3ece1f98df11:c002"
+variable_ja     = "金額"
+source_field_ja = "金額"
+
+# Reconstructed from payload.target_element.value on la-note clicks at
+# http://127.0.0.1:5133/#/leave-applications — 72 typed values, all of this shape.
+# Verbatim example:  経費承認（管理職）。費目：接待交際費　金額：35,227円。規程確認のうえ承認。
+# The amount in that comment comes from somewhere off this screen; the queue row does not
+# carry it, so the draft here cannot be rendered and none is offered.
+[comment]
+element_id      = "la-note"
+placeholder_ja  = "承認コメントまたは差戻し理由を入力してください…"
+template_ja     = "経費承認（管理職）。費目：{expense_type}　金額：{amount}。{judgement}。"
+judgement_slot  = "judgement"
+observed_n      = 72
+evidence_note_en = "72 typed values; 差戻し is offered by the placeholder and was typed 0 times in 282 uses of la-note"
+
+[comment.slots]
+expense_type = "field:申請種別"
+amount       = "amount:金額"
+
+[[comment.judgement_options]]
+text_ja       = "規程確認のうえ承認"
+observed_n    = 72
+offered_by_ja = "観測されたもの"
