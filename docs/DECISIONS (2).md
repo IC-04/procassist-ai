@@ -8,7 +8,7 @@
 
 ## Submission Note
 
-This submission-ready edition preserves the substantive ADR history, including accepted decisions, supersession/addenda, negative results, corrections, and implementation consequences. No decision, metric, evidence claim, or ADR outcome has been silently removed or rewritten for presentation.
+This edition preserves the substantive ADR history, including accepted decisions, supersession/addenda, negative results, corrections, and implementation consequences. No decision, metric, evidence claim, or ADR outcome has been silently removed or rewritten for presentation.
 
 The governing rule remains: **an ADR is required to change anything in `ARCHITECTURE.md` or a `*_SPEC.md`.** Each ADR records its ID, date, status, context, decision, consequences, and evidence.
 
