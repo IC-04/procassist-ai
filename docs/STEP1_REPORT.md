@@ -1,37 +1,4 @@
 # STEP 1 — Business-Process Execution Inference
-## Submission-Ready Final Report
-
-**Document type:** Final Step 1 report  
-**Status:** Frozen / submission-ready  
-**Scope:** Step 1 — reconstructing business-process executions from desktop telemetry  
-**Primary deliverable:** Dataset B `segments.jsonl`  
-**Evaluation basis:** Dataset A ground truth, scoreable canonical population  
-**Step 2 / Step 3:** Not started  
-
-> **Submission note:** This report records the frozen Step 1 method, measured results, validation evidence, limitations, Dataset B output, and freeze conditions. It does **not** claim that Step 2 or Step 3 has been completed.
-
-### Reviewer navigation
-1. [Headline results](#1-headline)
-2. [Reorientation that made the result possible](#2-the-reorientation-that-made-the-result-possible)
-3. [Identity: representation → similarity → grouping](#3-identity-representation--similarity--grouping)
-4. [B5 ARI question](#4-the-b5-ari-question-head-on)
-5. [LLM decision](#5-why-there-is-no-llm)
-6. [Residual findings](#6-the-residual-named-as-a-finding)
-7. [Limitations](#7-limitations--stated-not-buried)
-8. [Populations and denominators](#8-populations-and-denominators)
-9. [Method and verification findings](#9-the-method--and-what-it-caught)
-10. [Dataset B output](#10-dataset-b-output--no-accuracy-claims)
-11. [Freeze](#11-freeze)
-
-### Submission integrity
-- Accuracy figures are explicitly tied to Dataset A ground truth and stated denominators.
-- Candidate-space reachability is kept separate from segmentation accuracy.
-- Dataset B is treated as unvalidated because it has no ground truth.
-- The shipped path is `--no-llm`; no LLM dependency is hidden in the final pipeline.
-- The report preserves documented limitations and negative findings rather than presenting only successful results.
-- Step 1 ends at the documented freeze; Step 2 and Step 3 are explicitly outside this report.
-
----
 
 ## 1. Headline
 
